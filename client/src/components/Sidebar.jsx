@@ -19,8 +19,10 @@ const Sidebar = ({navItems}) => {
       <Flex
         justify={collapsed ? "center" : "space-between"}
         align="center"
-        p={5}
+        borderBottom="1px solid #e2e8f0"
+        p={4}
       >
+        {/*TODO: Add Logo Here...*/}
         {!collapsed && <Text fontWeight="bold">RESERVEQ</Text>}
         <IconButton
           icon={<FiMenu fontSize={20} />}

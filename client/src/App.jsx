@@ -4,7 +4,7 @@ import AdminRoutes from "./routes/AdminRoutes";
 
 function App() {
   return (
-    <Box minH="100vh">
+    <Box>
       <Router>
         <AdminRoutes />
       </Router>

@@ -1,14 +1,20 @@
-import { Box, Flex, Text, Icon, StatLabel, StatNumber, Stat } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Text,
+  Icon,
+  StatLabel,
+  StatNumber,
+  Stat,
+} from "@chakra-ui/react";
 
 const StatCard = ({ label, value, icon }) => {
   return (
     <Box
-      bg="white"
-      border="1px solid"
-      borderColor="gray.200"
-      borderRadius="xl"
+      borderRadius="2xl"
       p={5}
       w="100%"
+      bgGradient="linear(to-br, maroon, #c75d5dff)"
       boxShadow="sm"
       transition="box-shadow 0.2s"
       _hover={{ boxShadow: "md" }}
@@ -16,23 +22,27 @@ const StatCard = ({ label, value, icon }) => {
       <Flex justify="space-between" align="center">
         <Box>
           <Stat>
-            <StatLabel fontSize="sm" color="gray.500">
-                {label}
+            <StatLabel fontSize="sm" color="white" opacity={0.85}>
+              {label}
             </StatLabel>
-          <StatNumber fontSize="2xl" fontWeight="bold">
-            {value}
-          </StatNumber>
+            <StatNumber fontSize="3xl" fontWeight="bold" color="white">
+              {value}
+            </StatNumber>
           </Stat>
         </Box>
+
         {icon && (
           <Box
-            bg="gray.100"
-            p={2}
-            borderRadius="md"
-            color="blue.500"
-            fontSize="xl"
+            bg="whiteAlpha.300"
+            p={3}
+            borderRadius="full"
+            color="white"
+            fontSize="2xl"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
           >
-            <Icon as={icon} />
+            <Icon as={icon} boxSize={6} />
           </Box>
         )}
       </Flex>
