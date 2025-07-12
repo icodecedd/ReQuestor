@@ -1,23 +1,10 @@
 import { Box, IconButton, VStack, Text, Flex, Tooltip } from "@chakra-ui/react";
-import {
-  FiMenu,
-  FiHome,
-  FiFileText,
-  FiMonitor,
-  FiSettings,
-} from "react-icons/fi";
+import { FiMenu } from "react-icons/fi";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 
-const Sidebar = () => {
+const Sidebar = ({navItems}) => {
   const [collapsed, setCollapsed] = useState(false);
-
-  const navItems = [
-    { label: "Overview", icon: FiHome, path: "/dashboard/overview" },
-    { label: "Requests", icon: FiFileText, path: "/dashboard/requests" },
-    { label: "Equipments", icon: FiMonitor, path: "/dashboard/equipments" },
-    { label: "Settings", icon: FiSettings, path: "/dashboard/settings" },
-  ];
 
   return (
     <Box

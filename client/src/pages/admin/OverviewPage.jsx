@@ -1,9 +1,9 @@
-import { Box, Heading, SimpleGrid } from "@chakra-ui/react";
-import Navbar from "../components/Navbar";
+import { Box, SimpleGrid } from "@chakra-ui/react";
+import Navbar from "../../components/Navbar";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FiFileText, FiMonitor, FiUser } from "react-icons/fi";
-import StatCard from "../components/StatCard";
+import StatCard from "../../components/StatCard";
 
 const OverviewPage = () => {
   const [stats, setStats] = useState({
