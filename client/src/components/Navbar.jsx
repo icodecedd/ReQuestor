@@ -12,10 +12,12 @@ import {
   MenuItem,
   Button,
   HStack,
+  VStack,
+  Text,
+  MenuGroup,
+  MenuDivider,
 } from "@chakra-ui/react";
-import { ChevronRightIcon } from "@chakra-ui/icons";
-import { FiBell } from "react-icons/fi";
-import { MdHistory } from "react-icons/md";
+import { FiBell, FiSettings, FiLogOut, FiUser } from "react-icons/fi";
 import { IoIosArrowDown } from "react-icons/io";
 
 const Navbar = ({ pageName }) => {
@@ -26,7 +28,7 @@ const Navbar = ({ pageName }) => {
         <Flex justify="space-between" align="center" pb={0.5}>
           <Breadcrumb
             spacing="8px"
-            separator={<ChevronRightIcon color="gray.500" />}
+            //separator={<ChevronRightIcon color="gray.500" />}
             mb={2}
           >
             <BreadcrumbItem>
@@ -40,17 +42,18 @@ const Navbar = ({ pageName }) => {
           {/* Buttons */}
           <Flex align="center" gap={2} p={1}>
             <IconButton
-              icon={<MdHistory size={22} />}
-              aria-label="History"
-              variant="ghost"
-              size="md"
-            />
-            <IconButton
               icon={<FiBell size={20} />}
               aria-label="Notifications"
               variant="ghost"
               size="md"
             />
+            <IconButton
+              icon={<FiSettings size={19} />}
+              aria-label="Settings"
+              variant="ghost"
+              size="md"
+            />
+            <Box h="25px" w="1px" bg="gray.300" />
             <Menu>
               <MenuButton
                 as={Button}
@@ -62,14 +65,31 @@ const Navbar = ({ pageName }) => {
                 gap={2}
                 _hover={{ bg: "gray.100" }}
               >
+                {/* Change the name with the actual admin name */}
                 <HStack>
-                  <Avatar size="sm" name="Admin Test" src="" />
+                  <Avatar size="sm" name="Cedrick Joseph Mariano" src="" />
+                  <VStack align="start">
+                    <Text fontSize="14px" mb={-2}>
+                      Cedrick Joseph Mariano
+                    </Text>
+                    <Text fontSize="12px" color="gray.600" fontWeight="normal">
+                      Administrator
+                    </Text>
+                  </VStack>
                   <IoIosArrowDown />
                 </HStack>
               </MenuButton>
               <MenuList>
-                <MenuItem>Profile</MenuItem>
-                <MenuItem>Logout</MenuItem>
+                <MenuGroup title="Profile">
+                  <MenuItem gap={2} fontWeight="medium">
+                    <FiUser size="20px" />
+                    My Account
+                  </MenuItem>
+                  <MenuItem gap={2} fontWeight="medium">
+                    <FiLogOut size="19px" />
+                    Logout
+                  </MenuItem>
+                </MenuGroup>
               </MenuList>
             </Menu>
           </Flex>

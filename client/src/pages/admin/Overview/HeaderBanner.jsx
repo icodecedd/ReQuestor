@@ -4,7 +4,7 @@ import overviewBg from "../../../assets/overview.webp";
 const OverviewBanner = () => {
   return (
     <Box
-      w="90%"
+      w="95%"
       mx="auto"
       h="200px"
       borderRadius="2xl"

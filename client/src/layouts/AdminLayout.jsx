@@ -1,13 +1,14 @@
 import { Box, Flex } from "@chakra-ui/react";
 import Sidebar from "../components/Sidebar";
 import { Outlet } from "react-router-dom";
-import { FiHome, FiFileText, FiMonitor, FiSettings } from "react-icons/fi";
+import { FiHome, FiFileText, FiMonitor, FiSettings, FiList } from "react-icons/fi";
 
 const DashboardLayout = () => {
   const navItems = [
     { label: "Overview", icon: FiHome, path: "/dashboard/overview" },
     { label: "Requests", icon: FiFileText, path: "/dashboard/requests" },
-    { label: "Equipments", icon: FiMonitor, path: "/dashboard/equipments" },
+    { label: "Equipment", icon: FiMonitor, path: "/dashboard/equipment" },
+    { label: "Activity Log", icon: FiList, path: "/dashboard/activity" },
     { label: "Settings", icon: FiSettings, path: "/dashboard/settings" },
   ];
 

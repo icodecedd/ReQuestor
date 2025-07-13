@@ -1,7 +1,8 @@
-import { Box, IconButton, VStack, Text, Flex, Tooltip } from "@chakra-ui/react";
+import { Box, IconButton, VStack, Text, Flex, Tooltip, Image } from "@chakra-ui/react";
 import { FiMenu } from "react-icons/fi";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
+import logo from "../assets/reserveq.svg"
 
 const Sidebar = ({navItems}) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -20,10 +21,10 @@ const Sidebar = ({navItems}) => {
         justify={collapsed ? "center" : "space-between"}
         align="center"
         borderBottom="1px solid #e2e8f0"
-        p={4}
+        p={3}
       >
-        {/*TODO: Add Logo Here...*/}
-        {!collapsed && <Text fontWeight="bold">RESERVEQ</Text>}
+        {!collapsed && <Image src={logo} boxSize="50px"/>}
+        {!collapsed && <Text fontWeight="bold" mr={10}>RESERVEQ</Text>}
         <IconButton
           icon={<FiMenu fontSize={20} />}
           size="md"
