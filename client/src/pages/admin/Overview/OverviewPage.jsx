@@ -6,6 +6,7 @@ import BarGraph from "./BarGraph";
 import PieGraph from "./PieGraph";
 import RecentRequests from "./RecentRequests";
 import ActivityLogs from "./ActivityLogs";
+import QuickActions from "./QuickActions";
 
 // TODO: Requests Overview (Approvals vs Pendings)
 // TODO: Equipment by Category (Number of Equipment [projector])
@@ -33,10 +34,13 @@ const OverviewPage = () => {
           <PieGraph />
         </GridItem>
         <GridItem colSpan={4}>
-          <RecentRequests />
+          <QuickActions />
         </GridItem>
         <GridItem rowSpan={2} colSpan={2}>
           <ActivityLogs />
+        </GridItem>
+        <GridItem colSpan={4}>
+          <RecentRequests />
         </GridItem>
       </Grid>
     </Box>

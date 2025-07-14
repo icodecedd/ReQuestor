@@ -1,9 +1,9 @@
 //TODO: Finish This Quick Action Card
 
-const QuickActions = () => {
-  return (
-    <div>QuickActions</div>
-  )
-}
+import { Box } from "@chakra-ui/react";
 
-export default QuickActions
+const QuickActions = () => {
+  return <Box bg="white" borderRadius="2xl" p={5} boxShadow="md" w="100%" h="130px"></Box>;
+};
+
+export default QuickActions;

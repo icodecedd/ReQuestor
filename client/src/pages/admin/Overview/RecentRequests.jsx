@@ -12,6 +12,7 @@ import {
   Tr,
   Th,
   Td,
+  TableCaption,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 
@@ -116,9 +117,9 @@ const OverviewRecentRequests = () => {
               <Th>Date</Th>
             </Tr>
           </Thead>
-          <Tbody>
-            {data?.length > 0 ? (
-              data.map((req, index) => (
+          {data.length > 0 ? (
+            <Tbody>
+              {data.map((req, index) => (
                 <Tr key={index} textColor="blackAlpha.900">
                   <Td textColor="#157fc5ff" fontWeight="medium">
                     #{req.id}
@@ -132,13 +133,11 @@ const OverviewRecentRequests = () => {
                   </Td>
                   <Td>{req.date}</Td>
                 </Tr>
-              ))
-            ) : (
-              <Tr>
-                <Td>No Requests Yet</Td>
-              </Tr>
-            )}
-          </Tbody>
+              ))}
+            </Tbody>
+          ) : (
+            <TableCaption mt={20} fontSize="14px" fontWeight="bold">No Requests Yet</TableCaption>
+          )}
         </Table>
       </TableContainer>
     </Box>
