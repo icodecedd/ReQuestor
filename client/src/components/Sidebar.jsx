@@ -2,7 +2,7 @@ import { Box, IconButton, VStack, Text, Flex, Tooltip, Image } from "@chakra-ui/
 import { FiMenu } from "react-icons/fi";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
-import logo from "../assets/reserveq.svg"
+import logo from "@/assets/reserveq.svg"
 
 const Sidebar = ({navItems}) => {
   const [collapsed, setCollapsed] = useState(false);

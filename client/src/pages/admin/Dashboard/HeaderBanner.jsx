@@ -1,5 +1,5 @@
 import { Box, Text } from "@chakra-ui/react";
-import overviewBg from "../../../assets/overview.webp";
+import overviewBg from "@/assets/overview.webp";
 
 const OverviewBanner = () => {
   return (

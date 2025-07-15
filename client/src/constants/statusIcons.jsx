@@ -10,7 +10,7 @@ import {
   FiInfo,
 } from "react-icons/fi";
 
-export function getStatusStyle(status) {
+export function getStatusIconStyle(status) {
   const normalized = status?.toLowerCase();
 
   switch (normalized) {

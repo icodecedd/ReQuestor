@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { BrowserRouter as Router } from "react-router-dom";
 import AdminRoutes from "./routes/AdminRoutes";
-import './App.css';
+import '@/assets/global.css';
 
 function App() {
   return (
