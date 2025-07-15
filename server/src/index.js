@@ -5,6 +5,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import equipmentRoutes from "./routes/equipmentRoutes.js";
 import statRoutes from "./routes/statRoutes.js";
+import requestRoutes from "./routes/requestsRoutes.js"
+import activityRoutes from "./routes/activityRoutes.js"
 
 dotenv.config();
 
@@ -25,6 +27,8 @@ app.use(morgan("dev"));
 
 app.use("/api/equipment", equipmentRoutes);
 app.use("/api/stats", statRoutes);
+app.use("/api/requests", requestRoutes)
+app.use("/api/activities", activityRoutes)
 
 // Start the server on the specified port
 app.listen(PORT, () => {

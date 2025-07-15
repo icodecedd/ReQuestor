@@ -2,11 +2,9 @@ import pool from "../config/db.js";
 
 export const getAllEquipment = async (req, res) => {
   try {
-    const equipments = await pool.query(
-      `
+    const equipments = await pool.query(`
       SELECT * FROM equipments
-      `
-    );
+      `);
 
     res.status(200).json({ sucess: true, data: equipments });
   } catch (error) {

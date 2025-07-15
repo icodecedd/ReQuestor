@@ -34,9 +34,11 @@ const OverviewBanner = () => {
         mt={8}
       >
         <Text fontSize="5xl" fontWeight="bold">
-          Overview
+          Admin Dashboard
         </Text>
-        <Text>Welcome back, <b>Admin Test!</b></Text>
+        <Text>
+          Welcome back, <b>Cedrick Joseph Mariano</b>
+        </Text>
       </Box>
     </Box>
   );

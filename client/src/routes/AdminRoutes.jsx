@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import AdminLayout from "@/layouts/AdminLayout";
-import Dashboard from "@/pages/admin/Dashboard/Dashboard";
-import ManageUsers from "@/pages/admin/ManageUsersPage";
+import Dashboard from "@/pages/admin/Dashboard/DashboardPage";
+import ManageUsers from "@/pages/admin/ManageUsers/ManageUsersPage";
 import Requests from "@/pages/admin/RequestsPage";
 import Equipment from "@/pages/admin/EquipmentsPage";
 import Activity from "@/pages/admin/ActivityLogsPage";

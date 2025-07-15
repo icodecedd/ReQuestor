@@ -3,12 +3,13 @@ import {
   Flex,
   Text,
   Icon,
+  Stat,
   StatLabel,
   StatNumber,
-  Stat,
+  Skeleton,
 } from "@chakra-ui/react";
 
-const StatCard = ({ label, value, icon }) => {
+const StatCard = ({ label, value, icon, loading = false }) => {
   return (
     <Box
       borderRadius="2xl"
@@ -25,9 +26,13 @@ const StatCard = ({ label, value, icon }) => {
             <StatLabel fontSize="sm" color="white" opacity={0.85}>
               {label}
             </StatLabel>
-            <StatNumber fontSize="3xl" fontWeight="bold" color="white">
-              {value}
-            </StatNumber>
+            {loading ? (
+              <Skeleton height="37px" width="40px" mt={2} />
+            ) : (
+              <StatNumber fontSize="3xl" fontWeight="bold" color="white">
+                {value}
+              </StatNumber>
+            )}
           </Stat>
         </Box>
 
