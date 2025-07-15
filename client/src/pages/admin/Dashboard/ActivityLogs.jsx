@@ -1,6 +1,6 @@
 import { Box, Heading, Text, Flex, VStack } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
-import ActivityLogItem from "../../../components/AcvitivyLogItem";
+import ActivityLogItem from "@/components/AcvitivyLogItem";
 
 const ActivityLogs = () => {
   // TODO: Finish This Activity Logs
@@ -32,7 +32,7 @@ const ActivityLogs = () => {
     },
   ];
   return (
-    <Box bg="white" borderRadius="2xl" boxShadow="md" w="100%" h="550px">
+    <Box bg="white" borderRadius="2xl" boxShadow="md" w="100%" h="578px">
       <Flex
         justify="space-between"
         p={5}

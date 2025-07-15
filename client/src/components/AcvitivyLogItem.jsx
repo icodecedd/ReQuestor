@@ -1,7 +1,7 @@
 import { Box, Text, HStack } from "@chakra-ui/react";
-import { getStatusStyle } from "../utils/statusIcons.jsx";
-import { activityMeta } from "../utils/activityLogMeta.js";
-import { timeAgo } from "../utils/timeAgo.js";
+import { getStatusIconStyle } from "@/constants/statusIcons";
+import { activityMeta } from "@/constants/activityLogMeta";
+import { timeAgo } from "@/utils/timeAgo";
 import { FiClock } from "react-icons/fi";
 
 const ActivityLogItem = ({ log }) => {
@@ -10,16 +10,20 @@ const ActivityLogItem = ({ log }) => {
     description: `No metadata available for "${log.action}" on "${log.target}".`,
   };
   const { title, description } = meta;
-  const { icon, bg } = meta.title !== "Unknown Activity" ? getStatusStyle(log.action) : getStatusStyle("unknown");
+  const { icon, bg } =
+    meta.title !== "Unknown Activity"
+      ? getStatusIconStyle(log.action)
+      : getStatusIconStyle("unknown");
 
   return (
     <HStack
       align="center"
-      spacing={3}
+      spacing={4}
       p={3}
       bg="gray.50"
       borderRadius="md"
       w="90%"
+      mb={1.5}
     >
       <Box
         bg={bg}

@@ -15,7 +15,7 @@ const StatCard = ({ label, value, icon }) => {
       p={5}
       w="100%"
       bgGradient="linear(to-br, maroon, #c75d5dff)"
-      boxShadow="sm"
+      boxShadow="md"
       transition="box-shadow 0.2s"
       _hover={{ boxShadow: "md" }}
     >

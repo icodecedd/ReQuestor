@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FiFileText, FiMonitor, FiUser } from "react-icons/fi";
-import StatCard from "../../../components/StatCard";
+import StatCard from "@/components/StatCard";
 import { SimpleGrid } from "@chakra-ui/react";
 
 const OverviewStats = () => {

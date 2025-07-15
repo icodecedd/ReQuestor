@@ -1,5 +1,5 @@
 import { Box, Grid, GridItem } from "@chakra-ui/react";
-import Navbar from "../../../components/Navbar";
+import Navbar from "@/components/Navbar";
 import CardStats from "./CardStats";
 import HeaderBanner from "./HeaderBanner";
 import BarGraph from "./BarGraph";
