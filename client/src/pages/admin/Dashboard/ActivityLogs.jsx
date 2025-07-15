@@ -1,10 +1,12 @@
-import { Box, Heading, Text, Flex, VStack } from "@chakra-ui/react";
+import { Box, Heading, Text, Flex, VStack, Skeleton } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import ActivityLogItem from "@/components/AcvitivyLogItem";
+import { useRecentActivities } from "@/hooks/useRecentActivities";
 
 const ActivityLogs = () => {
-  // TODO: Finish This Activity Logs
-  const log = [
+  const { loading } = useRecentActivities();
+
+  const data = [
     {
       action: "Approved",
       target: "Request",
@@ -60,10 +62,22 @@ const ActivityLogs = () => {
         </NavLink>
       </Flex>
       <VStack>
-        {log.length > 0 ? (
-          log.map((log, index) => <ActivityLogItem key={index} log={log} />)
+        {loading ? (
+          [1, 2, 3, 4, 5].map(() => (
+            <Skeleton
+              height="76px"
+              width="90%"
+              borderRadius="lg"
+              mx="auto"
+              mb={2}
+            />
+          ))
+        ) : data.length > 0 ? (
+          data.map((log, index) => <ActivityLogItem key={index} log={log} />)
         ) : (
-          <Heading fontSize="14px" color="#4a5568">No Activities Yet</Heading>
+          <Heading fontSize="14px" color="#4a5568">
+            No activity log to display
+          </Heading>
         )}
       </VStack>
     </Box>

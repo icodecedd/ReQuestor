@@ -1,4 +1,12 @@
-import { Box, Heading, Text, HStack, Flex } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Text,
+  HStack,
+  Flex,
+  Center,
+  Skeleton,
+} from "@chakra-ui/react";
 import {
   ResponsiveContainer,
   Pie,
@@ -7,20 +15,14 @@ import {
   Cell,
   Legend,
 } from "recharts";
-
-// TODO: Change With Real Data
-const rawData = [
-  { name: "Projector", value: 12 },
-  { name: "White Screen", value: 5 },
-  { name: "AVR 1", value: 1 },
-  { name: "AVR 2", value: 1 },
-];
+import { useStats } from "@/hooks/useStatistics";
 
 const COLORS = ["#800000", "#a94444", "#c87c7c", "#e0b1b1", "#f5d3d3ff"];
 const maxVisibleItems = 4;
 
 const CustomLegend = ({ data }) => {
   const total = data.reduce((sum, item) => sum + item.value, 0);
+
   return (
     <Box>
       {data.map((entry, index) => {
@@ -48,7 +50,23 @@ const CustomLegend = ({ data }) => {
 };
 
 const OverviewPieGraph = () => {
-  const sorted = [...rawData].sort((a, b) => b.value - a.value); // sort by value desc
+  const { /*data,*/ loading } = useStats();
+
+  // Mock Data
+  const data = {
+   pieGraph: [
+    { name: "Projector", value: 11 },
+    { name: "White Screen", value: 9 },
+    { name: "AVR", value: 2 },
+   ],
+  };
+
+  // fallback to [] if undefined/null
+  const pieRaw = (data?.pieGraph ?? []).map((item) => ({
+    name: item.name,
+    value: Number(item.value),
+  }));
+  const sorted = [...pieRaw].sort((a, b) => b.value - a.value);
   const visible = sorted.slice(0, maxVisibleItems);
   const hidden = sorted.slice(maxVisibleItems);
   const othersValue = hidden.reduce((sum, item) => sum + item.value, 0);
@@ -63,30 +81,47 @@ const OverviewPieGraph = () => {
       <Text fontSize="13px" textColor="gray.500">
         Equipment distribution
       </Text>
-      <ResponsiveContainer width="100%" height="90%">
-        <PieChart>
-          <Pie
-            data={pieData}
-            cy={100}
-            innerRadius={50}
-            outerRadius={90}
-            fill="#8884d8"
-            paddingAngle={5}
-            dataKey="value"
-          >
-            {pieData.map((entry, index) => (
-              <Cell
-                key={`cell-${entry.name}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
-          <Tooltip
-            contentStyle={{ borderRadius: "8px", backgroundColor: "#fff" }}
-          />
-          <Legend content={<CustomLegend data={pieData} />} />
-        </PieChart>
-      </ResponsiveContainer>
+
+      {loading ? (
+        <Skeleton
+          height="300px"
+          width="96%"
+          borderRadius="lg"
+          mx="auto"
+          mt={5}
+        />
+      ) : pieRaw.length > 0 ? (
+        <ResponsiveContainer width="100%" height="90%">
+          <PieChart>
+            <Pie
+              data={pieData}
+              cy={100}
+              innerRadius={50}
+              outerRadius={90}
+              fill="#8884d8"
+              paddingAngle={5}
+              dataKey="value"
+            >
+              {pieData.map((entry, index) => (
+                <Cell
+                  key={`cell-${entry.name}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip
+              contentStyle={{ borderRadius: "8px", backgroundColor: "#fff" }}
+            />
+            <Legend content={<CustomLegend data={pieData} />} />
+          </PieChart>
+        </ResponsiveContainer>
+      ) : (
+        <Center h="80%">
+          <Heading fontSize="14px" color="#4a5568">
+            No data available
+          </Heading>
+        </Center>
+      )}
     </Box>
   );
 };

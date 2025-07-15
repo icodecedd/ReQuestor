@@ -13,11 +13,14 @@ import {
   Th,
   Td,
   TableCaption,
+  Skeleton,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
+import { useRecentRequests } from "@/hooks/useRecentRequests";
 
 const OverviewRecentRequests = () => {
-  // TODO: Change With Real Data
+  const { /*data,*/ loading } = useRecentRequests();
+
   const data = [
     {
       id: 11,
@@ -62,7 +65,7 @@ const OverviewRecentRequests = () => {
         return "green";
       case "Pending":
         return "yellow";
-      case "Rejected":
+      case "Denied":
         return "red";
       default:
         return "gray";
@@ -110,14 +113,26 @@ const OverviewRecentRequests = () => {
         >
           <Thead>
             <Tr bg="#f7f9fb">
-              <Th>Request ID</Th>
-              <Th>User</Th>
-              <Th>Equipment</Th>
-              <Th>Status</Th>
-              <Th>Date</Th>
+              <Th w="20%">Request ID</Th>
+              <Th w="20%">User</Th>
+              <Th w="20%">Equipment</Th>
+              <Th w="20%">Status</Th>
+              <Th w="20%">Date</Th>
             </Tr>
           </Thead>
-          {data.length > 0 ? (
+          {loading ? (
+            <TableCaption mt={3}>
+              {[1, 2, 3, 4, 5].map(() => (
+                <Skeleton
+                  height="40px"
+                  width="95%"
+                  borderRadius="lg"
+                  mx="auto"
+                  mb={2}
+                />
+              ))}
+            </TableCaption>
+          ) : data.length > 0 ? (
             <Tbody>
               {data.map((req, index) => (
                 <Tr key={index} textColor="blackAlpha.900">
@@ -136,7 +151,9 @@ const OverviewRecentRequests = () => {
               ))}
             </Tbody>
           ) : (
-            <TableCaption mt={20} fontSize="14px" fontWeight="bold">No Requests Yet</TableCaption>
+            <TableCaption mt={20} fontSize="14px" fontWeight="bold">
+              No recent requests to display.
+            </TableCaption>
           )}
         </Table>
       </TableContainer>

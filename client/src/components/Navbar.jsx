@@ -15,12 +15,14 @@ import {
   VStack,
   Text,
   MenuGroup,
-  MenuDivider,
 } from "@chakra-ui/react";
 import { FiBell, FiSettings, FiLogOut, FiUser } from "react-icons/fi";
 import { IoIosArrowDown } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ pageName }) => {
+  const navigate = useNavigate();
+
   return (
     <Box mb={10} mt={-4}>
       {/* Header */}
@@ -52,6 +54,7 @@ const Navbar = ({ pageName }) => {
               aria-label="Settings"
               variant="ghost"
               size="md"
+              onClick={() => navigate("/dashboard/settings")}
             />
             <Box h="25px" w="1px" bg="gray.300" />
             <Menu>
