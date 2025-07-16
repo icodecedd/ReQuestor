@@ -1,4 +1,12 @@
-import { Box, Heading, Text, Flex, VStack, Skeleton } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Text,
+  Flex,
+  VStack,
+  Skeleton,
+  Button,
+} from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import ActivityLogItem from "@/components/AcvitivyLogItem";
 import { useRecentActivities } from "@/hooks/useRecentActivities";
@@ -34,7 +42,7 @@ const ActivityLogs = () => {
     },
   ];
   return (
-    <Box bg="white" borderRadius="2xl" boxShadow="md" w="100%" h="578px">
+    <Box bg="white" borderRadius="2xl" boxShadow="md" w="100%" h="100%">
       <Flex
         justify="space-between"
         p={5}
@@ -51,20 +59,22 @@ const ActivityLogs = () => {
           </Text>
         </VStack>
         <NavLink to="/dashboard/activity">
-          <Text
-            textColor="#0c759eff"
+          <Button
             fontWeight="medium"
             fontSize="14px"
-            mt={3}
+            variant="outline"
+            borderRadius="xl"
+            _hover={{ bg: "#f7f1f1" }}
           >
             View all
-          </Text>
+          </Button>
         </NavLink>
       </Flex>
       <VStack>
         {loading ? (
-          [1, 2, 3, 4, 5].map(() => (
+          [1, 2, 3, 4, 5].map((i) => (
             <Skeleton
+              key={i}
               height="76px"
               width="90%"
               borderRadius="lg"

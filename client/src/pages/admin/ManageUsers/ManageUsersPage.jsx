@@ -1,9 +1,7 @@
-
+import { Box } from "@chakra-ui/react";
 
 const ManageUsersPage = () => {
-  return (
-    <div>ManageUsersPage</div>
-  )
-}
+  return <Box></Box>;
+};
 
-export default ManageUsersPage
+export default ManageUsersPage;

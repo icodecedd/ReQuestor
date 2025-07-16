@@ -19,7 +19,7 @@ import {
 } from "recharts";
 import { useStats } from "@/hooks/useStatistics";
 
-const OverviewBarGraph = () => {
+const BarGraph = () => {
   const { /*data,*/ loading } = useStats();
 
   // Mock Data
@@ -52,11 +52,11 @@ const OverviewBarGraph = () => {
           </Text>
         </VStack>
         <HStack mb={1}>
-          <Circle size="10px" bg="#8b0a0aff" />
+          <Circle size="10px" bg="#166534" />
           <Text fontSize="sm" textColor="gray.500">
             Approvals
           </Text>
-          <Circle size="10px" bg="#ffc107ff" />
+          <Circle size="10px" bg="#8b0000" />
           <Text fontSize="sm" textColor="gray.500">
             Pendings
           </Text>
@@ -89,8 +89,8 @@ const OverviewBarGraph = () => {
                 backgroundColor: "#fff",
               }}
             />
-            <Bar dataKey="approved" fill="#8b0a0aff" radius={[3, 3, 0, 0]} />
-            <Bar dataKey="pending" fill="#ffc107ff" radius={[3, 3, 0, 0]} />
+            <Bar dataKey="approved" fill="#166534" radius={[3, 3, 0, 0]} />
+            <Bar dataKey="pending" fill="#8b0000" radius={[3, 3, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       ) : (
@@ -104,4 +104,4 @@ const OverviewBarGraph = () => {
   );
 };
 
-export default OverviewBarGraph;
+export default BarGraph;

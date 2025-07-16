@@ -19,6 +19,7 @@ import {
 import { FiBell, FiSettings, FiLogOut, FiUser } from "react-icons/fi";
 import { IoIosArrowDown } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 
 const Navbar = ({ pageName }) => {
   const navigate = useNavigate();
@@ -30,15 +31,16 @@ const Navbar = ({ pageName }) => {
         <Flex justify="space-between" align="center" pb={0.5}>
           <Breadcrumb
             spacing="8px"
-            //separator={<ChevronRightIcon color="gray.500" />}
+            separator={<ChevronRightIcon fontSize={"20px"} />}
             mb={2}
+            fontWeight="medium"
           >
             <BreadcrumbItem>
               <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
-              <BreadcrumbLink href="#">{pageName}</BreadcrumbLink>
+              <BreadcrumbLink href="#" fontWeight="semibold" color="#800000">{pageName}</BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
           {/* Buttons */}
@@ -90,7 +92,7 @@ const Navbar = ({ pageName }) => {
                   </MenuItem>
                   <MenuItem gap={2} fontWeight="medium">
                     <FiLogOut size="19px" />
-                    Logout
+                    Sign out
                   </MenuItem>
                 </MenuGroup>
               </MenuList>

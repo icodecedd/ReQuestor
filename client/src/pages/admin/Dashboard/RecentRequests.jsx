@@ -14,11 +14,12 @@ import {
   Td,
   TableCaption,
   Skeleton,
+  Button,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import { useRecentRequests } from "@/hooks/useRecentRequests";
 
-const OverviewRecentRequests = () => {
+const RecentRequests = () => {
   const { /*data,*/ loading } = useRecentRequests();
 
   const data = [
@@ -79,7 +80,7 @@ const OverviewRecentRequests = () => {
       borderRadius="2xl"
       boxShadow="md"
       w="100%"
-      h="397px"
+      h="100%"
     >
       <Flex justify="space-between" p={5}>
         <VStack>
@@ -91,14 +92,15 @@ const OverviewRecentRequests = () => {
           </Text>
         </VStack>
         <NavLink to="/dashboard/requests">
-          <Text
-            textColor="#0c759eff"
+          <Button
             fontWeight="medium"
             fontSize="14px"
-            mt={3}
+            variant="outline"
+            borderRadius="xl"
+            _hover={{bg: "#f7f1f1"}}
           >
             View all
-          </Text>
+          </Button>
         </NavLink>
       </Flex>
       <TableContainer>
@@ -122,8 +124,9 @@ const OverviewRecentRequests = () => {
           </Thead>
           {loading ? (
             <TableCaption mt={3}>
-              {[1, 2, 3, 4, 5].map(() => (
+              {[1, 2, 3, 4, 5].map((i) => (
                 <Skeleton
+                  key={i}
                   height="40px"
                   width="95%"
                   borderRadius="lg"
@@ -142,7 +145,12 @@ const OverviewRecentRequests = () => {
                   <Td>{req.user}</Td>
                   <Td>{req.equipment}</Td>
                   <Td>
-                    <Badge colorScheme={getColorScheme(req.status)}>
+                    <Badge
+                      colorScheme={getColorScheme(req.status)}
+                      borderRadius="xl"
+                      pl={2}
+                      pr={2}
+                    >
                       {req.status}
                     </Badge>
                   </Td>
@@ -161,4 +169,4 @@ const OverviewRecentRequests = () => {
   );
 };
 
-export default OverviewRecentRequests;
+export default RecentRequests;

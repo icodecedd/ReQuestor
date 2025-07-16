@@ -3,7 +3,7 @@ import { FiFileText, FiMonitor, FiUser } from "react-icons/fi";
 import StatCard from "@/components/StatCard";
 import { SimpleGrid } from "@chakra-ui/react";
 
-const OverviewStats = () => {
+const DashboardStats = () => {
   const { data, loading } = useStats();
 
   const renderCard = (label, value, icon, loading) => (
@@ -13,8 +13,8 @@ const OverviewStats = () => {
   return (
     <SimpleGrid
       columns={{ base: 1, md: 2, lg: 4 }}
-      spacingX="20px"
-      spacingY="10px"
+      spacingX="1.8%"
+      spacingY="5%"
       w="95%"
       mx="auto"
       mt={6}
@@ -37,4 +37,4 @@ const OverviewStats = () => {
   );
 };
 
-export default OverviewStats;
+export default DashboardStats;

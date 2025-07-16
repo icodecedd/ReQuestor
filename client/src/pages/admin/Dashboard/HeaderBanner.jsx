@@ -1,12 +1,12 @@
 import { Box, Text } from "@chakra-ui/react";
 import overviewBg from "@/assets/overview.webp";
 
-const OverviewBanner = () => {
+const HeaderBanner = () => {
   return (
     <Box
       w="95%"
       mx="auto"
-      h="200px"
+      h="100%"
       borderRadius="2xl"
       overflow="hidden"
       position="relative"
@@ -28,10 +28,9 @@ const OverviewBanner = () => {
       <Box
         position="relative"
         zIndex={2}
-        p={4}
+        p={10}
         color="white"
         align="center"
-        mt={8}
       >
         <Text fontSize="5xl" fontWeight="bold">
           Admin Dashboard
@@ -44,4 +43,4 @@ const OverviewBanner = () => {
   );
 };
 
-export default OverviewBanner;
+export default HeaderBanner;
