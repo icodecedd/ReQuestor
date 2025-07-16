@@ -1,7 +1,7 @@
 import { Box, Text } from "@chakra-ui/react";
 import overviewBg from "@/assets/overview.webp";
 
-const HeaderBanner = () => {
+const ManageUsersBanner = () => {
   return (
     <Box
       w="95%"
@@ -33,14 +33,14 @@ const HeaderBanner = () => {
         align="center"
       >
         <Text fontSize="5xl" fontWeight="bold">
-          Admin Dashboard
+          User Management
         </Text>
         <Text>
-          Welcome back, <b>Cedrick Joseph Mariano</b>
+          View and manage all user accounts in the system
         </Text>
       </Box>
     </Box>
   );
 };
 
-export default HeaderBanner;
+export default ManageUsersBanner;

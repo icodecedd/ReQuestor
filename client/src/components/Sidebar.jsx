@@ -77,7 +77,7 @@ const Sidebar = ({ navItems }) => {
                   borderRadius="xl"
                   transition="background 0.2s"
                   fontWeight={isActive ? "bold" : "medium"}
-                  bg={isActive ? "#832222" : "transparent"}
+                  bg={isActive ? "#800000" : "transparent"}
                   color={isActive ? "white" : "gray.600"}
                 >
                   <Box as={icon} boxSize="5" />
