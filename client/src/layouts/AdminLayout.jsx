@@ -2,21 +2,21 @@ import { Box, Flex } from "@chakra-ui/react";
 import Sidebar from "@/components/Sidebar";
 import { Outlet } from "react-router-dom";
 import {
-  FiHome,
   FiFileText,
   FiMonitor,
   FiSettings,
-  FiList,
-  FiUserPlus,
+  FiUsers,
+  FiActivity
 } from "react-icons/fi";
+import { LuLayoutDashboard } from "react-icons/lu";
 
 const DashboardLayout = () => {
   const navItems = [
-    { label: "Dashboard", icon: FiHome, path: "/dashboard/dashboard" },
-    { label: "Manage Users", icon: FiUserPlus, path: "/dashboard/users" },
+    { label: "Dashboard", icon: LuLayoutDashboard, path: "/dashboard/dashboard" },
+    { label: "Manage Users", icon: FiUsers, path: "/dashboard/users" },
     { label: "Requests", icon: FiFileText, path: "/dashboard/requests" },
     { label: "Equipment", icon: FiMonitor, path: "/dashboard/equipment" },
-    { label: "Activity Logs", icon: FiList, path: "/dashboard/activity" },
+    { label: "Activity Logs", icon: FiActivity, path: "/dashboard/activity" },
     { label: "Settings", icon: FiSettings, path: "/dashboard/settings" },
   ];
 

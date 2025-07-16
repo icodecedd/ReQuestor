@@ -8,12 +8,7 @@ import RecentRequests from "./RecentRequests";
 import ActivityLogs from "./ActivityLogs";
 import QuickActions from "./QuickActions";
 
-// TODO: Requests Overview (Approvals vs Pendings)
-// TODO: Equipment by Category (Number of Equipment [projector])
-// TODO: Recent Requests
-// TODO: Activity Logs or Feed
-
-const OverviewPage = () => {
+const DashboardPage = () => {
   return (
     <Box>
       <Navbar pageName={"Overview"} />
@@ -26,7 +21,7 @@ const OverviewPage = () => {
           lg: "repeat(6, 1fr)", // Desktop: six columns
         }}
         templateRows={{
-          base: "repeat(6, auto)", // More rows for stacking on mobile
+          base: "repeat(6, auto)",
           md: "repeat(3, auto)",
           lg: "repeat(3, auto)",
         }}
@@ -58,4 +53,4 @@ const OverviewPage = () => {
   );
 };
 
-export default OverviewPage;
+export default DashboardPage;

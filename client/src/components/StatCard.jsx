@@ -13,7 +13,7 @@ const StatCard = ({ label, value, icon, loading = false }) => {
   return (
     <Box
       borderRadius="2xl"
-      p={5}
+      p={6}
       w="100%"
       bgGradient="linear(to-br, maroon, #c75d5dff)"
       boxShadow="md"

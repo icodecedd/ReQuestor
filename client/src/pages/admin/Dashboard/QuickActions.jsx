@@ -7,7 +7,7 @@ import {
   Icon,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { FiPlus, FiMonitor, FiUserPlus, FiClock, FiBox } from "react-icons/fi";
+import { FiPlus, FiMonitor, FiUsers, FiClock, FiBox } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 const QuickActions = () => {
@@ -30,7 +30,7 @@ const QuickActions = () => {
     },
     {
       label: "Manage Users",
-      icon: FiUserPlus,
+      icon: FiUsers,
       color: "purple.500",
       onClick: () => navigate("/dashboard/users"),
     },
@@ -41,7 +41,7 @@ const QuickActions = () => {
       onClick: () => navigate("/dashboard/equipment"), // navigate to equipment
     },
     {
-      label: "Pending Approvals",
+      label: "View Requests",
       icon: FiClock,
       color: "red.500",
       onClick: () => navigate("/dashboard/requests"),
@@ -50,9 +50,14 @@ const QuickActions = () => {
 
   return (
     <Box bg="white" borderRadius="2xl" p={5} boxShadow="md" h="100%" w="100%">
-      <Heading size="md" mb={4}>
-        Quick Actions
-      </Heading>
+      <VStack align={"left"} mb={4}>
+        <Heading size="md" mb={-2}>
+          Quick Actions
+        </Heading>
+        <Text fontSize="13px" textColor="gray.500">
+          Frequently used actions
+        </Text>
+      </VStack>
 
       <SimpleGrid columns={columns} spacing={4}>
         {actions.map((action, index) => (
@@ -62,10 +67,10 @@ const QuickActions = () => {
             cursor="pointer"
             borderRadius="xl"
             p={3}
-            bg="gray.50"
+            bg="#f7f3f3"
             textAlign="center"
             transition="all 0.2s"
-            _hover={{ bg: "gray.100", boxShadow: "md" }}
+            _hover={{ bg: "#f1e4e4", boxShadow: "md" }}
           >
             <VStack spacing={2}>
               <Icon as={action.icon} boxSize={6} color={action.color} />

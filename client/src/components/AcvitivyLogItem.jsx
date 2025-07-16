@@ -20,10 +20,10 @@ const ActivityLogItem = ({ log }) => {
       align="center"
       spacing={4}
       p={3}
-      bg="gray.50"
-      borderRadius="md"
+      borderRadius="xl"
       w="90%"
       mb={1.5}
+      _hover={{ bg: "#f7f1f1" }}
     >
       <Box
         bg={bg}

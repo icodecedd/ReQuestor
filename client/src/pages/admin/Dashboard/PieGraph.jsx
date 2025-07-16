@@ -49,7 +49,7 @@ const CustomLegend = ({ data }) => {
   );
 };
 
-const OverviewPieGraph = () => {
+const PieGraph = () => {
   const { /*data,*/ loading } = useStats();
 
   // Mock Data
@@ -126,4 +126,4 @@ const OverviewPieGraph = () => {
   );
 };
 
-export default OverviewPieGraph;
+export default PieGraph;

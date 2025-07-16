@@ -22,7 +22,6 @@ export function useStats() {
       .then((res) => {
         if (res.data?.success) {
           setData({ ...initialStats, ...res.data });
-          console.log({ ...initialStats, ...res.data })
         } else {
           setError("Invalid response");
         }

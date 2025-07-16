@@ -16,12 +16,14 @@ export const getDashbordStatistics = async (req, res) => {
 
     const barGraphStats = await pool.query(`
       SELECT 
-      TO_CHAR(requested_at, 'Mon') AS month,
+      TO_CHAR(DATE_TRUNC('month', requested_at), 'Mon') AS month,
       COUNT(*) FILTER (WHERE status = 'Approved') AS approved,
       COUNT(*) FILTER (WHERE status = 'Pending') AS pending
       FROM requests
-      GROUP BY month, DATE_TRUNC('month', requested_at)
-      ORDER BY DATE_TRUNC('month', requested_at) DESC
+      WHERE EXTRACT(YEAR FROM requested_at) = EXTRACT(YEAR FROM CURRENT_DATE)
+      GROUP BY DATE_TRUNC('month', requested_at)
+      ORDER BY DATE_TRUNC('month', requested_at) ASC;
+
     `);
 
     const pieGraphStats = await pool.query(`
