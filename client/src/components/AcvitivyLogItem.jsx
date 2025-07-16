@@ -1,6 +1,6 @@
 import { Box, Text, HStack } from "@chakra-ui/react";
-import { getStatusIconStyle } from "@/constants/statusIcons";
-import { activityMeta } from "@/constants/activityLogMeta";
+import { getStatusIconStyle } from "@/constants/statusIconsMeta";
+import { activityMeta } from "@/constants/activityLogsMeta";
 import { timeAgo } from "@/utils/timeAgo";
 import { FiClock } from "react-icons/fi";
 
@@ -13,16 +13,16 @@ const ActivityLogItem = ({ log }) => {
   const { icon, bg } =
     meta.title !== "Unknown Activity"
       ? getStatusIconStyle(log.action)
-      : getStatusIconStyle("unknown");
+      : getStatusIconStyle("default");
 
   return (
     <HStack
       align="center"
       spacing={4}
-      p={3}
+      p={4}
       borderRadius="xl"
       w="90%"
-      mb={1.5}
+      mb={1}
       _hover={{ bg: "#f7f1f1" }}
     >
       <Box

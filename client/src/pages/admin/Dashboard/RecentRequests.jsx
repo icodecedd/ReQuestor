@@ -103,7 +103,7 @@ const RecentRequests = () => {
           </Button>
         </NavLink>
       </Flex>
-      <TableContainer>
+      <TableContainer borderRadius={"xl"}>
         <Table
           variant="simple"
           borderTop="1px"

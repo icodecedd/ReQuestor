@@ -40,7 +40,9 @@ const Navbar = ({ pageName }) => {
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
-              <BreadcrumbLink href="#" fontWeight="semibold" color="#800000">{pageName}</BreadcrumbLink>
+              <BreadcrumbLink href="#" fontWeight="semibold" color="#800000">
+                {pageName}
+              </BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
           {/* Buttons */}
@@ -59,16 +61,15 @@ const Navbar = ({ pageName }) => {
               onClick={() => navigate("/dashboard/settings")}
             />
             <Box h="25px" w="1px" bg="gray.300" />
-            <Menu>
+            <Menu autoSelect={false}>
               <MenuButton
                 as={Button}
                 variant="ghost"
-                px={2}
-                py={1}
+                borderRadius="md"
                 display="flex"
                 alignItems="center"
                 gap={2}
-                _hover={{ bg: "gray.100" }}
+                _hover={{ bg: "#f7f1f1" }}
               >
                 {/* Change the name with the actual admin name */}
                 <HStack>
@@ -84,13 +85,31 @@ const Navbar = ({ pageName }) => {
                   <IoIosArrowDown />
                 </HStack>
               </MenuButton>
-              <MenuList>
+              <MenuList minW="250px">
                 <MenuGroup title="Profile">
-                  <MenuItem gap={2} fontWeight="medium">
+                  <MenuItem
+                    gap={2}
+                    fontWeight="medium"
+                    _hover={{
+                      bg: "#f7eaea",
+                      borderRadius: "lg",
+                    }}
+                    w="240px"
+                    ml={1}
+                  >
                     <FiUser size="20px" />
                     My Account
                   </MenuItem>
-                  <MenuItem gap={2} fontWeight="medium">
+                  <MenuItem
+                    gap={2}
+                    fontWeight="medium"
+                    _hover={{
+                      bg: "#f7eaea",
+                      borderRadius: "lg",
+                    }}
+                    w="240px"
+                    ml={1}
+                  >
                     <FiLogOut size="19px" />
                     Sign out
                   </MenuItem>
