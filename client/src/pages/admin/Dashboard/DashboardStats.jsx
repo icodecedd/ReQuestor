@@ -1,6 +1,6 @@
 import { useStatsStore } from "@/store/statsStore";
 import { FiFileText, FiMonitor, FiUser } from "react-icons/fi";
-import StatCard from "@/components/StatCard";
+import StatCard from "@/components/cards/StatCard";
 import { SimpleGrid } from "@chakra-ui/react";
 import { useEffect } from "react";
 

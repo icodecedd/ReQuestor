@@ -10,8 +10,8 @@ export const useRecentRequestsStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const res = await axios.get("/api/requests/recent"); // 5 most recent
-      if (res.data?.success) {
-        set({ recent: res.data, loading: false });
+      if (res.data?.success && Array.isArray(res.data.data)) {
+        set({ recent: res.data.data, loading: false });
       } else {
         set({ error: "Invalid response", loading: false });
       }
@@ -22,7 +22,7 @@ export const useRecentRequestsStore = create((set, get) => ({
 
   addRecentRequest: (newRequest) => {
     set((state) => ({
-      recentRequests: [newRequest, ...state.recent.slice(0, 4)], // Keep latest 5
+      recentRequests: [newRequest, ...state.recentRequests.slice(0, 4)], // Keep latest 5
     }));
   },
 
@@ -38,8 +38,8 @@ export const useRecentActivitiesStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const res = await axios.get("/api/activities/recent"); // 5 most recent
-      if (res.data?.success) {
-        set({ recent: res.data, loading: false });
+      if (res.data?.success && Array.isArray(res.data.data)) {
+        set({ recentActivities: res.data.data, loading: false });
       } else {
         set({ error: "Invalid response", loading: false });
       }
@@ -50,7 +50,7 @@ export const useRecentActivitiesStore = create((set, get) => ({
 
   addActivityLog: (newLog) => {
     set((state) => ({
-      recentActivities: [newLog, ...state.logs.slice(0, 4)], // Keep latest 5
+      recentActivities: [newLog, ...state.recentActivities.slice(0, 4)], // Keep latest 5
     }));
   },
 

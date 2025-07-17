@@ -19,7 +19,7 @@ const hoverStyle = {
   borderRadius: "lg",
 };
 
-const ActionButtons = ({
+const ActionButton = ({
   status,
   onEdit,
   onResetPassword,
@@ -56,7 +56,7 @@ const ActionButtons = ({
   ];
 
   return (
-    <Menu>
+    <Menu autoSelect={false}>
       <MenuButton
         as={IconButton}
         icon={<FiMoreVertical />}
@@ -81,4 +81,4 @@ const ActionButtons = ({
   );
 };
 
-export default ActionButtons;
+export default ActionButton;
