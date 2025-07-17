@@ -4,7 +4,7 @@ import pool from "../config/db.js";
 export const getAllRequests = async (req, res) => {
   try {
     const requests = await pool.query(
-      "SELECT * FROM requests ORDER BY requested_at DESC"
+      "SELECT * FROM requests ORDER BY created_at DESC"
     );
     res.status(200).json({ success: true, data: requests });
   } catch (error) {
@@ -17,7 +17,7 @@ export const getAllRequests = async (req, res) => {
 export const getRecentRequests = async (req, res) => {
   try {
     const request = await pool.query(
-      "SELECT * FROM requests ORDER BY requested_at DESC LIMIT 5"
+      "SELECT * FROM requests ORDER BY created_at DESC LIMIT 5"
     );
     res.status(200).json({ success: true, data: request });
   } catch (error) {

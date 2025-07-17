@@ -16,10 +16,10 @@ export const getAllEquipment = async (req, res) => {
 export const createEquipment = async (req, res) => {
   const { name, type, status } = req.body;
 
-  if (!name || !type) {
+  if (!name || !type || !status) {
     return res
       .status(400)
-      .json({ success: false, message: "All fields are required" });
+      .json({ success: false, message: "Name, type, and status are required" });
   }
 
   try {
@@ -45,29 +45,40 @@ export const updateEquipment = async (req, res) => {
   const { id } = req.params;
   const { name, type, status } = req.body;
 
+  if (!name || !type || !status) {
+    return res.status(400).json({
+      success: false,
+      message: "Name, type, and status are required.",
+    });
+  }
+
   try {
     const result = await pool.query(
       `
-      UPDATE equipments
+      UPDATE public.equipments
       SET name = $1, type = $2, status = $3
       WHERE id = $4
-      RETURNING *
+      RETURNING id, name, type, status;
       `,
       [name, type, status, id]
     );
 
-    if (result.rows.length === 0) {
+    if (result.rowCount === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "Equipment not found" });
+        .json({ success: false, message: "Equipment not found." });
     }
 
-    const updatedEquipment = result.rows[0];
-
-    res.status(200).json({ success: true, data: updatedEquipment });
+    return res.status(200).json({
+      success: true,
+      data: result.rows[0],
+    });
   } catch (error) {
-    console.error("Error in updateEquipment Function:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    console.error("Error in updateEquipment:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
   }
 };
 
