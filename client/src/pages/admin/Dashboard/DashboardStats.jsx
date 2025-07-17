@@ -1,14 +1,19 @@
-import { useStats } from "@/hooks/useStatistics";
+import { useStatsStore } from "@/store/statsStore";
 import { FiFileText, FiMonitor, FiUser } from "react-icons/fi";
 import StatCard from "@/components/StatCard";
 import { SimpleGrid } from "@chakra-ui/react";
+import { useEffect } from "react";
 
 const DashboardStats = () => {
-  const { data, loading } = useStats();
+  const { stats, loading, fetchStats } = useStatsStore();
 
   const renderCard = (label, value, icon, loading) => (
     <StatCard label={label} value={value} icon={icon} loading={loading} />
   );
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
 
   return (
     <SimpleGrid
@@ -19,17 +24,22 @@ const DashboardStats = () => {
       mx="auto"
       mt={6}
     >
-      {renderCard("Total Requests", data?.totalRequests, FiFileText, loading)}
+      {renderCard("Total Requests", stats?.totalRequests, FiFileText, loading)}
       {renderCard(
         "Active Equipment",
-        data?.availableEquipment,
+        stats?.availableEquipment,
         FiMonitor,
         loading
       )}
-      {renderCard("Approved Requests", data?.approvedRequests, FiUser, loading)}
+      {renderCard(
+        "Approved Requests",
+        stats?.approvedRequests,
+        FiUser,
+        loading
+      )}
       {renderCard(
         "Pending Approvals",
-        data?.pendingApprovals,
+        stats?.pendingApprovals,
         FiFileText,
         loading
       )}

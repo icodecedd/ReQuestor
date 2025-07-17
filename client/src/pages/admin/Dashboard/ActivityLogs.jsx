@@ -9,10 +9,12 @@ import {
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import ActivityLogItem from "@/components/AcvitivyLogItem";
-import { useRecentActivities } from "@/hooks/useRecentActivities";
+import { useRecentActivitiesStore } from "@/store/recentStore";
+import { useEffect } from "react";
 
 const ActivityLogs = () => {
-  const { loading } = useRecentActivities();
+  const { /*recentActivities*/ loading, fetchRecentActivities } =
+    useRecentActivitiesStore();
 
   const data = [
     {
@@ -41,6 +43,15 @@ const ActivityLogs = () => {
       timestamp: "2025-07-14 16:42:00",
     },
   ];
+
+  useEffect(() => {
+    fetchRecentActivities();
+  }, [fetchRecentActivities]);
+
+  if (loading) {
+    return <Skeleton height="100%" width="100%" borderRadius="xl" mx="auto" />;
+  }
+
   return (
     <Box bg="white" borderRadius="2xl" boxShadow="md" w="100%" h="100%">
       <Flex
@@ -71,18 +82,7 @@ const ActivityLogs = () => {
         </NavLink>
       </Flex>
       <VStack>
-        {loading ? (
-          [1, 2, 3, 4, 5].map((i) => (
-            <Skeleton
-              key={i}
-              height="76px"
-              width="90%"
-              borderRadius="lg"
-              mx="auto"
-              mb={2}
-            />
-          ))
-        ) : data.length > 0 ? (
+        {data.length > 0 ? (
           data.map((log, index) => <ActivityLogItem key={index} log={log} />)
         ) : (
           <Heading fontSize="14px" color="#4a5568">

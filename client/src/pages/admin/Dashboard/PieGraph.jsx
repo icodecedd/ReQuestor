@@ -15,7 +15,7 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { useStats } from "@/hooks/useStatistics";
+import { useStatsStore } from "@/store/statsStore";
 
 const COLORS = ["#800000", "#a94444", "#c87c7c", "#e0b1b1", "#f5d3d3ff"];
 const maxVisibleItems = 4;
@@ -50,19 +50,10 @@ const CustomLegend = ({ data }) => {
 };
 
 const PieGraph = () => {
-  const { /*data,*/ loading } = useStats();
-
-  // Mock Data
-  const data = {
-   pieGraph: [
-    { name: "Projector", value: 11 },
-    { name: "White Screen", value: 9 },
-    { name: "AVR", value: 2 },
-   ],
-  };
+  const { stats, loading } = useStatsStore();
 
   // fallback to [] if undefined/null
-  const pieRaw = (data?.pieGraph ?? []).map((item) => ({
+  const pieRaw = (stats?.pieGraph ?? []).map((item) => ({
     name: item.name,
     value: Number(item.value),
   }));
@@ -75,6 +66,10 @@ const PieGraph = () => {
     ...(othersValue > 0 ? [{ name: "Others", value: othersValue }] : []),
   ];
 
+  if (loading) {
+    return <Skeleton height="100%" width="100%" borderRadius="xl" mx="auto" />;
+  }
+
   return (
     <Box bg="white" borderRadius="2xl" p={5} boxShadow="md" w="100%" h="420px">
       <Heading size="md">Equipment by Category</Heading>
@@ -82,15 +77,7 @@ const PieGraph = () => {
         Equipment distribution
       </Text>
 
-      {loading ? (
-        <Skeleton
-          height="300px"
-          width="96%"
-          borderRadius="lg"
-          mx="auto"
-          mt={5}
-        />
-      ) : pieRaw.length > 0 ? (
+      {pieRaw.length > 0 ? (
         <ResponsiveContainer width="100%" height="90%">
           <PieChart>
             <Pie

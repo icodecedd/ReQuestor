@@ -10,6 +10,11 @@ import {
 } from "@chakra-ui/react";
 
 const StatCard = ({ label, value, icon, loading = false }) => {
+  
+  if (loading) {
+    return <Skeleton w="100%" h="114px" borderRadius="2xl" />;
+  }
+
   return (
     <Box
       borderRadius="2xl"
@@ -26,13 +31,9 @@ const StatCard = ({ label, value, icon, loading = false }) => {
             <StatLabel fontSize="sm" color="white" opacity={0.85}>
               {label}
             </StatLabel>
-            {loading ? (
-              <Skeleton height="37px" width="40px" mt={2} />
-            ) : (
-              <StatNumber fontSize="3xl" fontWeight="bold" color="white">
-                {value}
-              </StatNumber>
-            )}
+            <StatNumber fontSize="3xl" fontWeight="bold" color="white">
+              {value}
+            </StatNumber>
           </Stat>
         </Box>
 

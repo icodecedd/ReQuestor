@@ -13,8 +13,15 @@ import { useState } from "react";
 
 const roles = ["All Roles", "Admin", "Student"];
 
-export function RoleDropdown() {
+export function RoleDropdown({ onChange }) {
   const [selectedRole, setSelectedRole] = useState("All Roles");
+
+  const handleSelect = (role) => {
+    setSelectedRole(role);
+    if (onChange) {
+      onChange(role === "All Roles" ? "All Roles" : role);
+    }
+  };
 
   return (
     <Menu>
@@ -26,19 +33,19 @@ export function RoleDropdown() {
         variant="outline"
         color="black"
         fontSize="15px"
-        _hover={{ bg: "#f7f1f1" }}
+        _hover={{ bg: "#f7eaea" }}
         w="150px"
         textAlign="left"
       >
         {selectedRole}
       </MenuButton>
-      <MenuList borderRadius="xl" p={1} minW="120px">
+      <MenuList borderRadius="xl" p={1} minW="140px">
         {roles.map((role) => {
           const isSelected = selectedRole === role;
           return (
             <MenuItem
               key={role}
-              onClick={() => setSelectedRole(role)}
+              onClick={() => handleSelect(role)}
               bg={isSelected ? "#800000" : "transparent"}
               color={isSelected ? "white" : "black"}
               borderRadius="lg"
