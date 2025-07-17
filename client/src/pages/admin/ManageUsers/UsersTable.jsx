@@ -19,18 +19,12 @@ import {
 } from "@chakra-ui/react";
 import { FiSearch } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
-import { RoleDropdown } from "@/components/RoleDropdown";
+import { RoleDropdown } from "@/components/dropdowns/RoleFilterDropdown";
 import { users } from "@/data/users";
-import ActionButtons from "@/components/ActionButtons";
-import {
-  handleAdd,
-  handleEdit,
-  handleResetPassword,
-  handleToggleStatus,
-  handleDelete,
-} from "@/utils/usersActions";
+import ActionButton from "@/components/buttons/ActionButton";
 import { useState } from "react";
 import AddUserModal from "@/components/modals/AddUserModal";
+import useUserStore from "@/store/usersStore";
 
 const getColorScheme = (status) => {
   switch (status) {
@@ -48,10 +42,22 @@ const getColorScheme = (status) => {
 };
 
 const UsersTable = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [roleFilter, setRoleFilter] = useState("All Roles");
   const filteredUsers = users.filter((user) =>
     roleFilter === "All Roles" ? true : user.role === roleFilter
   );
+  const { addUser } = useUserStore();
+
+  const [userData, setUserData] = useState({
+    username: "",
+    email: "",
+    password_hash: "",
+    role: "",
+    status: "",
+  });
+
+  {/* TODO: ADD DEPARTMENT COLUMN IN THE DB AND HERE */}
 
   return (
     <Box w="100%" mx="auto" p={8}>
@@ -88,7 +94,7 @@ const UsersTable = () => {
             p={3}
             fontSize="95%"
             w="120px"
-            onClick={<AddUserModal onOpen={true} />}
+            onClick={onOpen}
           >
             <IoAdd size="25px" />
             Add user
@@ -143,12 +149,8 @@ const UsersTable = () => {
                   </Td>
                   <Td>{user.joinedDate}</Td>
                   <Td>
-                    <ActionButtons
+                    <ActionButton
                       status={user.status}
-                      onEdit={() => handleEdit(user.id)}
-                      onResetPassword={() => handleResetPassword(user.id)}
-                      onToggleStatus={() => handleToggleStatus(user.id)}
-                      onDelete={() => handleDelete(user.id)}
                     />
                   </Td>
                 </Tr>
@@ -157,6 +159,8 @@ const UsersTable = () => {
           </Table>
         </TableContainer>
       </Box>
+      {/* Modals will be placed here */}
+      <AddUserModal isOpen={isOpen} onClose={onClose} />
     </Box>
   );
 };

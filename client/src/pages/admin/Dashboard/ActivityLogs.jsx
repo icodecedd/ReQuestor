@@ -8,7 +8,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
-import ActivityLogItem from "@/components/AcvitivyLogItem";
+import ActivityLogItem from "@/components/cards/ActivityLogCard";
 import { useRecentActivitiesStore } from "@/store/recentStore";
 import { useEffect } from "react";
 
