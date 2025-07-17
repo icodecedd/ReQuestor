@@ -89,7 +89,6 @@ const Navbar = ({ pageName }) => {
                 <MenuGroup title="Profile">
                   <MenuItem
                     gap={2}
-                    fontWeight="medium"
                     _hover={{
                       bg: "#f7eaea",
                       borderRadius: "lg",
@@ -102,7 +101,6 @@ const Navbar = ({ pageName }) => {
                   </MenuItem>
                   <MenuItem
                     gap={2}
-                    fontWeight="medium"
                     _hover={{
                       bg: "#f7eaea",
                       borderRadius: "lg",

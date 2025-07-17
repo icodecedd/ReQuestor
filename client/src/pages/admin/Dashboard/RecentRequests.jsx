@@ -17,10 +17,12 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
-import { useRecentRequests } from "@/hooks/useRecentRequests";
+import { useRecentRequestsStore } from "@/store/recentStore";
+import { useEffect } from "react";
 
 const RecentRequests = () => {
-  const { /*data,*/ loading } = useRecentRequests();
+  const { /*recentRequests,*/ loading, fetchRecentRequests } =
+    useRecentRequestsStore();
 
   const data = [
     {
@@ -73,6 +75,14 @@ const RecentRequests = () => {
     }
   };
 
+  useEffect(() => {
+    fetchRecentRequests();
+  }, [fetchRecentRequests]);
+
+  if (loading) {
+    return <Skeleton height="400px" width="100%" borderRadius="xl" mx="auto" />;
+  }
+
   return (
     <Box
       overflow="hidden"
@@ -97,7 +107,7 @@ const RecentRequests = () => {
             fontSize="14px"
             variant="outline"
             borderRadius="xl"
-            _hover={{bg: "#f7f1f1"}}
+            _hover={{ bg: "#f7f1f1" }}
           >
             View all
           </Button>
@@ -109,8 +119,8 @@ const RecentRequests = () => {
           borderTop="1px"
           color="gray.100"
           sx={{
-            th: { textAlign: "center", fontSize: "14px" },
-            td: { textAlign: "center", fontSize: "14px" },
+            Th: { textAlign: "center", fontSize: "14px" },
+            Td: { textAlign: "center", fontSize: "14px" },
           }}
         >
           <Thead>
@@ -122,20 +132,7 @@ const RecentRequests = () => {
               <Th w="20%">Date</Th>
             </Tr>
           </Thead>
-          {loading ? (
-            <TableCaption mt={3}>
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Skeleton
-                  key={i}
-                  height="40px"
-                  width="95%"
-                  borderRadius="lg"
-                  mx="auto"
-                  mb={2}
-                />
-              ))}
-            </TableCaption>
-          ) : data.length > 0 ? (
+          {data.length > 0 ? (
             <Tbody>
               {data.map((req, index) => (
                 <Tr key={index} textColor="blackAlpha.900">

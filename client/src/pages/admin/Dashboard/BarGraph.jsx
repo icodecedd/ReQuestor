@@ -17,10 +17,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useStats } from "@/hooks/useStatistics";
+import { useStatsStore } from "@/store/statsStore";
 
 const BarGraph = () => {
-  const { /*data,*/ loading } = useStats();
+  const { /*data,*/ loading } = useStatsStore();
 
   // Mock Data
   const data = {
@@ -39,6 +39,10 @@ const BarGraph = () => {
       { month: "Dec", approved: 1, pending: 4 },
     ],
   };
+
+  if (loading) {
+    return <Skeleton height="420px" width="100%" borderRadius="xl" mx="auto" />;
+  }
 
   return (
     <Box bg="white" borderRadius="2xl" p={5} boxShadow="md" w="100%" h="420px">
