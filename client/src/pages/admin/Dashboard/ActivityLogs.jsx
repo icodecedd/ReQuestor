@@ -48,9 +48,9 @@ const ActivityLogs = () => {
     fetchRecentActivities();
   }, [fetchRecentActivities]);
 
-  if (loading) {
-    return <Skeleton height="100%" width="100%" borderRadius="xl" mx="auto" />;
-  }
+  // if (loading) {
+  //   return <Skeleton height="100%" width="100%" borderRadius="xl" mx="auto" />;
+  // }
 
   return (
     <Box bg="white" borderRadius="2xl" boxShadow="md" w="100%" h="100%">
@@ -82,7 +82,19 @@ const ActivityLogs = () => {
         </NavLink>
       </Flex>
       <VStack>
-        {data.length > 0 ? (
+        {loading ? (
+          [1, 2, 3, 4, 5].map((i) => (
+            <Skeleton
+              key={i}
+              height="86px"
+              width="90%"
+              p={4}
+              borderRadius="xl"
+              mx="auto"
+              mb={1}
+            />
+          ))
+        ) : data.length > 0 ? (
           data.map((log, index) => <ActivityLogItem key={index} log={log} />)
         ) : (
           <Heading fontSize="14px" color="#4a5568">

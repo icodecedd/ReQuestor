@@ -32,7 +32,7 @@ export const getUserById = async (req, res) => {
     if (result.rowCount === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found." });
     }
 
     return res.status(200).json({ success: true, data: result.rows[0] });
@@ -46,7 +46,7 @@ export const getUserById = async (req, res) => {
 
 export const addUser = async (req, res) => {
   try {
-    const { username, email, password_hash, role } = req.body;
+    const { username, email, password_hash, role, status } = req.body;
 
     if (!username || !email || !password_hash || !role) {
       return res.status(400).json({
@@ -59,16 +59,16 @@ export const addUser = async (req, res) => {
 
     const result = await pool.query(
       `
-      INSERT INTO users (username, email, password_hash, role)
-      VALUES ($1, $2, $3, $4)
-      RETURNING id, username, email, role, status, must_change_password, last_login, created_at; ;
+      INSERT INTO users (username, email, password_hash, role, status)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id, username, email, role, status, must_change_password, last_login, created_at;
       `,
-      [username, email, password_hashed, role]
+      [username, email, password_hashed, role, status]
     );
 
     const createdUser = result.rows[0];
 
-    res.status(200).json({ sucess: true, data: createdUser });
+    res.status(200).json({ success: true, data: createdUser });
   } catch (error) {
     console.error("Error in addUser Function", error);
 
@@ -91,14 +91,14 @@ export const updateUser = async (req, res) => {
     if (!id) {
       return res
         .status(400)
-        .json({ success: false, message: "User ID is required" });
+        .json({ success: false, message: "User ID is required." });
     }
 
     // Validate input (basic)
     if (!name && !email && !role && typeof status === "undefined") {
       return res
         .status(400)
-        .json({ success: false, message: "Nothing to update" });
+        .json({ success: false, message: "Nothing to update." });
     }
 
     // Build dynamic SQL to update only provided fields
@@ -137,7 +137,7 @@ export const updateUser = async (req, res) => {
     if (result.rowCount === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found." });
     }
 
     res.status(200).json({ success: true, data: result.rows[0] });
@@ -147,7 +147,7 @@ export const updateUser = async (req, res) => {
     if (error.code === "23505") {
       return res
         .status(409)
-        .json({ success: false, message: "Email already exists" });
+        .json({ success: false, message: "Email already exists." });
     }
 
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -198,7 +198,7 @@ export const toggleUserStatus = async (req, res) => {
     if (current.rowCount === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found." });
     }
 
     const currentStatus = current.rows[0].status;
@@ -273,6 +273,42 @@ export const resetUserPasswordManual = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in resetUserPasswordManual:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const checkUsernameAvailability = async (req, res) => {
+  const { username } = req.query;
+
+  if (!username) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Username is required" });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT username FROM users WHERE username = $1",
+      [username]
+    );
+
+    if (result.rowCount !== 0) {
+      return res.status(200).json({
+        success: true,
+        available: false,
+        message: "Username already exists.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      available: true,
+      message: "Username is available.",
+    });
+  } catch (error) {
+    console.error("Error in checkUsernameAvailability:", error);
     return res
       .status(500)
       .json({ success: false, message: "Internal Server Error" });

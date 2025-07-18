@@ -21,9 +21,6 @@ import { useRecentRequestsStore } from "@/store/recentStore";
 import { useEffect } from "react";
 
 const RecentRequests = () => {
-  const { /*recentRequests,*/ loading, fetchRecentRequests } =
-    useRecentRequestsStore();
-
   const data = [
     {
       id: 11,
@@ -75,13 +72,16 @@ const RecentRequests = () => {
     }
   };
 
+  const { /*recentRequests,*/ loading, fetchRecentRequests } =
+    useRecentRequestsStore();
+
   useEffect(() => {
     fetchRecentRequests();
   }, [fetchRecentRequests]);
 
-  if (loading) {
-    return <Skeleton height="400px" width="100%" borderRadius="xl" mx="auto" />;
-  }
+  // if (loading) {
+  //   return <Skeleton height="400px" width="100%" borderRadius="xl" mx="auto" />;
+  // }
 
   return (
     <Box
@@ -132,7 +132,20 @@ const RecentRequests = () => {
               <Th w="20%">Date</Th>
             </Tr>
           </Thead>
-          {data.length > 0 ? (
+          {loading ? (
+            <TableCaption mt={3}>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Skeleton
+                  key={i}
+                  height="41px"
+                  width="95%"
+                  borderRadius="xl"
+                  mx="auto"
+                  mb={2}
+                />
+              ))}
+            </TableCaption>
+          ) : data.length > 0 ? (
             <Tbody>
               {data.map((req, index) => (
                 <Tr key={index} textColor="blackAlpha.900">
@@ -142,12 +155,7 @@ const RecentRequests = () => {
                   <Td>{req.user}</Td>
                   <Td>{req.equipment}</Td>
                   <Td>
-                    <Badge
-                      colorScheme={getColorScheme(req.status)}
-                      borderRadius="xl"
-                      pl={2}
-                      pr={2}
-                    >
+                    <Badge colorScheme={getColorScheme(req.status)}>
                       {req.status}
                     </Badge>
                   </Td>

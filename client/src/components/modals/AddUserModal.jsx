@@ -17,17 +17,73 @@ import {
   TabList,
   TabPanels,
   TabPanel,
+  useToast,
+  Box,
 } from "@chakra-ui/react";
 import { FiUserPlus } from "react-icons/fi";
+import { RoleModalDropdown } from "@/components/dropdowns/RoleModalDropdown";
+import { useState } from "react";
+import useUserStore from "@/store/usersStore";
 
 const fields = [
-  { label: "Username", placeholder: "Enter username" },
-  { label: "Email Address", placeholder: "Enter email address" },
-  { label: "Password", placeholder: "Enter password" },
-  { label: "Confirm Password", placeholder: "Enter confirm password" },
+  { name: "username", label: "Username", placeholder: "Enter username" },
+  { name: "email", label: "Email", placeholder: "Enter email" },
+  { name: "password", label: "Password", placeholder: "Enter password" },
+  {
+    name: "confirmPassword",
+    label: "Confirm Password",
+    placeholder: "Re-enter password",
+  },
 ];
 
+const roles = ["Admin", "Student"];
+const department = ["BSIT", "BSPSYCH", "BSHM", "DIT", "BSA", "BSFM"];
+const status = ["Active", "Inactive", "Suspended"];
+
 const AddUserModal = ({ isOpen, onClose }) => {
+  const addUser = useUserStore((state) => state.addUser);
+  const toast = useToast();
+
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
+    status: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    console.log({ [name]: value });
+  };
+
+  const handleSubmit = async () => {
+    const result = await addUser(form); // Direct call to Zustand store
+
+    toast({
+      title: result.success ? "Success" : "Error",
+      description: result.message,
+      status: result.success ? "success" : "error",
+      duration: 3000,
+      isClosable: true,
+      position: "top-right",
+    });
+
+    if (result.success) {
+      onClose();
+      setForm({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        role: "",
+        status: "",
+      });
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
@@ -43,7 +99,11 @@ const AddUserModal = ({ isOpen, onClose }) => {
             Create a new user account for the system.
           </Text>
         </ModalHeader>
-        <ModalCloseButton size="md" _hover={{ bg: "#f7eaea" }} borderRadius="lg"/>
+        <ModalCloseButton
+          size="md"
+          _hover={{ bg: "#f7eaea" }}
+          borderRadius="lg"
+        />
         <ModalBody>
           <Tabs variant="enclosed" size="md">
             <TabList>
@@ -56,18 +116,39 @@ const AddUserModal = ({ isOpen, onClose }) => {
                   <FormControl isRequired mb={4} key={index}>
                     <FormLabel>{field.label}</FormLabel>
                     <Input
+                      name={field.name}
                       placeholder={field.placeholder}
                       focusBorderColor="maroon"
                       borderRadius="xl"
                       borderColor="gray.400"
+                      onChange={handleChange}
                     />
                   </FormControl>
                 ))}
               </TabPanel>
               <TabPanel>
-                <Flex>
-
+                <Box h="170px">
+                <Flex gap={5}>
+                  <RoleModalDropdown
+                    value={form.role}
+                    onChange={(newRole) => setForm({ ...form, role: newRole })}
+                    roles={roles}
+                    w="238px"
+                    label="Role"
+                    placeholder="Select role"
+                  />
+                  <RoleModalDropdown
+                    value={form.status}
+                    onChange={(newStatus) =>
+                      setForm({ ...form, status: newStatus })
+                    }
+                    roles={status}
+                    w="238px"
+                    label="Status"
+                    placeholder="Select status"
+                  />
                 </Flex>
+                </Box>
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -88,6 +169,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
             color="white"
             borderRadius="xl"
             _hover={{ bg: "#832222" }}
+            onClick={handleSubmit}
           >
             Create User
           </Button>

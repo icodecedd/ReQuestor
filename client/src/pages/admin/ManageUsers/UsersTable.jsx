@@ -9,6 +9,7 @@ import {
   HStack,
   Table,
   TableContainer,
+  TableCaption,
   Thead,
   Tr,
   Td,
@@ -16,15 +17,16 @@ import {
   Tbody,
   Badge,
   useDisclosure,
+  Skeleton,
 } from "@chakra-ui/react";
 import { FiSearch } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
 import { RoleDropdown } from "@/components/dropdowns/RoleFilterDropdown";
-import { users } from "@/data/users";
 import ActionButton from "@/components/buttons/ActionButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddUserModal from "@/components/modals/AddUserModal";
 import useUserStore from "@/store/usersStore";
+import { getDateOnly } from "@/utils/getDate";
 
 const getColorScheme = (status) => {
   switch (status) {
@@ -42,25 +44,43 @@ const getColorScheme = (status) => {
 };
 
 const UsersTable = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [roleFilter, setRoleFilter] = useState("All Roles");
-  const filteredUsers = users.filter((user) =>
-    roleFilter === "All Roles" ? true : user.role === roleFilter
-  );
-  const { addUser } = useUserStore();
+  {
+    /* Global State of Users */
+  }
+  const { users, loading, fetchUsers } = useUserStore();
 
-  const [userData, setUserData] = useState({
-    username: "",
-    email: "",
-    password_hash: "",
-    role: "",
-    status: "",
+  useEffect(() => {
+    fetchUsers();
+  }, []); // this fetch only once
+
+  {
+    /* Modal */
+  }
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  {
+    /* Role Filter */
+  }
+  const [roleFilter, setRoleFilter] = useState("All Roles");
+
+  {
+    /* Search Filter */
+  }
+  const [searchFilter, setSearchFilter] = useState("");
+  const filteredUsers = users.filter((user) => {
+    const matchesRole =
+      roleFilter === "All Roles" ? true : user.role === roleFilter;
+
+    const matchesSearch = searchFilter
+      ? user.username.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchFilter.toLowerCase())
+      : true;
+
+    return matchesRole && matchesSearch;
   });
 
-  {/* TODO: ADD DEPARTMENT COLUMN IN THE DB AND HERE */}
-
   return (
-    <Box w="100%" mx="auto" p={8}>
+    <Box w="99.5%" mx="auto" p={8}>
       <Flex justify="space-between" align="center" pb={0.5}>
         {/* Left: Header */}
         <HStack ml={3}>
@@ -74,12 +94,15 @@ const UsersTable = () => {
               <FiSearch />
             </InputLeftElement>
             <Input
-              placeholder="Search for user"
+              placeholder="Search by username or email"
               focusBorderColor="maroon"
               borderRadius="xl"
               borderColor="gray.400"
+              value={searchFilter}
+              onChange={(e) => setSearchFilter(e.target.value)}
             />
           </InputGroup>
+
           {/*Filter Button*/}
           <RoleDropdown onChange={setRoleFilter} />
 
@@ -121,41 +144,57 @@ const UsersTable = () => {
                 <Th>Actions</Th>
               </Tr>
             </Thead>
-            <Tbody>
-              {filteredUsers.map((user) => (
-                <Tr key={user.id} textColor="blackAlpha.900" bg="#f7f9fb">
-                  <Td>{user.username}</Td>
-                  <Td>{user.email}</Td>
-                  <Td>
-                    <Badge
-                      colorScheme={getColorScheme(user.role)}
-                      borderRadius="xl"
-                      pl={2}
-                      pr={2}
-                    >
-                      {user.role}
-                    </Badge>
-                  </Td>
-                  <Td>
-                    {" "}
-                    <Badge
-                      colorScheme={getColorScheme(user.status)}
-                      borderRadius="xl"
-                      pl={2}
-                      pr={2}
-                    >
-                      {user.status}
-                    </Badge>
-                  </Td>
-                  <Td>{user.joinedDate}</Td>
-                  <Td>
-                    <ActionButton
-                      status={user.status}
-                    />
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
+            {loading ? (
+              <TableCaption mt={3}>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Skeleton
+                    key={i}
+                    height="41px"
+                    width="95%"
+                    borderRadius="xl"
+                    mx="auto"
+                    mb={2}
+                  />
+                ))}
+              </TableCaption>
+            ) : filteredUsers.length > 0 ? (
+              <Tbody>
+                {filteredUsers.map((user) => (
+                  <Tr key={user.id} textColor="blackAlpha.900" bg="#f7f9fb">
+                    <Td>{user.username}</Td>
+                    <Td>{user.email}</Td>
+                    <Td>
+                      <Badge
+                        colorScheme={getColorScheme(user.role)}
+                        borderRadius="xl"
+                        pl={2}
+                        pr={2}
+                      >
+                        {user.role}
+                      </Badge>
+                    </Td>
+                    <Td>
+                      <Badge
+                        colorScheme={getColorScheme(user.status)}
+                        borderRadius="xl"
+                        pl={2}
+                        pr={2}
+                      >
+                        {user.status}
+                      </Badge>
+                    </Td>
+                    <Td>{getDateOnly(user.created_at)}</Td>
+                    <Td>
+                      <ActionButton status={user.status} />
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            ) : (
+              <TableCaption mt={20} mb={20} fontSize="14px" fontWeight="bold">
+                No recent user to display.
+              </TableCaption>
+            )}
           </Table>
         </TableContainer>
       </Box>
