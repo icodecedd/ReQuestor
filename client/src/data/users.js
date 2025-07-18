@@ -6,7 +6,7 @@ export const users = [
     email: "jdoe@example.com",
     role: "Admin",
     status: "Active",
-    joinedDate: "2024-09-10",
+    created_at: "2024-09-10",
   },
   {
     id: "u002",
@@ -15,7 +15,7 @@ export const users = [
     email: "msantos@example.com",
     role: "Student",
     status: "Inactive",
-    joinedDate: "2024-11-03",
+    created_at: "2024-11-03",
   },
   {
     id: "u003",
@@ -24,7 +24,7 @@ export const users = [
     email: "akimura@example.com",
     role: "Admin",
     status: "Active",
-    joinedDate: "2023-08-22",
+    created_at: "2023-08-22",
   },
   {
     id: "u004",
@@ -33,7 +33,7 @@ export const users = [
     email: "rcaballero@example.com",
     role: "Student",
     status: "Active",
-    joinedDate: "2025-01-12",
+    created_at: "2025-01-12",
   },
   {
     id: "u005",
@@ -42,7 +42,7 @@ export const users = [
     email: "lgarcia@example.com",
     role: "Admin",
     status: "Active",
-    joinedDate: "2023-06-15",
+    created_at: "2023-06-15",
   },
     {
     id: "u006",
@@ -51,7 +51,7 @@ export const users = [
     email: "jdoe@example.com",
     role: "Admin",
     status: "Active",
-    joinedDate: "2024-09-10",
+    created_at: "2024-09-10",
   },
   {
     id: "u007",
@@ -60,7 +60,7 @@ export const users = [
     email: "msantos@example.com",
     role: "Student",
     status: "Inactive",
-    joinedDate: "2024-11-03",
+    created_at: "2024-11-03",
   },
   {
     id: "u008",
@@ -69,7 +69,7 @@ export const users = [
     email: "akimura@example.com",
     role: "Admin",
     status: "Active",
-    joinedDate: "2023-08-22",
+    created_at: "2023-08-22",
   },
   {
     id: "u009",
@@ -78,7 +78,7 @@ export const users = [
     email: "rcaballero@example.com",
     role: "Student",
     status: "Active",
-    joinedDate: "2025-01-12",
+    created_at: "2025-01-12",
   },
   {
     id: "u010",
@@ -87,7 +87,7 @@ export const users = [
     email: "lgarcia@example.com",
     role: "Admin",
     status: "Active",
-    joinedDate: "2023-06-15",
+    created_at: "2023-06-15",
   },
     {
     id: "u011",
@@ -96,7 +96,7 @@ export const users = [
     email: "jdoe@example.com",
     role: "Admin",
     status: "Active",
-    joinedDate: "2024-09-10",
+    created_at: "2024-09-10",
   },
   {
     id: "u012",
@@ -105,7 +105,7 @@ export const users = [
     email: "msantos@example.com",
     role: "Student",
     status: "Inactive",
-    joinedDate: "2024-11-03",
+    created_at: "2024-11-03",
   },
   {
     id: "u013",
@@ -114,7 +114,7 @@ export const users = [
     email: "akimura@example.com",
     role: "Admin",
     status: "Active",
-    joinedDate: "2023-08-22",
+    created_at: "2023-08-22",
   },
   {
     id: "u014",
@@ -123,7 +123,7 @@ export const users = [
     email: "rcaballero@example.com",
     role: "Student",
     status: "Active",
-    joinedDate: "2025-01-12",
+    created_at: "2025-01-12",
   },
   {
     id: "u015",
@@ -132,6 +132,6 @@ export const users = [
     email: "lgarcia@example.com",
     role: "Admin",
     status: "Active",
-    joinedDate: "2023-06-15",
+    created_at: "2023-06-15",
   },
 ];

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import { toTitleCase } from "@/utils/toTitleCase";
 
 const useUserStore = create((set) => ({
   users: [],
@@ -16,29 +17,67 @@ const useUserStore = create((set) => ({
     }
   },
 
-  addUser: async (userData) => {
-    if (
-      !userData.username ||
-      !userData.email ||
-      !userData.password_hash ||
-      !userData.role
-    ) {
+  addUser: async (newUser) => {
+    const username = newUser.username?.trim() || "";
+    const email = newUser.email?.trim() || "";
+    const role = toTitleCase(newUser.role?.trim() || "");
+    const password = newUser.password || "";
+    const confirmPassword = newUser.confirmPassword || "";
+    const status = toTitleCase(newUser.status || "");
+
+    if (!username || !email || !password || !confirmPassword || !role) {
       return {
         success: false,
-        message: "Username, email, and password, role are required",
+        message:
+          "Username, email, and password, confirm password, role are required.",
       };
     }
+
     try {
-      const res = await axios.post("/api/users", userData);
+      const res = await axios.get("/api/users/check-username", {
+        params: { username },
+      });
+
+      if (!res.data.available) {
+        return {
+          success: false,
+          message: "Username already exist.",
+        };
+      }
+    } catch (error) {
+      return { success: false, message: "Error checking username." };
+    }
+
+    if (password && confirmPassword && password !== confirmPassword) {
+      return {
+        success: false,
+        message: "Passwords do not match",
+      };
+    }
+
+    try {
+      const payload = {
+        username,
+        email,
+        password_hash: password,
+        role,
+        status,
+      };
+
+      const res = await axios.post("/api/users", payload);
       set((state) => ({
         users: [...state.users, res.data.data], // Append new user
       }));
       return {
         success: true,
-        message: "Account added successfully.",
+        message: "New account added successfully.",
       };
     } catch (error) {
-      console.error("Add user error:", error);
+      console.error("Add user error:", error.response?.data || error.message);
+      return {
+        success: false,
+        message: "Failed to add user. Please try again.",
+      };
     }
   },
 }));
