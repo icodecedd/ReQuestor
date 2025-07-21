@@ -24,9 +24,12 @@ import { IoAdd } from "react-icons/io5";
 import { RoleDropdown } from "@/components/dropdowns/RoleFilterDropdown";
 import ActionButton from "@/components/buttons/ActionButton";
 import { useEffect, useState } from "react";
-import AddUserModal from "@/components/modals/AddUserModal";
 import useUserStore from "@/store/usersStore";
 import { getDateOnly } from "@/utils/getDate";
+import ResetPasswordModal from "@/components/modals/ResetPasswordModal";
+import AddUserModal from "@/components/modals/AddUserModal";
+import UpdateUserModal from "@/components/modals/UpdateUserModal";
+import DeleteUserModal from "@/components/modals/DeleteUserModal";
 
 const getColorScheme = (status) => {
   switch (status) {
@@ -56,7 +59,29 @@ const UsersTable = () => {
   {
     /* Modal */
   }
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isAddOpen,
+    onOpen: onAddOpen,
+    onClose: onAddClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isResetOpen,
+    onOpen: onResetOpen,
+    onClose: onResetClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
 
   {
     /* Role Filter */
@@ -78,6 +103,23 @@ const UsersTable = () => {
 
     return matchesRole && matchesSearch;
   });
+
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const handleEdit = (user) => {
+    setSelectedUser(user);
+    onEditOpen(); // open modal
+  };
+
+  const handleResetPassword = (user) => {
+    setSelectedUser(user);
+    onResetOpen();
+  };
+
+  const handleDelete = (user) => {
+    setSelectedUser(user);
+    onDeleteOpen();
+  };
 
   return (
     <Box w="99.5%" mx="auto" p={8}>
@@ -117,7 +159,7 @@ const UsersTable = () => {
             p={3}
             fontSize="95%"
             w="120px"
-            onClick={onOpen}
+            onClick={() => onAddOpen()}
           >
             <IoAdd size="25px" />
             Add user
@@ -185,7 +227,12 @@ const UsersTable = () => {
                     </Td>
                     <Td>{getDateOnly(user.created_at)}</Td>
                     <Td>
-                      <ActionButton status={user.status} />
+                      <ActionButton
+                        status={user.status}
+                        onEdit={() => handleEdit(user)}
+                        onResetPassword={() => handleResetPassword(user)}
+                        onDelete={() => handleDelete(user)}
+                      />
                     </Td>
                   </Tr>
                 ))}
@@ -199,7 +246,22 @@ const UsersTable = () => {
         </TableContainer>
       </Box>
       {/* Modals will be placed here */}
-      <AddUserModal isOpen={isOpen} onClose={onClose} />
+      <AddUserModal isOpen={isAddOpen} onClose={onAddClose} />
+      <UpdateUserModal
+        isOpen={isEditOpen}
+        onClose={onEditClose}
+        user={selectedUser}
+      />
+      <ResetPasswordModal
+        isOpen={isResetOpen}
+        onClose={onResetClose}
+        user={selectedUser}
+      />
+      <DeleteUserModal
+        isOpen={isDeleteOpen}
+        onClose={onDeleteClose}
+        user={selectedUser}
+      />
     </Box>
   );
 };
