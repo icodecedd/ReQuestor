@@ -21,7 +21,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { FiUserPlus } from "react-icons/fi";
-import { RoleModalDropdown } from "@/components/dropdowns/RoleModalDropdown";
+import { RoleModalDropdown } from "@/components/dropdowns/ModalDropdown";
 import { useState } from "react";
 import useUserStore from "@/store/usersStore";
 
@@ -128,26 +128,29 @@ const AddUserModal = ({ isOpen, onClose }) => {
               </TabPanel>
               <TabPanel>
                 <Box h="170px">
-                <Flex gap={5}>
-                  <RoleModalDropdown
-                    value={form.role}
-                    onChange={(newRole) => setForm({ ...form, role: newRole })}
-                    roles={roles}
-                    w="238px"
-                    label="Role"
-                    placeholder="Select role"
-                  />
-                  <RoleModalDropdown
-                    value={form.status}
-                    onChange={(newStatus) =>
-                      setForm({ ...form, status: newStatus })
-                    }
-                    roles={status}
-                    w="238px"
-                    label="Status"
-                    placeholder="Select status"
-                  />
-                </Flex>
+                  <Flex gap={5}>
+                    <RoleModalDropdown
+                      value={form.role}
+                      onChange={(newRole) =>
+                        setForm({ ...form, role: newRole })
+                      }
+                      roles={roles}
+                      w="238px"
+                      label="Role"
+                      placeholder="Select role"
+                    />
+                    <RoleModalDropdown
+                      value={form.status}
+                      onChange={(newStatus) =>
+                        setForm({ ...form, status: newStatus })
+                      }
+                      roles={status}
+                      w="238px"
+                      label="Status"
+                      placeholder="Select status"
+                      isRequired={false}
+                    />
+                  </Flex>
                 </Box>
               </TabPanel>
             </TabPanels>

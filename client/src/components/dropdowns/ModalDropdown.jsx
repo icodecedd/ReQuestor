@@ -14,28 +14,31 @@ import { FiCheck } from "react-icons/fi";
 import { useState, useEffect } from "react";
 
 export function RoleModalDropdown({
-  value = null,
+  value = "",
   onChange,
   roles,
   w = 150,
   label,
   placeholder,
+  isRequired = true,
 }) {
-  const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedRole, setSelectedRole] = useState(value);
 
   // keep internal state synced if parent changes value
   useEffect(() => {
-    setSelectedRole(value);
+    if (value !== selectedRole) {
+      setSelectedRole(value);
+    }
   }, [value]);
 
   const handleSelect = (role) => {
     setSelectedRole(role);
-    onChange(role);
-    console.log(value, role)
+    onChange && onChange(role);
+    console.log(role);
   };
 
   return (
-    <FormControl isRequired>
+    <FormControl isRequired={isRequired}>
       <FormLabel>{label}</FormLabel>
       <Menu>
         <MenuButton

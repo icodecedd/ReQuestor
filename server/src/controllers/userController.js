@@ -63,7 +63,7 @@ export const addUser = async (req, res) => {
       VALUES ($1, $2, $3, $4, $5)
       RETURNING id, username, email, role, status, must_change_password, last_login, created_at;
       `,
-      [username, email, password_hashed, role, status]
+      [username, email, password_hashed, role, status || "Active"]
     );
 
     const createdUser = result.rows[0];
@@ -86,7 +86,7 @@ export const addUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, role, status } = req.body;
+    const { username, email, role, status } = req.body;
 
     if (!id) {
       return res
@@ -95,7 +95,7 @@ export const updateUser = async (req, res) => {
     }
 
     // Validate input (basic)
-    if (!name && !email && !role && typeof status === "undefined") {
+    if (!username && !email && !role && typeof status === "undefined") {
       return res
         .status(400)
         .json({ success: false, message: "Nothing to update." });
@@ -106,8 +106,8 @@ export const updateUser = async (req, res) => {
     const values = [];
     let index = 1;
 
-    if (name) {
-      updates.push(`name = $${index++}`);
+    if (username) {
+      updates.push(`username = $${index++}`);
       values.push(name);
     }
     if (email) {
@@ -255,7 +255,7 @@ export const resetUserPasswordManual = async (req, res) => {
       `UPDATE public.users
        SET password_hash = $1, must_change_password = true
        WHERE id = $2
-       RETURNING id, username, email, role, must_change_password;`,
+       RETURNING id, username, email, role, status, must_change_password;`,
       [password_hash, id]
     );
 
