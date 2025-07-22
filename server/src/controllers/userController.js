@@ -72,11 +72,23 @@ export const addUser = async (req, res) => {
   } catch (error) {
     console.error("Error in addUser Function", error);
 
-    // Unique violation (duplicate email)
+    // Postgres unique violation
     if (error.code === "23505") {
-      return res
-        .status(409)
-        .json({ success: false, message: "Email already exists." });
+      // Unique violation
+      if (error.constraint === "users_email_key") {
+        return res.status(409).json({
+          success: false,
+          errorCode: "EMAIL_EXISTS",
+          message: "Email already exists.",
+        });
+      }
+      if (error.constraint === "users_username_key") {
+        return res.status(409).json({
+          success: false,
+          errorCode: "USERNAME_EXISTS",
+          message: "Username already exists.",
+        });
+      }
     }
 
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -108,7 +120,7 @@ export const updateUser = async (req, res) => {
 
     if (username) {
       updates.push(`username = $${index++}`);
-      values.push(name);
+      values.push(username);
     }
     if (email) {
       updates.push(`email = $${index++}`);
@@ -144,10 +156,23 @@ export const updateUser = async (req, res) => {
   } catch (error) {
     console.error("Error in updateUser:", error);
 
+    // Postgres unique violation
     if (error.code === "23505") {
-      return res
-        .status(409)
-        .json({ success: false, message: "Email already exists." });
+      // Unique violation
+      if (error.constraint === "users_email_key") {
+        return res.status(409).json({
+          success: false,
+          errorCode: "EMAIL_EXISTS",
+          message: "Email already exists.",
+        });
+      }
+      if (error.constraint === "users_username_key") {
+        return res.status(409).json({
+          success: false,
+          errorCode: "USERNAME_EXISTS",
+          message: "Username already exists.",
+        });
+      }
     }
 
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -167,7 +192,7 @@ export const deleteUser = async (req, res) => {
     const { rows } = await pool.query(
       `DELETE FROM users
        WHERE id = $1
-       RETURNING id, username, email, role;`,
+       RETURNING id, username, email, role, status;`,
       [id]
     );
 
@@ -216,7 +241,7 @@ export const toggleUserStatus = async (req, res) => {
       success: true,
       message: `User ${
         newStatus === "Active" ? "reactivated" : "deactivated"
-      } successfully`,
+      } successfully.`,
       data: result.rows[0],
     });
   } catch (error) {
@@ -232,24 +257,29 @@ import bcrypt from "bcrypt";
 export const resetUserPasswordManual = async (req, res) => {
   try {
     const { id } = req.params;
-    const { newPassword, confirmPassword } = req.body;
+    const { password, confirmPassword } = req.body;
 
     // Validate
-    if (!newPassword || !confirmPassword) {
+    if (!password || !confirmPassword) {
       return res.status(400).json({
         success: false,
+        errorCode: "REQUIRED_PASSWORD",
         message: "Both password fields are required.",
       });
     }
 
-    if (newPassword !== confirmPassword) {
+    if (password !== confirmPassword) {
       return res
         .status(400)
-        .json({ success: false, message: "Passwords do not match." });
+        .json({
+          success: false,
+          errorCode: "DO_NOT_MATCH",
+          message: "Passwords do not match.",
+        });
     }
 
     // Hash password
-    const password_hash = await bcrypt.hash(newPassword, 12);
+    const password_hash = await bcrypt.hash(password, 12);
 
     const result = await pool.query(
       `UPDATE public.users

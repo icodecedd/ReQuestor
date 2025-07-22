@@ -33,21 +33,6 @@ const useUserStore = create((set) => ({
       };
     }
 
-    try {
-      const res = await axios.get("/api/users/check-username", {
-        params: { username },
-      });
-
-      if (!res.data.available) {
-        return {
-          success: false,
-          message: "Username already exist.",
-        };
-      }
-    } catch (error) {
-      return { success: false, message: "Error checking username." };
-    }
-
     if (password && confirmPassword && password !== confirmPassword) {
       return {
         success: false,
@@ -73,11 +58,28 @@ const useUserStore = create((set) => ({
         message: "New account added successfully.",
       };
     } catch (error) {
-      console.error("Add account error:", error.response?.data || error.message);
-      return {
-        success: false,
-        message: "Failed to add account. Please try again.",
-      };
+      console.error(
+        "Add account error:",
+        error.response?.data || error.message
+      );
+
+      const err = error.response?.data;
+      if (err?.errorCode === "EMAIL_EXISTS") {
+        return {
+          success: false,
+          message: err.message,
+        };
+      } else if (err.errorCode === "USERNAME_EXISTS") {
+        return {
+          success: false,
+          message: err.message,
+        };
+      } else {
+        return {
+          success: false,
+          message: "Failed to add account. Please try again.",
+        };
+      }
     }
   },
 
@@ -113,10 +115,52 @@ const useUserStore = create((set) => ({
         message: "Account updated successfully.",
       };
     } catch (error) {
-      console.error("Update account error:", error.response?.data || error.message);
+      console.error(
+        "Update account error:",
+        error.response?.data || error.message
+      );
+
+      const err = error.response?.data;
+      if (err?.errorCode === "EMAIL_EXISTS") {
+        return {
+          success: false,
+          message: err.message,
+        };
+      } else if (err.errorCode === "USERNAME_EXISTS") {
+        return {
+          success: false,
+          message: err.message,
+        };
+      } else {
+        return {
+          success: false,
+          message: "Failed to update account. Please try again.",
+        };
+      }
+    }
+  },
+
+  deleteUser: async (id) => {
+    try {
+      const res = await axios.delete(`/api/users/${id}`);
+
+      set((state) => ({
+        users: state.users.filter((user) => user.id !== id),
+      }));
+
+      return {
+        success: true,
+        message: "Account deleted successfully."
+      }
+    } catch (error) {
+      console.error(
+        "Delete account error:",
+        error.response?.data || error.message
+      );
+
       return {
         success: false,
-        message: "Failed to update account. Please try again.",
+        message: "Failed to delete account. Please try again.",
       };
     }
   },
@@ -124,6 +168,13 @@ const useUserStore = create((set) => ({
   resetPassword: async (id, newPassword) => {
     const password = newPassword.password || "";
     const confirmPassword = newPassword.confirmPassword || "";
+
+    if (password.length < 8) {
+      return {
+        success: false,
+        message: "Password must be at least 8 characters long.",
+      };
+    }
 
     if (!password || !confirmPassword) {
       return {
@@ -140,21 +191,72 @@ const useUserStore = create((set) => ({
     }
 
     try {
-      const resettedPayload = {
+      const resetPayload = {
         password,
         confirmPassword,
       };
 
       const res = await axios.patch(
         `/api/users/${id}/set-password`,
-        resettedPayload
+        resetPayload
       );
       return {
         success: true,
-        message: "Account's password resetted successfully.",
+        message: "Account's password reset successfully.",
       };
     } catch (error) {
-      console.error("Reset account's password error:", error.response?.data || error.message);
+      console.error(
+        "Reset account's password error:",
+        error.response?.data || error.message
+      );
+
+      const err = error.response?.data;
+      if (err.errorCode === "REQUIRED_PASSWORD") {
+        return {
+          success: false,
+          message: err.message,
+        };
+      } else if (err.errorCode === "DO_NOT_MATCH") {
+        return {
+          success: false,
+          message: "Passwords do not match",
+        };
+      }
+      return {
+        success: false,
+        message: "Failed to reset account's password. Please try again.",
+      };
+    }
+  },
+
+  toggleStatus: async (id) => {
+    try {
+      const res = await axios.patch(`/api/users/${id}/set-status`);
+
+      set((state) => ({
+        users: state.users.map((user) =>
+          user.id === id ? { ...user, status: res.data.data.status } : user
+        ),
+      }));
+
+      const result = res?.data;
+      if (result.success) {
+        return {
+          success: result.success,
+          message: result.message,
+        };
+      } else {
+        return {
+          success: result.success,
+          message: "Something went wrong.",
+        };
+      }
+    } catch (error) {
+      console.error(
+        "Toggle account's status error:",
+        error.response?.data || error.message
+      );
+
       return {
         success: false,
         message: "Failed to reset account's password. Please try again.",

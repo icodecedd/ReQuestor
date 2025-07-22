@@ -4,7 +4,6 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -12,13 +11,13 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Radio,
   Text,
   useToast,
 } from "@chakra-ui/react";
 import { FiAlertTriangle } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import useUserStore from "@/store/usersStore";
+import PasswordInput from "../inputs/passwordInput";
 
 const fields = [
   { name: "password", label: "Password", placeholder: "Enter new password" },
@@ -30,10 +29,9 @@ const fields = [
 ];
 
 const ResetPasswordModal = ({ isOpen, onClose, user }) => {
-  const { resetPassword } = useUserStore((state) => state.resetPassword);
+  const resetPassword = useUserStore((state) => state.resetPassword);
   const toast = useToast();
   const [form, setForm] = useState({
-    email: "",
     password: "",
     confirmPassword: "",
   });
@@ -41,19 +39,14 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
   useEffect(() => {
     if (user) {
       setForm({
-        email: user.email,
+        password: "",
+        confirmPassword: "",
       });
     }
   }, [user]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    console.log({ [name]: value });
-  };
-
   const handleResetPassword = async () => {
-    const result = await resetPassword(form);
+    const result = await resetPassword(user.id, form);
 
     toast({
       title: result.success ? "Success" : "Error",
@@ -61,13 +54,13 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
       status: result.success ? "success" : "error",
       duration: 3000,
       isClosable: true,
+      variant: "subtle",
       position: "top-right",
     });
 
     if (result.success) {
       onClose();
       setForm({
-        email: "",
         password: "",
         confirmPassword: "",
       });
@@ -75,7 +68,12 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="xl"
+      motionPreset="slideInBottom"
+    >
       <ModalOverlay />
       <ModalContent borderRadius="xl">
         <ModalHeader>
@@ -86,7 +84,7 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
             </Text>
           </Flex>
           <Text color="gray.700" fontWeight="normal" fontSize="14px">
-            Reset password for {form.email}
+            Reset password for <strong>{user?.email}</strong>
           </Text>
         </ModalHeader>
         <ModalCloseButton
@@ -96,32 +94,27 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
         />
         <ModalBody>
           {fields.map((field, index) => (
-            <FormControl isRequired mb={4} key={index}>
+            <FormControl isRequired mb="4" key={index}>
               <FormLabel>{field.label}</FormLabel>
-              <Input
+              <PasswordInput
                 name={field.name}
                 placeholder={field.placeholder}
-                focusBorderColor="maroon"
-                borderRadius="xl"
-                borderColor="gray.400"
-                onChange={handleChange}
+                onChange={(password) =>
+                  setForm({ ...form, [field.name]: password })
+                }
               />
             </FormControl>
           ))}
-          <Radio mb={3}>
-            <Text fontWeight="medium">
-              Force user to change password on next login
-            </Text>
-          </Radio>
           <Box
             bg="#fffbeb"
             color="#ffe372ff"
             border="1px"
             borderRadius="xl"
-            p="2"
+            p={2.5}
           >
             <Text color="#998431ff">
-              The user will be logged out of all sessions after password reset.
+              <strong>Important:</strong> After the password reset, the user will be logged out
+              of all sessions and must change their password on the next login.
             </Text>
           </Box>
         </ModalBody>

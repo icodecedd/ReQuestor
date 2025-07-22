@@ -23,20 +23,21 @@ import { FiSearch } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
 import { RoleDropdown } from "@/components/dropdowns/RoleFilterDropdown";
 import ActionButton from "@/components/buttons/ActionButton";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useUserStore from "@/store/usersStore";
 import { getDateOnly } from "@/utils/getDate";
 import ResetPasswordModal from "@/components/modals/ResetPasswordModal";
 import AddUserModal from "@/components/modals/AddUserModal";
 import UpdateUserModal from "@/components/modals/UpdateUserModal";
 import DeleteUserModal from "@/components/modals/DeleteUserModal";
+import ToggleStatusModal from "@/components/modals/ToggleStatusModal";
 
 const getColorScheme = (status) => {
   switch (status) {
     case "Admin":
-      return "red";
+      return "maroon";
     case "Student":
-      return "green";
+      return "white";
     case "Active":
       return "green";
     case "Inactive":
@@ -83,6 +84,12 @@ const UsersTable = () => {
     onClose: onDeleteClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isStatusOpen,
+    onOpen: onStatusOpen,
+    onClose: onStatusClose,
+  } = useDisclosure();
+
   {
     /* Role Filter */
   }
@@ -92,17 +99,19 @@ const UsersTable = () => {
     /* Search Filter */
   }
   const [searchFilter, setSearchFilter] = useState("");
-  const filteredUsers = users.filter((user) => {
-    const matchesRole =
-      roleFilter === "All Roles" ? true : user.role === roleFilter;
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => {
+      const matchesRole =
+        roleFilter === "All Roles" ? true : user.role === roleFilter;
 
-    const matchesSearch = searchFilter
-      ? user.username.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchFilter.toLowerCase())
-      : true;
+      const matchesSearch = searchFilter
+        ? user.username.toLowerCase().includes(searchFilter.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchFilter.toLowerCase())
+        : true;
 
-    return matchesRole && matchesSearch;
-  });
+      return matchesRole && matchesSearch;
+    });
+  }, [users, roleFilter, searchFilter]); // Only recalculates when these change
 
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -119,6 +128,11 @@ const UsersTable = () => {
   const handleDelete = (user) => {
     setSelectedUser(user);
     onDeleteOpen();
+  };
+
+  const handleToggleStatus = (user) => {
+    setSelectedUser(user);
+    onStatusOpen();
   };
 
   return (
@@ -207,10 +221,14 @@ const UsersTable = () => {
                     <Td>{user.email}</Td>
                     <Td>
                       <Badge
-                        colorScheme={getColorScheme(user.role)}
+                        bg={getColorScheme(user.role)}
+                        color={user.role === "Admin" ? "white" : "black"}
+                        border="1px"
+                        borderColor="gray.300"
                         borderRadius="xl"
                         pl={2}
                         pr={2}
+                        pb={0.5}
                       >
                         {user.role}
                       </Badge>
@@ -221,6 +239,7 @@ const UsersTable = () => {
                         borderRadius="xl"
                         pl={2}
                         pr={2}
+                        pb={0.5}
                       >
                         {user.status}
                       </Badge>
@@ -232,6 +251,7 @@ const UsersTable = () => {
                         onEdit={() => handleEdit(user)}
                         onResetPassword={() => handleResetPassword(user)}
                         onDelete={() => handleDelete(user)}
+                        onToggleStatus={() => handleToggleStatus(user)}
                       />
                     </Td>
                   </Tr>
@@ -260,6 +280,11 @@ const UsersTable = () => {
       <DeleteUserModal
         isOpen={isDeleteOpen}
         onClose={onDeleteClose}
+        user={selectedUser}
+      />
+      <ToggleStatusModal
+        isOpen={isStatusOpen}
+        onClose={onStatusClose}
         user={selectedUser}
       />
     </Box>

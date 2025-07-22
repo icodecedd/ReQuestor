@@ -36,7 +36,7 @@ router.put("/:id", updateUser);
 router.delete("/:id", deleteUser);
 
 // Toggle user status (activate/deactivate)
-router.patch("/:id/status", toggleUserStatus);
+router.patch("/:id/set-status", toggleUserStatus);
 
 // Reset user password manually
 router.patch("/:id/set-password", resetUserPasswordManual);

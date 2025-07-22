@@ -24,6 +24,7 @@ import { FiUserPlus } from "react-icons/fi";
 import { RoleModalDropdown } from "@/components/dropdowns/ModalDropdown";
 import { useState } from "react";
 import useUserStore from "@/store/usersStore";
+import PasswordInput from "../inputs/PasswordInput";
 
 const fields = [
   { name: "username", label: "Username", placeholder: "Enter username" },
@@ -50,7 +51,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
     password: "",
     confirmPassword: "",
     role: "",
-    status: "",
+    status: "Active",
   });
 
   const handleChange = (e) => {
@@ -68,6 +69,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
       status: result.success ? "success" : "error",
       duration: 3000,
       isClosable: true,
+      variant: "subtle",
       position: "top-right",
     });
 
@@ -85,7 +87,12 @@ const AddUserModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="xl"
+      motionPreset="slideInBottom"
+    >
       <ModalOverlay />
       <ModalContent borderRadius="xl">
         <ModalHeader>
@@ -105,14 +112,41 @@ const AddUserModal = ({ isOpen, onClose }) => {
           borderRadius="lg"
         />
         <ModalBody>
-          <Tabs variant="enclosed" size="md">
-            <TabList>
-              <Tab _selected={{ bg: "#f7eaea" }}>Account</Tab>
-              <Tab _selected={{ bg: "#f7eaea" }}>Role</Tab>
+          <Tabs variant="unstyle" size="sm">
+            <TabList
+              bg="#f4f4f5"
+              borderRadius="lg"
+              display="inline-flex"
+              p={1.5}
+              pr={1.5}
+              pl={1.5}
+            >
+              <Tab
+                _selected={{
+                  bg: "white",
+                  color: "black",
+                  borderRadius: "lg",
+                }}
+                color="#71717e"
+                fontWeight="bold"
+              >
+                Account Details
+              </Tab>
+              <Tab
+                _selected={{
+                  bg: "white",
+                  color: "black",
+                  borderRadius: "lg",
+                }}
+                color="#71717e"
+                fontWeight="bold"
+              >
+                Role & Status
+              </Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
-                {fields.map((field, index) => (
+                {fields.slice(0, 2).map((field, index) => (
                   <FormControl isRequired mb={4} key={index}>
                     <FormLabel>{field.label}</FormLabel>
                     <Input
@@ -122,6 +156,18 @@ const AddUserModal = ({ isOpen, onClose }) => {
                       borderRadius="xl"
                       borderColor="gray.400"
                       onChange={handleChange}
+                    />
+                  </FormControl>
+                ))}
+                {fields.slice(2).map((field, index) => (
+                  <FormControl isRequired mb="4" key={index}>
+                    <FormLabel>{field.label}</FormLabel>
+                    <PasswordInput
+                      name={field.name}
+                      placeholder={field.placeholder}
+                      onChange={(password) =>
+                        setForm({ ...form, [field.name]: password })
+                      }
                     />
                   </FormControl>
                 ))}
