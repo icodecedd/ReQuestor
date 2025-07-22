@@ -12,31 +12,39 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import { FiTrash } from "react-icons/fi";
+import useUserStore from "@/store/usersStore";
 
 const DeleteUserModal = ({ isOpen, onClose, user }) => {
+  const deleteUser = useUserStore((state) => state.deleteUser);
   const toast = useToast();
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  useEffect(() => {
-    if (user) {
-      setForm({
-        email: user.email,
-      });
-    }
-  }, [user]);
 
   const handleDelete = async () => {
-    console.log("handle delete");
+    const result = await deleteUser(user.id);
+
+    toast({
+      title: result.success ? "Success" : "Error",
+      description: result.message,
+      status: result.success ? "success" : "error",
+      duration: 3000,
+      isClosable: true,
+      variant: "subtle",
+      position: "top-right",
+    });
+
+    if (result.success) {
+      onClose();
+    }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+      motionPreset="slideInBottom"
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent borderRadius="xl">
         <ModalHeader>
@@ -47,8 +55,8 @@ const DeleteUserModal = ({ isOpen, onClose, user }) => {
             </Text>
           </Flex>
           <Text color="gray.700" fontWeight="normal" fontSize="14px">
-            Are you sure you want to delete "{form.email}"? This action cannot
-            be undone.
+            Are you sure you want to delete <strong>"{user?.email}"</strong>?
+            This action cannot be undone.
           </Text>
         </ModalHeader>
         <ModalCloseButton
@@ -62,7 +70,7 @@ const DeleteUserModal = ({ isOpen, onClose, user }) => {
             color="#fda8a8ff"
             border="1px"
             borderRadius="xl"
-            p="4"
+            p="3"
           >
             <Text color="#ef4444">
               <strong>Warning:</strong> This action is permanent and cannot be

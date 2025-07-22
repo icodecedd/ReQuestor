@@ -66,6 +66,7 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
       status: result.success ? "success" : "error",
       duration: 3000,
       isClosable: true,
+      variant: "subtle",
       position: "top-right",
     });
 
@@ -81,7 +82,12 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="xl"
+      motionPreset="slideInBottom"
+    >
       <ModalOverlay />
       <ModalContent borderRadius="xl">
         <ModalHeader>
@@ -102,7 +108,7 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
         />
         <ModalBody>
           {fields.map((field, index) => (
-            <FormControl isRequired mb={4} key={index}>
+            <FormControl isRequired key={index} p={2}>
               <FormLabel>{field.label}</FormLabel>
               <Input
                 name={field.name}
@@ -116,12 +122,12 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
             </FormControl>
           ))}
           <Box h="140px">
-            <Flex gap={5}>
+            <Flex gap={5} p={2}>
               <RoleModalDropdown
                 value={form.role}
                 onChange={(newRole) => setForm({ ...form, role: newRole })}
                 roles={roles}
-                w="238px"
+                w="246px"
                 label="Role"
                 placeholder="Select role"
               />
@@ -131,7 +137,7 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
                   setForm({ ...form, status: newStatus })
                 }
                 roles={status}
-                w="238px"
+                w="246px"
                 label="Status"
                 placeholder="Select status"
                 isRequired={false}
