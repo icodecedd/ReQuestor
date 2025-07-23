@@ -1,7 +1,6 @@
 import {
   Box,
   Flex,
-  Text,
   Icon,
   Stat,
   StatLabel,
@@ -10,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 
 const StatCard = ({ label, value, icon, loading = false }) => {
-  
+
   if (loading) {
     return <Skeleton w="100%" h="114px" borderRadius="2xl" />;
   }

@@ -1,6 +1,6 @@
 import { Box, Grid, GridItem } from "@chakra-ui/react";
 import Navbar from "@/components/Navbar";
-import CardStats from "./DashboardStats";
+import DashboardStats from "./DashboardStats";
 import DashboardBanner from "./DashboardBanner";
 import BarGraph from "./BarGraph";
 import PieGraph from "./PieGraph";
@@ -13,7 +13,7 @@ const DashboardPage = () => {
     <Box>
       <Navbar pageName={"Overview"} />
       <DashboardBanner />
-      <CardStats />
+      <DashboardStats />
       <Grid
         templateColumns={{
           base: "1fr", // Mobile: single column

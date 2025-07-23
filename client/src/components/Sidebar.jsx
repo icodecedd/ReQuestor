@@ -8,10 +8,10 @@ import {
   Image,
   Divider,
 } from "@chakra-ui/react";
-import { FiMenu, FiLogOut } from "react-icons/fi";
+import { FiLogOut, FiSidebar } from "react-icons/fi";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
-import logo from "@/assets/reserveq.svg";
+import logo from "@/assets/requestor.svg";
 
 const Sidebar = ({ navItems }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -27,22 +27,30 @@ const Sidebar = ({ navItems }) => {
       top="0"
     >
       <Flex
-        justify={collapsed ? "center" : "space-between"}
+        justify={collapsed ? "center" : "left"}
         align="center"
         borderBottom="1px solid #e2e8f0"
         p={3}
       >
-        {!collapsed && <Image src={logo} boxSize="50px" />}
+        {!collapsed && <Image src={logo} boxSize="40px" />}
         {!collapsed && (
-          <Text fontWeight="bold" mr={10}>
-            RESERVEQ
+          <Text
+            fontWeight="bold"
+            mr={5}
+            fontSize={20}
+            bgGradient="linear-gradient(to bottom, #800020 0%, #b86575 100%)"
+            bgClip="text"
+          >
+            ReQuestor
           </Text>
         )}
         <IconButton
-          icon={<FiMenu fontSize={20} />}
+          icon={<FiSidebar fontSize={20} />}
           size="md"
+          variant="ghost"
           onClick={() => setCollapsed(!collapsed)}
           aria-label="Toggle sidebar"
+          borderRadius="md"
         />
       </Flex>
 
@@ -58,8 +66,12 @@ const Sidebar = ({ navItems }) => {
             label={collapsed ? label : ""}
             placement="right"
             key={label}
-            borderRadius={"md"}
+            borderRadius="md"
             hasArrow
+            bg="white"
+            color="black"
+            border="1px solid #e5e5e5"
+            boxShadow="sm"
           >
             <NavLink to={path}>
               {({ isActive }) => (

@@ -11,15 +11,15 @@ import { GoFilter } from "react-icons/go";
 import { FiCheck } from "react-icons/fi";
 import { useState } from "react";
 
-const roles = ["All Roles", "Admin", "Student"];
+const statuses = ["All Status", "Active", "Inactive", "Suspended"];
 
-export function RoleFilterDropdown({ onChange }) {
-  const [selectedRole, setSelectedRole] = useState("All Roles");
+export function StatusFilterDropdown({ onChange }) {
+  const [selectedStatus, setSelectedStatus] = useState("All Status");
 
-  const handleSelect = (role) => {
-    setSelectedRole(role);
+  const handleSelect = (status) => {
+    setSelectedStatus(status);
     if (onChange) {
-      onChange(role === "All Roles" ? "All Roles" : role);
+      onChange(status === "All Status" ? "All Status" : status);
     }
   };
 
@@ -37,15 +37,15 @@ export function RoleFilterDropdown({ onChange }) {
         w="130px"
         textAlign="left"
       >
-        {selectedRole}
+        {selectedStatus}
       </MenuButton>
       <MenuList borderRadius="xl" p={1} minW="120px">
-        {roles.map((role) => {
-          const isSelected = selectedRole === role;
+        {statuses.map((status) => {
+          const isSelected = selectedStatus === status;
           return (
             <MenuItem
-              key={role}
-              onClick={() => handleSelect(role)}
+              key={status}
+              onClick={() => handleSelect(status)}
               bg={isSelected ? "#800000" : "transparent"}
               color={isSelected ? "white" : "black"}
               borderRadius="lg"
@@ -64,7 +64,7 @@ export function RoleFilterDropdown({ onChange }) {
               py={2}
             >
               <Flex align="center" justify="space-between" w="100%">
-                <Text fontSize="14px">{role}</Text>
+                <Text fontSize="14px">{status}</Text>
                 {isSelected && <FiCheck />}
               </Flex>
             </MenuItem>
