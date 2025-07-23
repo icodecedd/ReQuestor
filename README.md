@@ -1,4 +1,4 @@
-# **ReQuest: Reservation Queue System for Classroom Equipment**  
+# **ReQuestor: Reservation Queue System for Classroom Equipment**  
 _"Smart Requests, Seamless Reservations."_
 
 ---
@@ -19,10 +19,11 @@ ReQuest streamlines how academic institutions (e.g., PUP San Juan) manage equipm
 ---
 
 ## 🛠 **Tech Stack (Planned)**  
-- **Frontend:** React with Chakra UI
-- **Backend:** Node.js / Express
+- **Frontend:** React + Chakra UI + Vite
+- **Backend:** Node.js / Expressa
 - **Database:** Supabase (PostgreSQL)
-- **Tools:** Git
+- **Auth:** JWT
+- **Repo & CI:** GitHub Actions
 
 ---
 
