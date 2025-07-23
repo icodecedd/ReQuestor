@@ -6,7 +6,7 @@ export const getAllEquipment = async (req, res) => {
       SELECT * FROM equipments
       `);
 
-    res.status(200).json({ sucess: true, data: equipments });
+    res.status(200).json({ sucess: true, data: equipments.rows });
   } catch (error) {
     console.log("Error in getAllEquipment Function", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -14,22 +14,41 @@ export const getAllEquipment = async (req, res) => {
 };
 
 export const createEquipment = async (req, res) => {
-  const { name, type, status } = req.body;
+  const {
+    name,
+    type,
+    status,
+    location,
+    serial_number,
+    condition,
+    description,
+  } = req.body;
 
-  if (!name || !type || !status) {
+  if (!name || !type || !status || !location) {
     return res
       .status(400)
-      .json({ success: false, message: "Name, type, and status are required" });
+      .json({
+        success: false,
+        message: "Name, type, status, and location are required",
+      });
   }
 
   try {
     const result = await pool.query(
       `
-      INSERT INTO equipments (name, type, status) 
-      VALUES ($1, $2, $3)
-      RETURNING *
+      INSERT INTO equipments (name, type, status, location, serial_number, condition, description)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING id, name, type, status, location, serial_number, condition, description;
       `,
-      [name, type, status || "available"]
+      [
+        name,
+        type,
+        status || "Available",
+        location,
+        serial_number,
+        condition,
+        description,
+      ]
     );
 
     const createdEquipment = result.rows[0];
@@ -43,12 +62,20 @@ export const createEquipment = async (req, res) => {
 
 export const updateEquipment = async (req, res) => {
   const { id } = req.params;
-  const { name, type, status } = req.body;
+  const {
+    name,
+    type,
+    status,
+    location,
+    serial_number,
+    condition,
+    description,
+  } = req.body;
 
-  if (!name || !type || !status) {
+  if (!name || !type || !status || !location) {
     return res.status(400).json({
       success: false,
-      message: "Name, type, and status are required.",
+      message: "Name, type, status, and location are required.",
     });
   }
 
@@ -56,11 +83,11 @@ export const updateEquipment = async (req, res) => {
     const result = await pool.query(
       `
       UPDATE public.equipments
-      SET name = $1, type = $2, status = $3
-      WHERE id = $4
-      RETURNING id, name, type, status;
+      SET name = $1, type = $2, status = $3, location = $4, serial_number = $5, condition = $6, description = $7
+      WHERE id = $8
+      RETURNING id, name, type, status, location, serial_number, condition, description;
       `,
-      [name, type, status, id]
+      [name, type, status, location, serial_number, condition, description, id]
     );
 
     if (result.rowCount === 0) {

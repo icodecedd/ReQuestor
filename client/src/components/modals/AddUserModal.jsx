@@ -21,7 +21,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { FiUserPlus } from "react-icons/fi";
-import { RoleModalDropdown } from "@/components/dropdowns/ModalDropdown";
+import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
 import { useState } from "react";
 import useUserStore from "@/store/usersStore";
 import PasswordInput from "../inputs/PasswordInput";
@@ -125,8 +125,10 @@ const AddUserModal = ({ isOpen, onClose }) => {
                 _selected={{
                   bg: "white",
                   color: "black",
-                  borderRadius: "lg",
+                  borderRadius: "md",
+                  boxShadow: "0 0.5px 1px rgba(0, 0, 0, 0.15)",
                 }}
+                borderRadius="md"
                 color="#71717e"
                 fontWeight="bold"
               >
@@ -136,8 +138,10 @@ const AddUserModal = ({ isOpen, onClose }) => {
                 _selected={{
                   bg: "white",
                   color: "black",
-                  borderRadius: "lg",
+                  borderRadius: "md",
+                  boxShadow: "0 0.5px 1px rgba(0, 0, 0, 0.15)",
                 }}
+                borderRadius="md"
                 color="#71717e"
                 fontWeight="bold"
               >
@@ -175,7 +179,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
               <TabPanel>
                 <Box h="170px">
                   <Flex gap={5}>
-                    <RoleModalDropdown
+                    <ModalDropdown
                       value={form.role}
                       onChange={(newRole) =>
                         setForm({ ...form, role: newRole })
@@ -185,7 +189,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
                       label="Role"
                       placeholder="Select role"
                     />
-                    <RoleModalDropdown
+                    <ModalDropdown
                       value={form.status}
                       onChange={(newStatus) =>
                         setForm({ ...form, status: newStatus })

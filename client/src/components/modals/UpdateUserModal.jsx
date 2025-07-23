@@ -16,7 +16,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { FiEdit } from "react-icons/fi";
-import { RoleModalDropdown } from "@/components/dropdowns/ModalDropdown";
+import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
 import { useState, useEffect } from "react";
 import useUserStore from "@/store/usersStore";
 
@@ -123,7 +123,7 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
           ))}
           <Box h="140px">
             <Flex gap={5} p={2}>
-              <RoleModalDropdown
+              <ModalDropdown
                 value={form.role}
                 onChange={(newRole) => setForm({ ...form, role: newRole })}
                 roles={roles}
@@ -131,7 +131,7 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
                 label="Role"
                 placeholder="Select role"
               />
-              <RoleModalDropdown
+              <ModalDropdown
                 value={form.status}
                 onChange={(newStatus) =>
                   setForm({ ...form, status: newStatus })

@@ -13,7 +13,7 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { FiCheck } from "react-icons/fi";
 import { useState, useEffect } from "react";
 
-export function RoleModalDropdown({
+export function ModalDropdown({
   value = "",
   onChange,
   roles,

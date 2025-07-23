@@ -6,7 +6,7 @@ export const getAllRequests = async (req, res) => {
     const requests = await pool.query(
       "SELECT * FROM requests ORDER BY created_at DESC"
     );
-    res.status(200).json({ success: true, data: requests });
+    res.status(200).json({ success: true, data: requests.rows });
   } catch (error) {
     console.log("Error in getAllRequests Function", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -19,7 +19,7 @@ export const getRecentRequests = async (req, res) => {
     const request = await pool.query(
       "SELECT * FROM requests ORDER BY created_at DESC LIMIT 5"
     );
-    res.status(200).json({ success: true, data: request });
+    res.status(200).json({ success: true, data: request.rows });
   } catch (error) {
     console.log("Error in getRecentRequests Function", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });

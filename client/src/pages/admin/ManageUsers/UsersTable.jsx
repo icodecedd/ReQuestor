@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { FiSearch } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
-import { RoleDropdown } from "@/components/dropdowns/RoleFilterDropdown";
+import { RoleFilterDropdown } from "@/components/dropdowns/RoleFilterDropdown";
 import ActionButton from "@/components/buttons/ActionButton";
 import { useEffect, useMemo, useState } from "react";
 import useUserStore from "@/store/usersStore";
@@ -31,6 +31,7 @@ import AddUserModal from "@/components/modals/AddUserModal";
 import UpdateUserModal from "@/components/modals/UpdateUserModal";
 import DeleteUserModal from "@/components/modals/DeleteUserModal";
 import ToggleStatusModal from "@/components/modals/ToggleStatusModal";
+import { StatusFilterDropdown } from "@/components/dropdowns/StatusFilterDropdown";
 
 const getColorScheme = (status) => {
   switch (status) {
@@ -95,6 +96,8 @@ const UsersTable = () => {
   }
   const [roleFilter, setRoleFilter] = useState("All Roles");
 
+  const [statusFilter, setStatusFilter] = useState("All Status");
+
   {
     /* Search Filter */
   }
@@ -104,14 +107,17 @@ const UsersTable = () => {
       const matchesRole =
         roleFilter === "All Roles" ? true : user.role === roleFilter;
 
+      const matchesStatus =
+        statusFilter === "All Status" ? true : user.status === statusFilter;
+
       const matchesSearch = searchFilter
         ? user.username.toLowerCase().includes(searchFilter.toLowerCase()) ||
           user.email.toLowerCase().includes(searchFilter.toLowerCase())
         : true;
 
-      return matchesRole && matchesSearch;
+      return matchesRole && matchesStatus && matchesSearch;
     });
-  }, [users, roleFilter, searchFilter]); // Only recalculates when these change
+  }, [users, roleFilter, statusFilter, searchFilter]); // Only recalculates when these change
 
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -160,7 +166,8 @@ const UsersTable = () => {
           </InputGroup>
 
           {/*Filter Button*/}
-          <RoleDropdown onChange={setRoleFilter} />
+          <RoleFilterDropdown onChange={setRoleFilter} />
+          <StatusFilterDropdown onChange={setStatusFilter} />
 
           {/*Add User Button*/}
           <Button
