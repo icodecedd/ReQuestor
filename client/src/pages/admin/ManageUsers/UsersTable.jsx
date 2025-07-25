@@ -21,8 +21,8 @@ import {
 } from "@chakra-ui/react";
 import { FiSearch } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
-import { RoleFilterDropdown } from "@/components/dropdowns/RoleFilterDropdown";
-import ActionButton from "@/components/buttons/ActionButton";
+import { UserRoleDropdown } from "@/components/dropdowns/UserRoleDropdown";
+import UserActionButton from "@/components/buttons/UserActionButton";
 import { useEffect, useMemo, useState } from "react";
 import useUserStore from "@/store/usersStore";
 import { getDateOnly } from "@/utils/getDate";
@@ -31,7 +31,7 @@ import AddUserModal from "@/components/modals/AddUserModal";
 import UpdateUserModal from "@/components/modals/UpdateUserModal";
 import DeleteUserModal from "@/components/modals/DeleteUserModal";
 import ToggleStatusModal from "@/components/modals/ToggleStatusModal";
-import { StatusFilterDropdown } from "@/components/dropdowns/StatusFilterDropdown";
+import { UserStatusDropdown } from "@/components/dropdowns/UserStatusDropdown";
 
 const getColorScheme = (status) => {
   switch (status) {
@@ -92,16 +92,14 @@ const UsersTable = () => {
   } = useDisclosure();
 
   {
-    /* Role Filter */
+    /* User Filters */
   }
   const [roleFilter, setRoleFilter] = useState("All Roles");
 
   const [statusFilter, setStatusFilter] = useState("All Status");
 
-  {
-    /* Search Filter */
-  }
   const [searchFilter, setSearchFilter] = useState("");
+
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const matchesRole =
@@ -166,8 +164,8 @@ const UsersTable = () => {
           </InputGroup>
 
           {/*Filter Button*/}
-          <RoleFilterDropdown onChange={setRoleFilter} />
-          <StatusFilterDropdown onChange={setStatusFilter} />
+          <UserRoleDropdown onChange={setRoleFilter} />
+          <UserStatusDropdown onChange={setStatusFilter} />
 
           {/*Add User Button*/}
           <Button
@@ -175,7 +173,8 @@ const UsersTable = () => {
             bg="#800000"
             color="white"
             borderRadius="xl"
-            _hover={{ bg: "#832222" }}
+            _hover={{ bg: "#a12828" }}
+            transition="background-color 0.2s ease-in-out"
             gap={1}
             p={3}
             fontSize="95%"
@@ -253,7 +252,7 @@ const UsersTable = () => {
                     </Td>
                     <Td>{getDateOnly(user.created_at)}</Td>
                     <Td>
-                      <ActionButton
+                      <UserActionButton
                         status={user.status}
                         onEdit={() => handleEdit(user)}
                         onResetPassword={() => handleResetPassword(user)}

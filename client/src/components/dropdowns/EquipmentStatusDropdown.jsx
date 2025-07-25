@@ -11,13 +11,13 @@ import { GoFilter } from "react-icons/go";
 import { FiCheck } from "react-icons/fi";
 import { useState } from "react";
 
-const statuses = ["All Status", "Active", "Inactive", "Suspended"];
+const statuses = ["All Status", "Available", "In Use", "Reserved"];
 
-export function StatusFilterDropdown({ onChange }) {
-  const [selectedStatus, setSelectedStatus] = useState("All Status");
+export function EquipmentStatusDropdown({ onChange }) {
+  const [selectedEqStatus, setSelectedEqStatus] = useState("All Status");
 
   const handleSelect = (status) => {
-    setSelectedStatus(status);
+    setSelectedEqStatus(status);
     if (onChange) {
       onChange(status === "All Status" ? "All Status" : status);
     }
@@ -37,11 +37,11 @@ export function StatusFilterDropdown({ onChange }) {
         w="130px"
         textAlign="left"
       >
-        {selectedStatus}
+        {selectedEqStatus}
       </MenuButton>
       <MenuList borderRadius="xl" p={1} minW="120px">
         {statuses.map((status) => {
-          const isSelected = selectedStatus === status;
+          const isSelected = selectedEqStatus === status;
           return (
             <MenuItem
               key={status}

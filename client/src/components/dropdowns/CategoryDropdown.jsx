@@ -11,15 +11,15 @@ import { GoFilter } from "react-icons/go";
 import { FiCheck } from "react-icons/fi";
 import { useState } from "react";
 
-const roles = ["All Roles", "Admin", "Student"];
+const categories = ["All Categories", "Projector", "White Screen", "AVR"];
 
-export function RoleFilterDropdown({ onChange }) {
-  const [selectedRole, setSelectedRole] = useState("All Roles");
+export function CategoryDropdown({ onChange }) {
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
 
-  const handleSelect = (role) => {
-    setSelectedRole(role);
+  const handleSelect = (category) => {
+    setSelectedCategory(category);
     if (onChange) {
-      onChange(role === "All Roles" ? "All Roles" : role);
+      onChange(category === "All Categories" ? "All Categories" : category);
     }
   };
 
@@ -34,22 +34,22 @@ export function RoleFilterDropdown({ onChange }) {
         color="black"
         fontSize="15px"
         _hover={{ bg: "#f7eaea" }}
-        w="130px"
+        w="160px"
         textAlign="left"
       >
-        {selectedRole}
+        {selectedCategory}
       </MenuButton>
-      <MenuList borderRadius="xl" p={1} minW="120px">
-        {roles.map((role) => {
-          const isSelected = selectedRole === role;
+      <MenuList borderRadius="xl" p={1} minW="150px">
+        {categories.map((category) => {
+          const isSelected = selectedCategory === category;
           return (
             <MenuItem
-              key={role}
-              onClick={() => handleSelect(role)}
+              key={category}
+              onClick={() => handleSelect(category)}
               bg={isSelected ? "#800000" : "transparent"}
               color={isSelected ? "white" : "black"}
               borderRadius="lg"
-              w="120px"
+              w="150px"
               _hover={
                 isSelected
                   ? {
@@ -64,7 +64,7 @@ export function RoleFilterDropdown({ onChange }) {
               py={2}
             >
               <Flex align="center" justify="space-between" w="100%">
-                <Text fontSize="14px">{role}</Text>
+                <Text fontSize="14px">{category}</Text>
                 {isSelected && <FiCheck />}
               </Flex>
             </MenuItem>

@@ -114,7 +114,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
         <ModalBody>
           <Tabs variant="unstyle" size="sm">
             <TabList
-              bg="#f4f4f5"
+              bg="#e9e9e9ff"
               borderRadius="lg"
               display="inline-flex"
               p={1.5}
