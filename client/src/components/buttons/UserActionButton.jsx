@@ -19,7 +19,7 @@ const hoverStyle = {
   borderRadius: "lg",
 };
 
-const ActionButton = ({
+const UserActionButton = ({
   status,
   onEdit,
   onResetPassword,
@@ -81,4 +81,4 @@ const ActionButton = ({
   );
 };
 
-export default ActionButton;
+export default UserActionButton;
