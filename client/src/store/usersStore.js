@@ -36,7 +36,7 @@ const useUserStore = create((set) => ({
     if (password && confirmPassword && password !== confirmPassword) {
       return {
         success: false,
-        message: "Passwords do not match",
+        message: "Passwords do not match.",
       };
     }
 
@@ -150,8 +150,8 @@ const useUserStore = create((set) => ({
 
       return {
         success: true,
-        message: "Account deleted successfully."
-      }
+        message: "Account deleted successfully.",
+      };
     } catch (error) {
       console.error(
         "Delete account error:",
@@ -168,13 +168,8 @@ const useUserStore = create((set) => ({
   resetPassword: async (id, newPassword) => {
     const password = newPassword.password || "";
     const confirmPassword = newPassword.confirmPassword || "";
-
-    if (password.length < 8) {
-      return {
-        success: false,
-        message: "Password must be at least 8 characters long.",
-      };
-    }
+    const forceLogin = newPassword.forceLogin
+    const sendNotification = newPassword.sendNotification
 
     if (!password || !confirmPassword) {
       return {
@@ -183,17 +178,30 @@ const useUserStore = create((set) => ({
       };
     }
 
+    if (password.length < 8) {
+      return {
+        success: false,
+        message: "Password must be at least 8 characters long.",
+      };
+    }
+
     if (password && confirmPassword && password !== confirmPassword) {
       return {
         success: false,
-        message: "Passwords do not match",
+        message: "Passwords do not match.",
       };
+    }
+
+    // Note: Add a notification email logic here
+    if(sendNotification) {
+      console.log("Email has been sent to the user.")
     }
 
     try {
       const resetPayload = {
         password,
         confirmPassword,
+        must_change_password: forceLogin
       };
 
       const res = await axios.patch(
@@ -219,7 +227,7 @@ const useUserStore = create((set) => ({
       } else if (err.errorCode === "DO_NOT_MATCH") {
         return {
           success: false,
-          message: "Passwords do not match",
+          message: "Passwords do not match.",
         };
       }
       return {

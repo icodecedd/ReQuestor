@@ -47,7 +47,7 @@ const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="xl"
+      size="lg"
       motionPreset="slideInBottom"
     >
       <ModalOverlay />

@@ -19,6 +19,7 @@ import {
   TabPanel,
   useToast,
   Box,
+  Divider,
 } from "@chakra-ui/react";
 import { FiUserPlus } from "react-icons/fi";
 import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
@@ -26,7 +27,7 @@ import { useState } from "react";
 import useUserStore from "@/store/usersStore";
 import PasswordInput from "../inputs/PasswordInput";
 
-const fields = [
+const userFields = [
   { name: "username", label: "Username", placeholder: "Enter username" },
   { name: "email", label: "Email", placeholder: "Enter email" },
   { name: "password", label: "Password", placeholder: "Enter password" },
@@ -37,9 +38,8 @@ const fields = [
   },
 ];
 
-const roles = ["Admin", "Student"];
-const department = ["BSIT", "BSPSYCH", "BSHM", "DIT", "BSA", "BSFM"];
-const status = ["Active", "Inactive", "Suspended"];
+const roleOptions = ["Admin", "Student"];
+const statusOptions = ["Active", "Inactive", "Suspended"];
 
 const AddUserModal = ({ isOpen, onClose }) => {
   const addUser = useUserStore((state) => state.addUser);
@@ -81,7 +81,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
         password: "",
         confirmPassword: "",
         role: "",
-        status: "",
+        status: "Active",
       });
     }
   };
@@ -90,21 +90,33 @@ const AddUserModal = ({ isOpen, onClose }) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="xl"
+      size="lg"
       motionPreset="slideInBottom"
     >
       <ModalOverlay />
-      <ModalContent borderRadius="xl">
+      <ModalContent borderRadius="xl" overflow="hidden">
         <ModalHeader>
-          <Flex color="gray.900" gap={3} align="center">
-            <FiUserPlus color="#800000" />
-            <Text fontSize="lg" mt={0.5}>
-              Add New User
-            </Text>
+          <Flex color="gray.900" gap={3} align="center" mb={3}>
+            <Box
+              bg="white"
+              color="#f0f0f0ff"
+              borderRadius="md"
+              boxShadow="0 2px 8px rgba(0,0,0,0.12)"
+              border="1px solid #e2e8f0"
+              p={2}
+            >
+              <FiUserPlus color="#800000" />
+            </Box>
+            <Box>
+              <Text fontSize="lg" mt={0.5}>
+                Add New User
+              </Text>
+              <Text color="gray.700" fontWeight="normal" fontSize="14px">
+                Create a new user account for the system.
+              </Text>
+            </Box>
           </Flex>
-          <Text color="gray.700" fontWeight="normal" fontSize="14px">
-            Create a new user account for the system.
-          </Text>
+          <Divider w="110%" ml={-6} />
         </ModalHeader>
         <ModalCloseButton
           size="md"
@@ -112,15 +124,8 @@ const AddUserModal = ({ isOpen, onClose }) => {
           borderRadius="lg"
         />
         <ModalBody>
-          <Tabs variant="unstyle" size="sm">
-            <TabList
-              bg="#e9e9e9ff"
-              borderRadius="lg"
-              display="inline-flex"
-              p={1.5}
-              pr={1.5}
-              pl={1.5}
-            >
+          <Tabs isFitted variant="unstyle" size="sm">
+            <TabList bg="#e9e9e9ff" borderRadius="lg" p={1.5} pr={1.5} pl={1.5}>
               <Tab
                 _selected={{
                   bg: "white",
@@ -150,7 +155,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
             </TabList>
             <TabPanels>
               <TabPanel>
-                {fields.slice(0, 2).map((field, index) => (
+                {userFields.slice(0, 2).map((field, index) => (
                   <FormControl isRequired mb={4} key={index}>
                     <FormLabel>{field.label}</FormLabel>
                     <Input
@@ -163,7 +168,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
                     />
                   </FormControl>
                 ))}
-                {fields.slice(2).map((field, index) => (
+                {userFields.slice(2).map((field, index) => (
                   <FormControl isRequired mb="4" key={index}>
                     <FormLabel>{field.label}</FormLabel>
                     <PasswordInput
@@ -184,8 +189,8 @@ const AddUserModal = ({ isOpen, onClose }) => {
                       onChange={(newRole) =>
                         setForm({ ...form, role: newRole })
                       }
-                      roles={roles}
-                      w="238px"
+                      roles={roleOptions}
+                      w={206}
                       label="Role"
                       placeholder="Select role"
                     />
@@ -194,8 +199,8 @@ const AddUserModal = ({ isOpen, onClose }) => {
                       onChange={(newStatus) =>
                         setForm({ ...form, status: newStatus })
                       }
-                      roles={status}
-                      w="238px"
+                      roles={statusOptions}
+                      w={206}
                       label="Status"
                       placeholder="Select status"
                       isRequired={false}
@@ -221,7 +226,8 @@ const AddUserModal = ({ isOpen, onClose }) => {
             bg="#800000"
             color="white"
             borderRadius="xl"
-            _hover={{ bg: "#832222" }}
+            _hover={{ bg: "#a12828" }}
+            transition="background-color 0.2s ease-in-out"
             onClick={handleSubmit}
           >
             Create User

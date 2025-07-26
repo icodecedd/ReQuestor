@@ -1,9 +1,12 @@
 import {
   Box,
   Button,
+  Checkbox,
+  Divider,
   Flex,
   FormControl,
   FormLabel,
+  HStack,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -14,7 +17,7 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { FiAlertTriangle } from "react-icons/fi";
+import { FiAlertTriangle, FiShield } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import useUserStore from "@/store/usersStore";
 import PasswordInput from "../inputs/passwordInput";
@@ -34,6 +37,8 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
   const [form, setForm] = useState({
     password: "",
     confirmPassword: "",
+    forceLogin: false,
+    sendNotification: true
   });
 
   useEffect(() => {
@@ -41,9 +46,16 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
       setForm({
         password: "",
         confirmPassword: "",
+        forceLogin: false,
+        sendNotification: true,
       });
     }
   }, [user]);
+
+  const handleCheckbox =(e) => {
+    const {name, checked} = e.target;
+    setForm((prev) => ({...prev, [name]: checked}))
+  }
 
   const handleResetPassword = async () => {
     const result = await resetPassword(user.id, form);
@@ -63,6 +75,8 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
       setForm({
         password: "",
         confirmPassword: "",
+        forceLogin: false,
+        sendNotification: true,
       });
     }
   };
@@ -71,21 +85,33 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="xl"
+      size="lg"
       motionPreset="slideInBottom"
     >
       <ModalOverlay />
-      <ModalContent borderRadius="xl">
+      <ModalContent borderRadius="xl" overflow="hidden">
         <ModalHeader>
-          <Flex color="gray.900" gap={3} align="center">
-            <FiAlertTriangle color="#800000" />
-            <Text fontSize="lg" mt={0.5}>
-              Reset Password
-            </Text>
+          <Flex color="gray.900" gap={3} align="center" mb={3}>
+            <Box
+              bg="white"
+              color="#f0f0f0ff"
+              borderRadius="md"
+              boxShadow="0 2px 8px rgba(0,0,0,0.12)"
+              border="1px solid #e2e8f0"
+              p={2}
+            >
+              <FiAlertTriangle color="#800000" />
+            </Box>
+            <Box>
+              <Text fontSize="lg" mt={0.5}>
+                Reset Password
+              </Text>
+              <Text color="gray.700" fontWeight="normal" fontSize="14px">
+                Reset password for <strong>{user?.email}</strong>
+              </Text>
+            </Box>
           </Flex>
-          <Text color="gray.700" fontWeight="normal" fontSize="14px">
-            Reset password for <strong>{user?.email}</strong>
-          </Text>
+          <Divider w="110%" ml={-6} />
         </ModalHeader>
         <ModalCloseButton
           size="md"
@@ -105,6 +131,46 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
               />
             </FormControl>
           ))}
+          <Box pb={4}>
+            <Checkbox
+              colorScheme="red"
+              fontWeight="medium"
+              name="forceLogin"
+              onChange={handleCheckbox}
+              sx={{
+                "& span.chakra-checkbox__control": {
+                  borderRadius: "full",
+                },
+              }}
+            >
+              Force password change on next login
+            </Checkbox>
+            <Text pl={6} fontSize="xs" color="gray.500">
+              User will be required to set a new password when they next sign
+              in.
+            </Text>
+          </Box>
+
+          <Box pb={4}>
+            <Checkbox
+              defaultChecked
+              name="sendNotification"
+              colorScheme="red"
+              fontWeight="medium"
+              onChange={handleCheckbox}
+              sx={{
+                "& span.chakra-checkbox__control": {
+                  borderRadius: "full",
+                },
+              }}
+            >
+              Send password reset notification
+            </Checkbox>
+            <Text pl={6} fontSize="xs" color="gray.500">
+              User will receive an email notification about the password change.
+            </Text>
+          </Box>
+
           <Box
             bg="#fffbeb"
             color="#ffe372ff"
@@ -112,9 +178,15 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
             borderRadius="xl"
             p={2.5}
           >
-            <Text color="#998431ff">
-              <strong>Important:</strong> After the password reset, the user will be logged out
-              of all sessions and must change their password on the next login.
+            <HStack>
+              <FiShield color="#92400e" fontSize="20px" />
+              <Text color="#92400e">
+                <strong>Security Notice:</strong>
+              </Text>
+            </HStack>
+            <Text color="#bd6826" pl={7} fontSize="14px">
+              The user will be automatically logged out of all active sessions
+              after the password reset.
             </Text>
           </Box>
         </ModalBody>
@@ -132,7 +204,8 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
             bg="#800000"
             color="white"
             borderRadius="xl"
-            _hover={{ bg: "#832222" }}
+            _hover={{ bg: "#a12828" }}
+            transition="background-color 0.2s ease-in-out"
             onClick={handleResetPassword}
           >
             Reset Password

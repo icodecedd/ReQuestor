@@ -14,6 +14,7 @@ import {
   Input,
   useToast,
   Box,
+  Divider,
 } from "@chakra-ui/react";
 import { FiEdit } from "react-icons/fi";
 import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
@@ -85,28 +86,40 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="xl"
+      size="lg"
       motionPreset="slideInBottom"
     >
       <ModalOverlay />
-      <ModalContent borderRadius="xl">
+      <ModalContent borderRadius="xl" overflow="hidden">
         <ModalHeader>
-          <Flex color="gray.900" gap={3} align="center">
-            <FiEdit color="#800000" />
-            <Text fontSize="lg" mt={0.5}>
-              Edit User
-            </Text>
+          <Flex color="gray.900" gap={3} align="center" mb={3}>
+            <Box
+              bg="white"
+              color="#f0f0f0ff"
+              borderRadius="md"
+              boxShadow="0 2px 8px rgba(0,0,0,0.12)"
+              border="1px solid #e2e8f0"
+              p={2}
+            >
+              <FiEdit color="#800000" />
+            </Box>
+            <Box>
+              <Text fontSize="lg" mt={0.5}>
+                Edit User
+              </Text>
+              <Text color="gray.700" fontWeight="normal" fontSize="14px">
+                Modify user information and permissions.
+              </Text>
+            </Box>
           </Flex>
-          <Text color="gray.700" fontWeight="normal" fontSize="14px">
-            Modify user information and permissions.
-          </Text>
+          <Divider w="110%" ml={-6} />
         </ModalHeader>
         <ModalCloseButton
           size="md"
           _hover={{ bg: "#f7eaea" }}
           borderRadius="lg"
         />
-        <ModalBody>
+        <ModalBody mt={-2}>
           {fields.map((field, index) => (
             <FormControl isRequired key={index} p={2}>
               <FormLabel>{field.label}</FormLabel>
@@ -121,29 +134,25 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
               />
             </FormControl>
           ))}
-          <Box h="140px">
-            <Flex gap={5} p={2}>
-              <ModalDropdown
-                value={form.role}
-                onChange={(newRole) => setForm({ ...form, role: newRole })}
-                roles={roles}
-                w="246px"
-                label="Role"
-                placeholder="Select role"
-              />
-              <ModalDropdown
-                value={form.status}
-                onChange={(newStatus) =>
-                  setForm({ ...form, status: newStatus })
-                }
-                roles={status}
-                w="246px"
-                label="Status"
-                placeholder="Select status"
-                isRequired={false}
-              />
-            </Flex>
-          </Box>
+          <Flex gap={5} p={2}>
+            <ModalDropdown
+              value={form.role}
+              onChange={(newRole) => setForm({ ...form, role: newRole })}
+              roles={roles}
+              w={206}
+              label="Role"
+              placeholder="Select role"
+            />
+            <ModalDropdown
+              value={form.status}
+              onChange={(newStatus) => setForm({ ...form, status: newStatus })}
+              roles={status}
+              w={206}
+              label="Status"
+              placeholder="Select status"
+              isRequired={false}
+            />
+          </Flex>
         </ModalBody>
         <ModalFooter>
           <Button
@@ -159,7 +168,8 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
             bg="#800000"
             color="white"
             borderRadius="xl"
-            _hover={{ bg: "#832222" }}
+            _hover={{ bg: "#a12828" }}
+            transition="background-color 0.2s ease-in-out"
             onClick={handleUpdate}
           >
             Update User

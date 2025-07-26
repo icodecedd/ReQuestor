@@ -1,6 +1,6 @@
 import { CategoryDropdown } from "@/components/dropdowns/CategoryDropdown";
 import { EquipmentStatusDropdown } from "@/components/dropdowns/EquipmentStatusDropdown";
-import { useEquipmentStore } from "@/store/equipmentStore";
+import useEquipmentStore from "@/store/equipmentStore";
 import { equipment } from "@/data/equipment";
 import {
   Badge,
@@ -31,10 +31,8 @@ import { FiSearch } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
 import EquipmentActionButton from "@/components/buttons/EquipmentActionButton";
 import ViewEquipmentModal from "@/components/modals/ViewEquipmentModal";
-import {
-  getEqStatusColor,
-  getEqConditionColor,
-} from "@/utils/getColorScheme";
+import { getEqStatusColor, getEqConditionColor } from "@/utils/getColorScheme";
+import AddEquipmentModal from "@/components/modals/AddEquipmentModal";
 
 const formatEquipmentId = (id) => {
   return `EQ-${String(id).padStart(3, "0")}`;
@@ -101,6 +99,12 @@ const EquipmentTable = () => {
   const [selectedEquipment, setSelectedEquipment] = useState("");
 
   const {
+    isOpen: isAddOpen,
+    onOpen: onAddOpen,
+    onClose: onAddClose,
+  } = useDisclosure();
+
+  const {
     isOpen: isViewOpen,
     onOpen: onViewOpen,
     onClose: onViewClose,
@@ -145,6 +149,7 @@ const EquipmentTable = () => {
           p={3}
           fontSize="95%"
           w="160px"
+          onClick={() => onAddOpen()}
         >
           <IoAdd size="25px" />
           Add Equipment
@@ -261,7 +266,9 @@ const EquipmentTable = () => {
                               </Td>
                               <Td>
                                 <Badge
-                                  colorScheme={getEqConditionColor(eq.condition)}
+                                  colorScheme={getEqConditionColor(
+                                    eq.condition
+                                  )}
                                   borderRadius="xl"
                                   pl={2}
                                   pr={2}
@@ -273,6 +280,7 @@ const EquipmentTable = () => {
                               <Td>
                                 <EquipmentActionButton
                                   onViewDetails={() => handleViewDetails(eq)}
+                                  d
                                 />
                               </Td>
                             </Tr>
@@ -297,6 +305,7 @@ const EquipmentTable = () => {
         </Tabs>
       </Box>
       {/* Modals will be placed here */}
+      <AddEquipmentModal isOpen={isAddOpen} onClose={onAddClose} />
       <ViewEquipmentModal
         isOpen={isViewOpen}
         onClose={onViewClose}
