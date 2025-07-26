@@ -3,13 +3,13 @@ import { hashPassword } from "../helpers/password.js";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const result = await pool.query(
+    const users = await pool.query(
       `SELECT id, username, email, role, status, must_change_password, last_login, created_at
        FROM users
        ORDER BY created_at DESC;`
     );
 
-    return res.status(200).json({ success: true, data: result.rows });
+    return res.status(200).json({ success: true, data: users.rows });
   } catch (error) {
     console.error("Error in getAllUsers:", error);
     return res
@@ -57,14 +57,19 @@ export const addUser = async (req, res) => {
 
     const password_hashed = await hashPassword(password_hash);
 
-    const result = await pool.query(
-      `
+    const query = `
       INSERT INTO users (username, email, password_hash, role, status)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING id, username, email, role, status, must_change_password, last_login, created_at;
-      `,
-      [username, email, password_hashed, role, status || "Active"]
-    );
+      `;
+
+    const result = await pool.query(query, [
+      username,
+      email,
+      password_hashed,
+      role,
+      status || "Active",
+    ]);
 
     const createdUser = result.rows[0];
 
@@ -120,20 +125,22 @@ export const updateUser = async (req, res) => {
 
     if (username) {
       updates.push(`username = $${index++}`);
-      values.push(username);
+      values.push(username.trim());
     }
     if (email) {
       updates.push(`email = $${index++}`);
-      values.push(email);
+      values.push(email.trim());
     }
     if (role) {
       updates.push(`role = $${index++}`);
-      values.push(role);
+      values.push(role.trim());
     }
     if (typeof status !== "undefined") {
       updates.push(`status = $${index++}`);
-      values.push(status);
+      values.push(status.trim());
     }
+
+    values.push(id);
 
     // Finalize query
     const query = `
@@ -142,7 +149,6 @@ export const updateUser = async (req, res) => {
       WHERE id = $${index}
       RETURNING id, username, email, role, status, must_change_password, last_login, created_at;
     `;
-    values.push(id);
 
     const result = await pool.query(query, values);
 
@@ -152,7 +158,9 @@ export const updateUser = async (req, res) => {
         .json({ success: false, message: "User not found." });
     }
 
-    res.status(200).json({ success: true, data: result.rows[0] });
+    const updatedUser = result.rows[0];
+
+    res.status(200).json({ success: true, data: updatedUser });
   } catch (error) {
     console.error("Error in updateUser:", error);
 
@@ -189,12 +197,12 @@ export const deleteUser = async (req, res) => {
         .json({ success: false, message: "User ID is required." });
     }
 
-    const { rows } = await pool.query(
-      `DELETE FROM users
-       WHERE id = $1
-       RETURNING id, username, email, role, status;`,
-      [id]
-    );
+    const query = `
+      DELETE FROM users
+      WHERE id = $1
+      RETURNING id, username, email, role, status;`;
+
+    const { rows } = await pool.query(query, [id]);
 
     if (rows.length === 0) {
       return res
@@ -202,7 +210,9 @@ export const deleteUser = async (req, res) => {
         .json({ success: false, message: "User not found." });
     }
 
-    return res.status(200).json({ success: true, data: rows[0] });
+    const deletedUser = rows[0];
+
+    return res.status(200).json({ success: true, data: deletedUser });
   } catch (error) {
     console.error("Error in deleteUser:", error);
     return res
@@ -269,13 +279,11 @@ export const resetUserPasswordManual = async (req, res) => {
     }
 
     if (password !== confirmPassword) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          errorCode: "DO_NOT_MATCH",
-          message: "Passwords do not match.",
-        });
+      return res.status(400).json({
+        success: false,
+        errorCode: "DO_NOT_MATCH",
+        message: "Passwords do not match.",
+      });
     }
 
     // Hash password

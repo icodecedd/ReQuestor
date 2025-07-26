@@ -64,7 +64,7 @@ const useUserStore = create((set) => ({
       );
 
       const err = error.response?.data;
-      if (err?.errorCode === "EMAIL_EXISTS") {
+      if (err.errorCode === "EMAIL_EXISTS") {
         return {
           success: false,
           message: err.message,

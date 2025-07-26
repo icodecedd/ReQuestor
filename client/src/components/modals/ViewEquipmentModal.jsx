@@ -1,4 +1,4 @@
-import { getEqStatusColor } from "@/utils/getColorScheme";
+import { getEqStatusColor, getEqConditionColor } from "@/utils/getColorScheme";
 import {
   Badge,
   Box,
@@ -14,12 +14,35 @@ import {
   ModalOverlay,
   Spacer,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import React from "react";
 import { BsProjector } from "react-icons/bs";
 import { MdOutlineViewInAr } from "react-icons/md";
+import { FaChalkboardTeacher } from "react-icons/fa";
+import { PiProjectorScreenChart } from "react-icons/pi";
+import {
+  FiInfo,
+  FiMapPin,
+  FiCheckCircle,
+  FiActivity,
+  FiBox,
+} from "react-icons/fi";
 
 const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
+  const selectedCategory = (type) => {
+    switch (type) {
+      case "Projector":
+        return <BsProjector fontSize="32px" color="white" />;
+      case "White Screen":
+        return <PiProjectorScreenChart fontSize="32px" color="white" />;
+      case "AVR":
+        return <FaChalkboardTeacher fontSize="32px" color="white" />;
+      default:
+        return <FiBox fontSize="32px" color="white" />; // fallback icon
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -68,7 +91,7 @@ const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
                 p={2}
                 mr={2}
               >
-                <BsProjector size="32px" color="white" />
+                {selectedCategory(equipment.type)}
               </Box>
               <Box>
                 <Heading as="h3" fontSize="15px" fontWeight="bold">
@@ -83,7 +106,7 @@ const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
                 color="black"
                 border="1px"
                 borderColor="gray.300"
-                borderRadius="xl"
+                borderRadius="md"
                 pl={2}
                 pr={2}
                 mb={8}
@@ -91,6 +114,72 @@ const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
                 {equipment.type}
               </Badge>
             </HStack>
+          </Box>
+          <Box p={4}>
+            <VStack align="start" spacing={4}>
+              <HStack spacing={12} align="start" w="full">
+                {/* Description */}
+                <VStack align="start" spacing={1}>
+                  <HStack>
+                    <FiInfo />
+                    <Text fontWeight="semibold" color="gray.600">
+                      Description
+                    </Text>
+                  </HStack>
+                  <Text fontSize="sm">{equipment.description}</Text>
+                </VStack>
+              </HStack>
+
+              <HStack spacing={12} align="start" w="full">
+                {/* Location */}
+                <VStack align="start" spacing={1}>
+                  <HStack>
+                    <FiMapPin />
+                    <Text fontWeight="semibold" color="gray.600">
+                      Location
+                    </Text>
+                  </HStack>
+                  <Text fontSize="sm">{equipment.location}</Text>
+                </VStack>
+
+                {/* Status */}
+                <VStack align="start" spacing={1}>
+                  <HStack>
+                    <FiCheckCircle />
+                    <Text fontWeight="semibold" color="gray.600">
+                      Status
+                    </Text>
+                  </HStack>
+                  <Badge
+                    bg={getEqStatusColor(equipment.status)}
+                    color="white"
+                    borderRadius="md"
+                    px={3}
+                    py={1}
+                  >
+                    {equipment.status}
+                  </Badge>
+                </VStack>
+
+                {/* Condition */}
+                <VStack align="start" spacing={1}>
+                  <HStack>
+                    <FiActivity />
+                    <Text fontWeight="semibold" color="gray.600">
+                      Condition
+                    </Text>
+                  </HStack>
+                  <Badge
+                    colorScheme={getEqConditionColor(equipment.condition)}
+                    borderRadius="md"
+                    px={3}
+                    py={1}
+                  >
+                    {equipment.condition}
+                  </Badge>
+                </VStack>
+              </HStack>
+            </VStack>
           </Box>
         </ModalBody>
       </ModalContent>
