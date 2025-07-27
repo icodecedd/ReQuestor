@@ -4,7 +4,7 @@ import { hashPassword } from "../helpers/password.js";
 export const getAllUsers = async (req, res) => {
   try {
     const users = await pool.query(
-      `SELECT id, username, email, role, status, must_change_password, last_login, created_at
+      `SELECT id, username, email, role, status, must_change_password, created_at, verified
        FROM users
        ORDER BY created_at DESC;`
     );
@@ -23,7 +23,7 @@ export const getUserById = async (req, res) => {
     const { id } = req.params;
 
     const result = await pool.query(
-      `SELECT id, username, email, role, status, must_change_password, last_login, created_at
+      `SELECT id, username, email, role, status, must_change_password, created_at, verified
        FROM users
        WHERE id = $1;`,
       [id]

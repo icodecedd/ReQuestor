@@ -15,14 +15,14 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { FiAlertTriangle, FiTrash } from "react-icons/fi";
-import useUserStore from "@/store/usersStore";
+import useEquipmentStore from "@/store/equipmentStore";
 
-const DeleteUserModal = ({ isOpen, onClose, user }) => {
-  const deleteUser = useUserStore((state) => state.deleteUser);
+const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
+  const deleteEquipment = useEquipmentStore((state) => state.deleteEquipment);
   const toast = useToast();
 
   const handleDelete = async () => {
-    const result = await deleteUser(user.id);
+    const result = await deleteEquipment(equipment.id);
 
     toast({
       title: result.success ? "Success" : "Error",
@@ -63,10 +63,11 @@ const DeleteUserModal = ({ isOpen, onClose, user }) => {
             </Box>
             <Box>
               <Text fontSize="lg" mt={0.5}>
-                Delete Account
+                Delete Equipment
               </Text>
               <Text color="gray.700" fontWeight="normal" fontSize="14px">
-                This will permanently delete <strong>"{user?.email}"</strong>.
+                This will permanently remove the equipment record from the
+                system.
               </Text>
             </Box>
           </Flex>
@@ -92,8 +93,8 @@ const DeleteUserModal = ({ isOpen, onClose, user }) => {
               </Text>
             </HStack>
             <Text color="#ef4444" pl={7} fontSize="14px">
-              Deleting this account is permanent and cannot be undone. All
-              access and related data will be lost.
+              Deleting this equipment is permanent and cannot be undone. All
+              associated records will be lost.
             </Text>
           </Box>
         </ModalBody>
@@ -114,7 +115,7 @@ const DeleteUserModal = ({ isOpen, onClose, user }) => {
             _hover={{ bg: "#cc5a5aff" }}
             onClick={handleDelete}
           >
-            Delete User
+            Delete Equipment
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -122,4 +123,4 @@ const DeleteUserModal = ({ isOpen, onClose, user }) => {
   );
 };
 
-export default DeleteUserModal;
+export default DeleteEquipmentModal;

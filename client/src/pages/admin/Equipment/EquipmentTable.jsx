@@ -33,6 +33,8 @@ import EquipmentActionButton from "@/components/buttons/EquipmentActionButton";
 import ViewEquipmentModal from "@/components/modals/ViewEquipmentModal";
 import { getEqStatusColor, getEqConditionColor } from "@/utils/getColorScheme";
 import AddEquipmentModal from "@/components/modals/AddEquipmentModal";
+import UpdateEquipmentModal from "@/components/modals/UpdateEquipmentModal";
+import DeleteEquipmentModal from "@/components/modals/DeleteEquipmentModal";
 
 const formatEquipmentId = (id) => {
   return `EQ-${String(id).padStart(3, "0")}`;
@@ -62,11 +64,11 @@ const EquipmentTable = () => {
     /* Global State of Users */
   }
 
-  // const { equipment, loading, fetchEquipment } = useEquipmentStore();
+  const { equipment, loading, fetchEquipment } = useEquipmentStore();
 
-  // useEffect(() => {
-  //   fetchEquipment();
-  // }, []);
+  useEffect(() => {
+    fetchEquipment();
+  }, []);
 
   {
     /* Equipment Filters */
@@ -105,14 +107,36 @@ const EquipmentTable = () => {
   } = useDisclosure();
 
   const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
+
+  const {
     isOpen: isViewOpen,
     onOpen: onViewOpen,
     onClose: onViewClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
+
+  const handleEdit = (eq) => {
+    setSelectedEquipment(eq);
+    onEditOpen();
+  };
+
   const handleViewDetails = (eq) => {
     setSelectedEquipment(eq);
     onViewOpen();
+  };
+
+  const handleDelete = (eq) => {
+    setSelectedEquipment(eq);
+    onDeleteOpen();
   };
 
   return (
@@ -279,8 +303,9 @@ const EquipmentTable = () => {
                               </Td>
                               <Td>
                                 <EquipmentActionButton
+                                  onEdit={() => handleEdit(eq)}
                                   onViewDetails={() => handleViewDetails(eq)}
-                                  d
+                                  onDelete={() => handleDelete(eq)}
                                 />
                               </Td>
                             </Tr>
@@ -306,9 +331,19 @@ const EquipmentTable = () => {
       </Box>
       {/* Modals will be placed here */}
       <AddEquipmentModal isOpen={isAddOpen} onClose={onAddClose} />
+      <UpdateEquipmentModal
+        isOpen={isEditOpen}
+        onClose={onEditClose}
+        equipment={selectedEquipment}
+      />
       <ViewEquipmentModal
         isOpen={isViewOpen}
         onClose={onViewClose}
+        equipment={selectedEquipment}
+      />
+      <DeleteEquipmentModal
+        isOpen={isDeleteOpen}
+        onClose={onDeleteClose}
         equipment={selectedEquipment}
       />
     </Box>
