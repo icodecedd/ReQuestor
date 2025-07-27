@@ -29,3 +29,17 @@ export const getEqConditionColor = (condition) => {
       return "gray";
   }
 };
+
+export const getRequestStatusColor = (status) => {
+  switch (status) {
+    case "Pending":
+      return "yellow";
+    case "Approved":
+      return "green";
+    case "Rejected":
+      return "red";
+    default:
+      return "gray";
+  }
+};
+

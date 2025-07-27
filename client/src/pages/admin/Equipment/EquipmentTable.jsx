@@ -1,7 +1,3 @@
-import { CategoryDropdown } from "@/components/dropdowns/CategoryDropdown";
-import { EquipmentStatusDropdown } from "@/components/dropdowns/EquipmentStatusDropdown";
-import useEquipmentStore from "@/store/equipmentStore";
-import { equipment } from "@/data/equipment";
 import {
   Badge,
   Box,
@@ -26,6 +22,9 @@ import {
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
+import { CategoryDropdown } from "@/components/dropdowns/CategoryDropdown";
+import { EquipmentStatusDropdown } from "@/components/dropdowns/EquipmentStatusDropdown";
+import useEquipmentStore from "@/store/equipmentStore";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
@@ -35,6 +34,7 @@ import { getEqStatusColor, getEqConditionColor } from "@/utils/getColorScheme";
 import AddEquipmentModal from "@/components/modals/AddEquipmentModal";
 import UpdateEquipmentModal from "@/components/modals/UpdateEquipmentModal";
 import DeleteEquipmentModal from "@/components/modals/DeleteEquipmentModal";
+// import { equipment } from "@/data/equipment";
 
 const formatEquipmentId = (id) => {
   return `EQ-${String(id).padStart(3, "0")}`;
@@ -60,10 +60,6 @@ const tabConfigs = [
 ];
 
 const EquipmentTable = () => {
-  {
-    /* Global State of Users */
-  }
-
   const { equipment, loading, fetchEquipment } = useEquipmentStore();
 
   useEffect(() => {
@@ -239,9 +235,9 @@ const EquipmentTable = () => {
                           <Th>Action</Th>
                         </Tr>
                       </Thead>
-                      {false ? (
+                      {loading ? (
                         <TableCaption mt={3}>
-                          {[1, 2, 3, 4, 5].map((i) => (
+                          {[1, 2].map((i) => (
                             <Skeleton
                               key={i}
                               height="41px"
@@ -318,7 +314,7 @@ const EquipmentTable = () => {
                           fontSize="14px"
                           fontWeight="bold"
                         >
-                          No recent user to display.
+                          No equipment to display.
                         </TableCaption>
                       )}
                     </Table>
