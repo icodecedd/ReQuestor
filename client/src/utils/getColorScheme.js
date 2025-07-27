@@ -4,12 +4,10 @@ export const getEqStatusColor = (status) => {
       return "green";
     case "In Use":
       return "blue";
+    case "Reserved":
+      return "yellow";
     case "Under Repair":
       return "orange";
-    case "Lost":
-      return "red";
-    case "Decommissioned":
-      return "gray";
     default:
       return "gray";
   }

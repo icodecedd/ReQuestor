@@ -1,9 +1,8 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toTitleCase } from "@/utils/toTitleCase";
-import { equipment } from "@/data/equipment";
 
-export const useEquipmentStore = create((set, get) => ({
+const useEquipmentStore = create((set, get) => ({
   equipment: [],
   loading: false,
   error: null,
@@ -176,3 +175,5 @@ export const useEquipmentStore = create((set, get) => ({
     }
   },
 }));
+
+export default useEquipmentStore;

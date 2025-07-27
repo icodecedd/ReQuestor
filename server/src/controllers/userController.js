@@ -4,7 +4,7 @@ import { hashPassword } from "../helpers/password.js";
 export const getAllUsers = async (req, res) => {
   try {
     const users = await pool.query(
-      `SELECT id, username, email, role, status, must_change_password, last_login, created_at
+      `SELECT id, username, email, role, status, must_change_password, created_at, verified
        FROM users
        ORDER BY created_at DESC;`
     );
@@ -23,7 +23,7 @@ export const getUserById = async (req, res) => {
     const { id } = req.params;
 
     const result = await pool.query(
-      `SELECT id, username, email, role, status, must_change_password, last_login, created_at
+      `SELECT id, username, email, role, status, must_change_password, created_at, verified
        FROM users
        WHERE id = $1;`,
       [id]
@@ -58,9 +58,9 @@ export const addUser = async (req, res) => {
     const password_hashed = await hashPassword(password_hash);
 
     const query = `
-      INSERT INTO users (username, email, password_hash, role, status)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING id, username, email, role, status, must_change_password, last_login, created_at;
+      INSERT INTO users (username, email, password_hash, role, status, verified)
+      VALUES ($1, $2, $3, $4, $5, TRUE)
+      RETURNING id, username, email, role, status, must_change_password, created_at, verified;
       `;
 
     const result = await pool.query(query, [
@@ -147,7 +147,7 @@ export const updateUser = async (req, res) => {
       UPDATE users
       SET ${updates.join(", ")}
       WHERE id = $${index}
-      RETURNING id, username, email, role, status, must_change_password, last_login, created_at;
+      RETURNING id, username, email, role, status, must_change_password, created_at, verified;
     `;
 
     const result = await pool.query(query, values);
@@ -267,7 +267,7 @@ import bcrypt from "bcrypt";
 export const resetUserPasswordManual = async (req, res) => {
   try {
     const { id } = req.params;
-    const { password, confirmPassword } = req.body;
+    const { password, confirmPassword, must_change_password } = req.body;
 
     // Validate
     if (!password || !confirmPassword) {
@@ -291,10 +291,10 @@ export const resetUserPasswordManual = async (req, res) => {
 
     const result = await pool.query(
       `UPDATE public.users
-       SET password_hash = $1, must_change_password = true
-       WHERE id = $2
+       SET password_hash = $1, must_change_password = $2
+       WHERE id = $3
        RETURNING id, username, email, role, status, must_change_password;`,
-      [password_hash, id]
+      [password_hash, must_change_password, id]
     );
 
     if (result.rowCount === 0) {

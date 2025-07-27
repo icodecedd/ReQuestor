@@ -10,8 +10,11 @@ import {
   Flex,
   Text,
   useToast,
+  Divider,
+  HStack,
+  ModalOverlay,
 } from "@chakra-ui/react";
-import { FiUserCheck, FiUserX } from "react-icons/fi";
+import { FiAlertCircle, FiCheckCircle, FiUserCheck, FiUserX } from "react-icons/fi";
 import useUserStore from "@/store/usersStore";
 
 const ToggleStatusModal = ({ isOpen, onClose, user }) => {
@@ -46,22 +49,46 @@ const ToggleStatusModal = ({ isOpen, onClose, user }) => {
       motionPreset="slideInBottom"
       isCentered
     >
-      <ModalContent borderRadius="xl">
+      <ModalOverlay />
+      <ModalContent borderRadius="xl" overflow="hidden">
         <ModalHeader>
-          <Flex color="gray.900" gap={3} align="center">
-            {isActive ? (
-              <FiUserX color="#800000" />
-            ) : (
-              <FiUserCheck color="#800000" />
-            )}
-            <Text fontSize="lg" mt={0.5}>
-              {label} Account
-            </Text>
+          <Flex color="gray.900" gap={3} align="center" mb={3}>
+            <Box
+              bg="white"
+              color="#f0f0f0ff"
+              borderRadius="md"
+              boxShadow="0 2px 8px rgba(0,0,0,0.12)"
+              border="1px solid #e2e8f0"
+              p={2}
+            >
+              {isActive ? (
+                <FiUserX color="#800000" />
+              ) : (
+                <FiUserCheck color="#800000" />
+              )}
+            </Box>
+            <Box>
+              <Text fontSize="lg" mt={0.5}>
+                {label} Account
+              </Text>
+              <Text color="gray.700" fontWeight="normal" fontSize="14px">
+                Confirm to{" "}
+                <Text
+                  fontWeight="semibold"
+                  as="span"
+                  color={
+                    label.toLowerCase() === "deactivate"
+                      ? "red.600"
+                      : "green.600"
+                  }
+                >
+                  {label.toLowerCase()}
+                </Text>{" "}
+                the account of <strong>{user?.email}</strong>?
+              </Text>
+            </Box>
           </Flex>
-          <Text color="gray.700" fontWeight="normal" fontSize="14px">
-            Are you sure you want to <strong>{label.toLowerCase()}</strong> the
-            account of <strong>{user?.email}</strong>?
-          </Text>
+          <Divider w="110%" ml={-6} />
         </ModalHeader>
         <ModalCloseButton
           size="md"
@@ -76,8 +103,23 @@ const ToggleStatusModal = ({ isOpen, onClose, user }) => {
             borderRadius="xl"
             p="2.5"
           >
-            <Text color={isActive ? "#DC2626" : "#047857"}>
-              <strong>Important:</strong>{" "}
+            <HStack>
+              {isActive ? (
+                <FiAlertCircle color="#DC2626" size="20px" />
+              ) : (
+                <FiCheckCircle color="#047857" size="20px" />
+              )}
+              <Text color={isActive ? "#DC2626" : "#047857"}>
+                <strong>
+                  {isActive ? "Deactivation Notice:" : "Reactivation Notice:"}
+                </strong>
+              </Text>
+            </HStack>
+            <Text
+              color={isActive ? "#cf4747ff" : "#18ab81ff"}
+              pl={7}
+              fontSize="14px"
+            >
               {isActive
                 ? "Deactivating this account will restrict the user from accessing their account until it is reactivated."
                 : "Reactivating this account will allow the user to access their account again."}

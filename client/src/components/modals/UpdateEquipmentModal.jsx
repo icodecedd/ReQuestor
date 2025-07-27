@@ -1,32 +1,32 @@
+import useEquipmentStore from "@/store/equipmentStore";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
+  Badge,
+  Box,
   Button,
+  Divider,
   Flex,
-  Text,
   FormControl,
   FormLabel,
   Input,
-  Tabs,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Tab,
   TabList,
-  TabPanels,
   TabPanel,
-  useToast,
-  Box,
-  Divider,
-  Badge,
+  TabPanels,
+  Tabs,
+  Text,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
-import { FiBox } from "react-icons/fi";
-import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
-import { useState } from "react";
-import useEquipmentStore from "@/store/equipmentStore";
+import React, { useEffect, useState } from "react";
+import { ModalDropdown } from "../dropdowns/ModalDropdown";
+import { FiEdit } from "react-icons/fi";
 import { getEqConditionColor } from "@/utils/getColorScheme";
 
 const equipmentFields = [
@@ -50,8 +50,8 @@ const equipmentFields = [
 const statusOptions = ["Available", "In Use", "Reserved", "Under Repair"];
 const conditionOptions = ["Excellent", "Good", "Fair", "Poor", "Broken"];
 
-const AddEquipmentModal = ({ isOpen, onClose }) => {
-  const addEquipment = useEquipmentStore((state) => state.addEquipment);
+const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
+  const updateEquipment = useEquipmentStore((state) => state.updateEquipment);
   const toast = useToast();
 
   const [form, setForm] = useState({
@@ -64,14 +64,28 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
     description: "",
   });
 
+  useEffect(() => {
+    if (equipment) {
+      setForm({
+        name: equipment.name,
+        type: equipment.type,
+        status: equipment.status,
+        location: equipment.location,
+        serial_number: equipment.serial_number,
+        condition: equipment.condition,
+        description: equipment.description,
+      });
+    }
+  }, [equipment]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     console.log({ [name]: value });
   };
 
-  const handleSubmit = async () => {
-    const result = await addEquipment(form); // Direct call to Zustand store
+  const handleUpdate = async () => {
+    const result = await updateEquipment(equipment.id, form);
 
     toast({
       title: result.success ? "Success" : "Error",
@@ -116,14 +130,14 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
               border="1px solid #e2e8f0"
               p={2}
             >
-              <FiBox color="#800000" />
+              <FiEdit color="#800000" />
             </Box>
             <Box>
               <Text fontSize="lg" mt={0.5}>
-                Add New Equipment
+                Update Equipment
               </Text>
               <Text color="gray.700" fontWeight="normal" fontSize="14px">
-                Add new equipment to the inventory.
+                Modify details or status of this equipment.
               </Text>
             </Box>
           </Flex>
@@ -171,6 +185,7 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
                     <FormLabel>{field.label}</FormLabel>
                     <Input
                       name={field.name}
+                      value={form[`${field.name}`]}
                       placeholder={field.placeholder}
                       focusBorderColor="maroon"
                       borderRadius="xl"
@@ -231,6 +246,7 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
                       <FormLabel>Serial Number</FormLabel>
                       <Input
                         name="serial_number"
+                        value={form.serial_number}
                         placeholder="Enter serial number"
                         focusBorderColor="maroon"
                         borderRadius="xl"
@@ -243,6 +259,8 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
                     <FormLabel>Description & Specifications</FormLabel>
                     <Textarea
                       focusBorderColor="maroon"
+                      name="description"
+                      value={form.description}
                       borderRadius="xl"
                       borderColor="gray.400"
                       placeholder="Equipment description, specifications, and additional details..."
@@ -254,7 +272,6 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
             </TabPanels>
           </Tabs>
         </ModalBody>
-
         <ModalFooter>
           <Button
             mr={3}
@@ -271,9 +288,9 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
             borderRadius="xl"
             _hover={{ bg: "#a12828" }}
             transition="background-color 0.2s ease-in-out"
-            onClick={handleSubmit}
+            onClick={handleUpdate}
           >
-            Create Equipment
+            Update Equipment
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -281,4 +298,4 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
   );
 };
 
-export default AddEquipmentModal;
+export default UpdateEquipmentModal;

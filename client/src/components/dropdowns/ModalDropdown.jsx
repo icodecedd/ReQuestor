@@ -69,7 +69,7 @@ export function ModalDropdown({
                 borderRadius="lg"
                 pr={2}
                 pl={2}
-                w={235}
+                w={w-6}
                 _hover={
                   isSelected
                     ? {

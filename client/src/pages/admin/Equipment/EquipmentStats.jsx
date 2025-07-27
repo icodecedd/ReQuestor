@@ -1,5 +1,5 @@
 import StatCard from "@/components/cards/StatCard";
-import { useEquipmentStore } from "@/store/equipmentStore";
+import useEquipmentStore from "@/store/equipmentStore";
 import { SimpleGrid } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { FiBox, FiCheckCircle, FiMonitor, FiPieChart } from "react-icons/fi";
