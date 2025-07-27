@@ -1,5 +1,5 @@
 # **ReQuestor: Reservation Queue System for Classroom Equipment**  
-_"Smart Requests, Seamless Reservations."_
+<p align="center"><em>Smart Requests, Seamless Reservations.</em></p>
 
 ---
 
