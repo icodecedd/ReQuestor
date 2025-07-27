@@ -7,19 +7,33 @@ import {
   Tooltip,
   Image,
   Divider,
+  Heading,
 } from "@chakra-ui/react";
 import { FiLogOut, FiSidebar } from "react-icons/fi";
 import { NavLink } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "@/assets/requestor.svg";
 
 const Sidebar = ({ navItems }) => {
   const [collapsed, setCollapsed] = useState(false);
 
+  const [showText, setShowText] = useState(!collapsed);
+
+  useEffect(() => {
+    let timeout;
+    if (!collapsed) {
+      timeout = setTimeout(() => setShowText(true), 150); // wait until sidebar expands
+    } else {
+      setShowText(false);
+    }
+    return () => clearTimeout(timeout);
+  }, [collapsed]);
+
+
   return (
     <Box
       w={collapsed ? "60px" : "230px"}
-      transition="width 0.1s"
+      transition="width 0.2s ease-in-out"
       h="100vh"
       bg="#f5f5f6"
       borderRight="1px solid #e2e8f0"
@@ -33,7 +47,7 @@ const Sidebar = ({ navItems }) => {
         p={3}
       >
         {!collapsed && <Image src={logo} boxSize="40px" />}
-        {!collapsed && (
+        {showText && (
           <Text
             fontWeight="bold"
             mr={5}
@@ -44,6 +58,7 @@ const Sidebar = ({ navItems }) => {
             ReQuestor
           </Text>
         )}
+
         <IconButton
           icon={<FiSidebar fontSize={20} />}
           size="md"
@@ -57,17 +72,22 @@ const Sidebar = ({ navItems }) => {
       <VStack
         align="stretch"
         spacing={2}
-        mt={4}
         pl={collapsed ? 1 : 2}
         pr={collapsed ? 1 : 2}
+        mt={showText ? 2 : 12}
       >
+        {showText && (
+          <Heading fontSize="13px" color="gray" mt={3} ml={2} mb={1}>
+            General
+          </Heading>
+        )}
         {navItems.map(({ label, icon, path }) => (
           <Tooltip
             label={collapsed ? label : ""}
             placement="right"
             key={label}
             borderRadius="md"
-            hasArrow
+            p={1}
             bg="white"
             color="black"
             border="1px solid #e5e5e5"
@@ -93,7 +113,7 @@ const Sidebar = ({ navItems }) => {
                   color={isActive ? "white" : "gray.600"}
                 >
                   <Box as={icon} boxSize="5" />
-                  {!collapsed && <Text fontSize={"90%"}>{label}</Text>}
+                  {showText && <Text fontSize="90%">{label}</Text>}
                 </Flex>
               )}
             </NavLink>
@@ -113,8 +133,12 @@ const Sidebar = ({ navItems }) => {
         <Tooltip
           label={collapsed ? "Logout" : ""}
           placement="right"
-          borderRadius={"md"}
-          hasArrow
+          borderRadius="md"
+          p={1}
+          bg="white"
+          color="black"
+          border="1px solid #e5e5e5"
+          boxShadow="sm"
         >
           <NavLink to={"/logout"}>
             {({ isActive }) => (

@@ -265,7 +265,7 @@ const UsersTable = () => {
               </Tbody>
             ) : (
               <TableCaption mt={20} mb={20} fontSize="14px" fontWeight="bold">
-                No recent user to display.
+                No users to display.
               </TableCaption>
             )}
           </Table>

@@ -1,7 +1,7 @@
 import express from "express";
 import {
   getAllEquipment,
-  createEquipment,
+  addEquipment,
   updateEquipment,
   deleteEquipment,
 } from "../controllers/equipmentController.js";
@@ -9,7 +9,7 @@ import {
 const router = express.Router();
 
 router.get("/", getAllEquipment);
-router.post("/", createEquipment);
+router.post("/", addEquipment);
 router.put("/:id", updateEquipment);
 router.delete("/:id", deleteEquipment);
 

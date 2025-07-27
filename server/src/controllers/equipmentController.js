@@ -13,7 +13,7 @@ export const getAllEquipment = async (req, res) => {
   }
 };
 
-export const createEquipment = async (req, res) => {
+export const addEquipment = async (req, res) => {
   const {
     name,
     type,
