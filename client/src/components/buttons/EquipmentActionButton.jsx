@@ -49,7 +49,9 @@ const EquipmentActionButton = ({
       <MenuButton
         as={IconButton}
         icon={<FiMoreVertical />}
+        variant={"ghost"}
         _hover={{ bg: "#f7eaea" }}
+        _active={{ bg: "#f7eaea" }}
         aria-label="Equipment actions"
       />
       <MenuList minW="170px" p={1}>

@@ -36,7 +36,12 @@ const Navbar = ({ pageName }) => {
             fontWeight="medium"
           >
             <BreadcrumbItem>
-              <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+              <BreadcrumbLink
+                href="/dashboard"
+                _hover={{ textDecoration: "none" }}
+              >
+                Dashboard
+              </BreadcrumbLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
@@ -51,6 +56,7 @@ const Navbar = ({ pageName }) => {
               icon={<FiBell size={20} />}
               aria-label="Notifications"
               variant="ghost"
+              _hover={{ bg: "#f7eaea" }}
               size="md"
             />
             <IconButton
@@ -58,6 +64,7 @@ const Navbar = ({ pageName }) => {
               aria-label="Settings"
               variant="ghost"
               size="md"
+              _hover={{ bg: "#f7eaea" }}
               onClick={() => navigate("/dashboard/settings")}
             />
             <Box h="25px" w="1px" bg="gray.300" />
@@ -69,7 +76,8 @@ const Navbar = ({ pageName }) => {
                 display="flex"
                 alignItems="center"
                 gap={2}
-                _hover={{ bg: "#f7f1f1" }}
+                _hover={{ bg: "#f7eaea" }}
+                _active={{ bg: "#f7eaea" }}
               >
                 {/* Change the name with the actual admin name */}
                 <HStack>

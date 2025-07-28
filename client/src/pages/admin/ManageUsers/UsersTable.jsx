@@ -203,7 +203,7 @@ const UsersTable = () => {
                 <Th>Role</Th>
                 <Th>Status</Th>
                 <Th>Created date</Th>
-                <Th>Actions</Th>
+                <Th>{" "}</Th>
               </Tr>
             </Thead>
             {loading ? (
