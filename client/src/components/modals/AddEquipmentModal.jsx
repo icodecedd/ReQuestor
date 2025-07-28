@@ -216,17 +216,6 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
               <TabPanel>
                 <Box>
                   <Flex gap={5}>
-                    <ModalDropdown
-                      value={form.status}
-                      onChange={(newStatus) =>
-                        setForm({ ...form, status: newStatus })
-                      }
-                      roles={statusOptions}
-                      w={206}
-                      label="Status"
-                      placeholder="Select status"
-                      isRequired={false}
-                    />
                     <FormControl mb={4}>
                       <FormLabel>Serial Number</FormLabel>
                       <Input
@@ -238,10 +227,22 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
                         onChange={handleChange}
                       />
                     </FormControl>
+                    <ModalDropdown
+                      value={form.status}
+                      onChange={(newStatus) =>
+                        setForm({ ...form, status: newStatus })
+                      }
+                      roles={statusOptions}
+                      w={206}
+                      label="Status"
+                      placeholder="Select status"
+                      isRequired={false}
+                    />
                   </Flex>
                   <FormControl>
                     <FormLabel>Description & Specifications</FormLabel>
                     <Textarea
+                      name="description"
                       focusBorderColor="maroon"
                       borderRadius="xl"
                       borderColor="gray.400"
@@ -254,7 +255,6 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
             </TabPanels>
           </Tabs>
         </ModalBody>
-
         <ModalFooter>
           <Button
             mr={3}

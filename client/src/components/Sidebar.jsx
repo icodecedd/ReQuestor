@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import {
   Box,
   IconButton,
@@ -9,26 +11,20 @@ import {
   Divider,
   Heading,
 } from "@chakra-ui/react";
-import { FiLogOut, FiSidebar } from "react-icons/fi";
-import { NavLink } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { FiLogOut } from "react-icons/fi";
 import logo from "@/assets/requestor.svg";
+import { LuPanelLeftClose, LuPanelRightClose } from "react-icons/lu";
 
 const Sidebar = ({ navItems }) => {
   const [collapsed, setCollapsed] = useState(false);
-
   const [showText, setShowText] = useState(!collapsed);
 
   useEffect(() => {
-    let timeout;
-    if (!collapsed) {
-      timeout = setTimeout(() => setShowText(true), 150); // wait until sidebar expands
-    } else {
-      setShowText(false);
-    }
-    return () => clearTimeout(timeout);
+    let t;
+    if (!collapsed) t = setTimeout(() => setShowText(true), 200);
+    else setShowText(false);
+    return () => clearTimeout(t);
   }, [collapsed]);
-
 
   return (
     <Box
@@ -39,6 +35,7 @@ const Sidebar = ({ navItems }) => {
       borderRight="1px solid #e2e8f0"
       position="sticky"
       top="0"
+      overflow="hidden"
     >
       <Flex
         justify={collapsed ? "center" : "left"}
@@ -60,78 +57,89 @@ const Sidebar = ({ navItems }) => {
         )}
 
         <IconButton
-          icon={<FiSidebar fontSize={20} />}
+          icon={
+            collapsed ? (
+              <LuPanelRightClose fontSize={20} />
+            ) : (
+              <LuPanelLeftClose fontSize={20} />
+            )
+          }
           size="md"
           variant="ghost"
           onClick={() => setCollapsed(!collapsed)}
+          _hover={{ bg: "#f7eaea" }}
           aria-label="Toggle sidebar"
           borderRadius="md"
         />
       </Flex>
 
-      <VStack
-        align="stretch"
-        spacing={2}
-        pl={collapsed ? 1 : 2}
-        pr={collapsed ? 1 : 2}
-        mt={showText ? 2 : 12}
-      >
+      {/* Navigation */}
+      <VStack align="stretch" spacing={2} px={collapsed ? 1 : 2} mt={2}>
         {showText && (
-          <Heading fontSize="13px" color="gray" mt={3} ml={2} mb={1}>
+          <Heading fontSize="13px" color="gray" ml={2} mb={1}>
             General
           </Heading>
         )}
-        {navItems.map(({ label, icon, path }) => (
+
+        {navItems.map(({ label, icon: Icon, path }) => (
           <Tooltip
-            label={collapsed ? label : ""}
+            label={collapsed ? label : undefined}
             placement="right"
             key={label}
             borderRadius="md"
             p={1}
+            pr={3}
+            pl={3}
             bg="white"
             color="black"
             border="1px solid #e5e5e5"
             boxShadow="sm"
+            isDisabled={!collapsed}
           >
             <NavLink to={path}>
               {({ isActive }) => (
                 <Flex
                   align="center"
-                  justify={collapsed ? "center" : "flex-start"}
+                  gap={4}
                   p={3}
-                  gap={collapsed ? 0 : 4}
                   w="full"
-                  _hover={
-                    isActive
-                      ? { bg: "#832222", color: "#white" }
-                      : { bg: "#e0b1b1", color: "#800000" }
-                  }
                   borderRadius="xl"
                   transition="background 0.2s"
                   fontWeight={isActive ? "bold" : "medium"}
                   bg={isActive ? "#800000" : "transparent"}
                   color={isActive ? "white" : "gray.600"}
+                  _hover={{
+                    bg: isActive ? "#832222" : "#e0b1b1",
+                    color: isActive ? "white" : "#800000",
+                  }}
                 >
-                  <Box as={icon} boxSize="5" />
-                  {showText && <Text fontSize="90%">{label}</Text>}
+                  {/* Icon always stays fixed */}
+                  <Box flexShrink={0} pl={1}>
+                    <Icon size={18} />
+                  </Box>
+
+                  {/* Label slides in/out */}
+                  <Box
+                    overflow="hidden"
+                    whiteSpace="nowrap"
+                    transition="opacity 0.2s ease, width 0.2s ease"
+                    opacity={showText ? 1 : 0}
+                    width={showText ? "auto" : 0}
+                  >
+                    <Text fontSize="90%">{label}</Text>
+                  </Box>
                 </Flex>
               )}
             </NavLink>
           </Tooltip>
         ))}
       </VStack>
-      <Box
-        pos="absolute"
-        bottom="5"
-        left="0"
-        right="0"
-        px={2}
-        pl={collapsed ? 1 : 2}
-        pr={collapsed ? 1 : 2}
-      >
+
+      {/* Footer */}
+      <Box pos="absolute" bottom="5" left="0" right="0" px={collapsed ? 1 : 2}>
         <Divider my={2} />
         <Tooltip
-          label={collapsed ? "Logout" : ""}
+          label={collapsed ? "Logout" : undefined}
           placement="right"
           borderRadius="md"
           p={1}
@@ -139,24 +147,35 @@ const Sidebar = ({ navItems }) => {
           color="black"
           border="1px solid #e5e5e5"
           boxShadow="sm"
+          isDisabled={!collapsed}
         >
-          <NavLink to={"/logout"}>
+          <NavLink to="/logout">
             {({ isActive }) => (
               <Flex
                 align="center"
-                justify={collapsed ? "center" : "flex-start"}
+                gap={4}
                 p={3}
-                gap={collapsed ? 0 : 4}
                 w="full"
-                _hover={{ bg: "#e0b1b1", color: "#800000" }}
                 borderRadius="xl"
                 transition="background 0.2s"
                 fontWeight={isActive ? "bold" : "medium"}
                 bg={isActive ? "#e0b1b1" : "transparent"}
                 color={isActive ? "#800000" : "gray.600"}
+                _hover={{ bg: "#e0b1b1", color: "#800000" }}
               >
-                <Box as={FiLogOut} boxSize="5" />
-                {!collapsed && <Text fontSize={"90%"}>Logout</Text>}
+                <Box flexShrink={0} pl={1}>
+                  <FiLogOut size={18} />
+                </Box>
+
+                <Box
+                  overflow="hidden"
+                  whiteSpace="nowrap"
+                  transition="opacity 0.2s ease, width 0.2s ease"
+                  opacity={showText ? 1 : 0}
+                  width={showText ? "auto" : 0}
+                >
+                  <Text fontSize="90%">Logout</Text>
+                </Box>
               </Flex>
             )}
           </NavLink>

@@ -1,11 +1,14 @@
+import RequestActionButton from "@/components/buttons/RequestActionButton";
 import { CategoryDropdown } from "@/components/dropdowns/CategoryDropdown";
 import { RequestsStatusDropdown } from "@/components/dropdowns/RequestsStatusDropdown";
-import useEquipmentStore from "@/store/equipmentStore";
+import AddRequestModal from "@/components/modals/AddRequestModal";
+import UpdateRequestModal from "@/components/modals/UpdateRequestModal";
 import { useRequestsStore } from "@/store/requestsStore";
 import useUserStore from "@/store/usersStore";
 import { formatTime } from "@/utils/formatTime";
 import { getRequestStatusColor } from "@/utils/getColorScheme";
 import { getDateOnly } from "@/utils/getDate";
+import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Box,
   Flex,
@@ -29,6 +32,11 @@ import {
   Skeleton,
   Button,
   Text,
+  useDisclosure,
+  Tooltip,
+  VStack,
+  HStack,
+  IconButton,
 } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
@@ -59,12 +67,10 @@ const tabConfigs = [
 
 const RequestsTable = () => {
   const { requests, loading, fetchRequests } = useRequestsStore();
-  const { equipment, fetchEquipment } = useEquipmentStore();
   const { users, fetchUsers } = useUserStore();
 
   useEffect(() => {
     fetchRequests();
-    fetchEquipment();
     fetchUsers();
   }, []);
 
@@ -80,14 +86,15 @@ const RequestsTable = () => {
         statusFilter === "All Status" ? true : req.status === statusFilter;
 
       // finds the information about specific equipment
-      const reqEquipment = equipment.find((eq) => eq.id === req.equipment_id);
+      const reqEquipment = req.equipment_list.map((eq) => eq.equipment_type);
+      console.log(reqEquipment);
 
       const reqUser = users.find((user) => user.id === req.user_id);
 
       const matchesCategory =
         categoryFilter === "All Categories"
           ? true
-          : reqEquipment?.type === categoryFilter;
+          : reqEquipment?.some((eq) => eq === categoryFilter);
 
       const matchesSearch = searchFilter
         ? reqUser?.username
@@ -100,9 +107,26 @@ const RequestsTable = () => {
 
       return matchesStatus && matchesCategory && matchesSearch;
     });
-  }, [requests, equipment, statusFilter, categoryFilter, searchFilter]);
+  }, [requests, statusFilter, categoryFilter, searchFilter]);
 
   const [selectedRequest, setSelectedRequest] = useState("");
+
+  const {
+    isOpen: isAddOpen,
+    onOpen: onAddOpen,
+    onClose: onAddClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
+
+  const handleEdit = (req) => {
+    setSelectedRequest(req);
+    onEditOpen();
+  };
 
   const tabData = useMemo(() => {
     return tabConfigs.map(({ filter }) => filteredRequests.filter(filter));
@@ -111,11 +135,6 @@ const RequestsTable = () => {
   const usersMap = useMemo(
     () => Object.fromEntries(users.map((u) => [u.id, u])),
     [users]
-  );
-
-  const equipmentMap = useMemo(
-    () => Object.fromEntries(equipment.map((e) => [e.id, e])),
-    [equipment]
   );
 
   return (
@@ -212,7 +231,7 @@ const RequestsTable = () => {
                           <Th>Equipment</Th>
                           <Th>Date & Time</Th>
                           <Th>Status</Th>
-                          <Th>Action</Th>
+                          <Th> </Th>
                         </Tr>
                       </Thead>
                       {loading ? (
@@ -232,7 +251,6 @@ const RequestsTable = () => {
                         <Tbody>
                           {tab.map((req) => {
                             const user = usersMap[req.user_id];
-                            const equip = equipmentMap[req.equipment_id];
                             return (
                               <Tr
                                 key={req.id}
@@ -244,17 +262,22 @@ const RequestsTable = () => {
                                 <Td>{req.course_section}</Td>
                                 <Td>{req.faculty_in_charge}</Td>
                                 <Td>
-                                  <Badge
-                                    color="black"
-                                    border="1px"
-                                    borderColor="gray.300"
-                                    borderRadius="xl"
-                                    pl={2}
-                                    pr={2}
-                                    pb={0.5}
-                                  >
-                                    {equip?.name}
-                                  </Badge>
+                                  <VStack>
+                                    {req.equipment_list.map((eq, index) => (
+                                      <Badge
+                                        key={index}
+                                        color="black"
+                                        border="1px"
+                                        borderColor="gray.300"
+                                        borderRadius="xl"
+                                        pl={2}
+                                        pr={2}
+                                        pb={0.5}
+                                      >
+                                        {eq.equipment_name}
+                                      </Badge>
+                                    ))}
+                                  </VStack>
                                 </Td>
                                 <Td>
                                   <Text mb={1}>
@@ -279,7 +302,58 @@ const RequestsTable = () => {
                                     {req.status}
                                   </Badge>
                                 </Td>
-                                <Td>Action</Td>
+                                <Td>
+                                  <Flex gap={2}>
+                                    <HStack spacing={2}>
+                                      <Tooltip
+                                        label="Approve"
+                                        placement="bottom"
+                                        borderRadius="md"
+                                        p={1}
+                                        pr={3}
+                                        pl={3}
+                                        bg="white"
+                                        color="black"
+                                        border="1px solid #e5e5e5"
+                                        boxShadow="sm"
+                                      >
+                                        <IconButton
+                                          icon={<CheckIcon />}
+                                          colorScheme="green"
+                                          aria-label="Approve"
+                                          borderRadius="lg"
+                                          size="sm"
+                                          //onClick={handleApprove}
+                                        />
+                                      </Tooltip>
+
+                                      <Tooltip
+                                        label="Reject"
+                                        placement="bottom"
+                                        borderRadius="md"
+                                        p={1}
+                                        pr={3}
+                                        pl={3}
+                                        bg="white"
+                                        color="black"
+                                        border="1px solid #e5e5e5"
+                                        boxShadow="sm"
+                                      >
+                                        <IconButton
+                                          icon={<CloseIcon />}
+                                          colorScheme="red"
+                                          aria-label="Reject"
+                                          borderRadius="lg"
+                                          size="sm"
+                                          //onClick={handleReject}
+                                        />
+                                      </Tooltip>
+                                    </HStack>
+                                    <RequestActionButton
+                                      onEdit={() => handleEdit(req)}
+                                    />
+                                  </Flex>
+                                </Td>
                               </Tr>
                             );
                           })}
@@ -302,6 +376,12 @@ const RequestsTable = () => {
           </TabPanels>
         </Tabs>
       </Box>
+      <AddRequestModal isOpen={isAddOpen} onClose={onAddClose} />
+      <UpdateRequestModal
+        isOpen={isEditOpen}
+        onClose={onEditClose}
+        request={selectedRequest}
+      />
     </Box>
   );
 };

@@ -8,9 +8,7 @@ import {
 import {
   FiMoreVertical,
   FiEdit,
-  FiKey,
-  FiUserX,
-  FiUserCheck,
+  FiEye,
   FiTrash,
 } from "react-icons/fi";
 
@@ -19,14 +17,11 @@ const hoverStyle = {
   borderRadius: "lg",
 };
 
-const UserActionButton = ({
-  status,
+const RequestActionButton = ({
   onEdit,
-  onResetPassword,
-  onToggleStatus,
+  onViewDetails,
   onDelete,
 }) => {
-  const isActive = status === "Active";
 
   const actions = [
     {
@@ -36,16 +31,10 @@ const UserActionButton = ({
       onClick: onEdit,
     },
     {
-      key: "reset",
-      icon: <FiKey />,
-      label: "Reset Password",
-      onClick: onResetPassword,
-    },
-    {
-      key: "toggle",
-      icon: isActive ? <FiUserX /> : <FiUserCheck />,
-      label: isActive ? "Deactivate" : "Activate",
-      onClick: onToggleStatus,
+      key: "view",
+      icon: <FiEye />,
+      label: "View Details",
+      onClick: onViewDetails,
     },
     {
       key: "delete",
@@ -63,7 +52,7 @@ const UserActionButton = ({
         variant={"ghost"}
         _hover={{ bg: "#f7eaea" }}
         _active={{ bg: "#f7eaea" }}
-        aria-label="User actions"
+        aria-label="Equipment actions"
       />
       <MenuList minW="170px" p={1}>
         {actions.map(({ key, icon, label, onClick }) => (
@@ -83,4 +72,4 @@ const UserActionButton = ({
   );
 };
 
-export default UserActionButton;
+export default RequestActionButton;

@@ -232,7 +232,7 @@ const EquipmentTable = () => {
                           <Th>Location</Th>
                           <Th>Status</Th>
                           <Th>Condition</Th>
-                          <Th>Action</Th>
+                          <Th>{" "}</Th>
                         </Tr>
                       </Thead>
                       {loading ? (

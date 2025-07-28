@@ -12,6 +12,7 @@ export const useRequestsStore = create((set, get) => ({
     try {
       const res = await axios.get("/api/requests");
       set({ requests: res.data.data, loading: false });
+      console.log(res.data.data)
     } catch (error) {
       set({ error: error.message, loading: false });
     }
