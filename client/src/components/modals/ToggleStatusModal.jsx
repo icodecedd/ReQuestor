@@ -60,6 +60,11 @@ const ToggleStatusModal = ({ isOpen, onClose, user }) => {
               boxShadow="0 2px 8px rgba(0,0,0,0.12)"
               border="1px solid #e2e8f0"
               p={2}
+              transition="all 0.3s ease"
+              _hover={{
+                transform: "scale(1.02)",
+                boxShadow: "lg",
+              }}
             >
               {isActive ? (
                 <FiUserX color="#800000" />
@@ -102,6 +107,11 @@ const ToggleStatusModal = ({ isOpen, onClose, user }) => {
             borderColor={isActive ? "#FCA5A5" : "#6EE7B7"}
             borderRadius="xl"
             p="2.5"
+            transition="all 0.3s ease"
+            _hover={{
+              transform: "scale(1.02)",
+              boxShadow: "lg",
+            }}
           >
             <HStack>
               {isActive ? (

@@ -6,12 +6,12 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import {
-  FiMoreVertical,
   FiEdit,
   FiKey,
   FiUserX,
   FiUserCheck,
   FiTrash,
+  FiMoreHorizontal,
 } from "react-icons/fi";
 
 const hoverStyle = {
@@ -59,7 +59,7 @@ const UserActionButton = ({
     <Menu autoSelect={false}>
       <MenuButton
         as={IconButton}
-        icon={<FiMoreVertical />}
+        icon={<FiMoreHorizontal />}
         variant={"ghost"}
         _hover={{ bg: "#f7eaea" }}
         _active={{ bg: "#f7eaea" }}

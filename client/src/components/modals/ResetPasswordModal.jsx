@@ -99,6 +99,11 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
               boxShadow="0 2px 8px rgba(0,0,0,0.12)"
               border="1px solid #e2e8f0"
               p={2}
+              transition="all 0.3s ease"
+              _hover={{
+                transform: "scale(1.02)",
+                boxShadow: "lg",
+              }}
             >
               <FiAlertTriangle color="#800000" />
             </Box>
@@ -177,6 +182,11 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
             border="1px"
             borderRadius="xl"
             p={2.5}
+            transition="all 0.3s ease"
+            _hover={{
+              transform: "scale(1.02)",
+              boxShadow: "lg",
+            }}
           >
             <HStack>
               <FiShield color="#92400e" fontSize="20px" />

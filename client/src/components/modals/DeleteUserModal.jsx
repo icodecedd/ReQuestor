@@ -58,6 +58,11 @@ const DeleteUserModal = ({ isOpen, onClose, user }) => {
               boxShadow="0 2px 8px rgba(0,0,0,0.12)"
               border="1px solid #e2e8f0"
               p={2}
+              transition="all 0.3s ease"
+              _hover={{
+                transform: "scale(1.02)",
+                boxShadow: "lg",
+              }}
             >
               <FiTrash color="#800000" />
             </Box>
@@ -84,6 +89,11 @@ const DeleteUserModal = ({ isOpen, onClose, user }) => {
             border="1px"
             borderRadius="xl"
             p="2.5"
+            transition="all 0.3s ease"
+            _hover={{
+              transform: "scale(1.02)",
+              boxShadow: "lg",
+            }}
           >
             <HStack>
               <FiAlertTriangle color="#922323ff" fontSize="20px" />

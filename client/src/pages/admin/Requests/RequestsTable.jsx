@@ -2,9 +2,10 @@ import RequestActionButton from "@/components/buttons/RequestActionButton";
 import { CategoryDropdown } from "@/components/dropdowns/CategoryDropdown";
 import { RequestsStatusDropdown } from "@/components/dropdowns/RequestsStatusDropdown";
 import AddRequestModal from "@/components/modals/AddRequestModal";
+import DeleteRequestModal from "@/components/modals/DeleteRequestModal";
 import UpdateRequestModal from "@/components/modals/UpdateRequestModal";
+import ViewRequestModal from "@/components/modals/ViewRequestModal";
 import { useRequestsStore } from "@/store/requestsStore";
-import useUserStore from "@/store/usersStore";
 import { formatTime } from "@/utils/formatTime";
 import { getRequestStatusColor } from "@/utils/getColorScheme";
 import { getDateOnly } from "@/utils/getDate";
@@ -67,11 +68,9 @@ const tabConfigs = [
 
 const RequestsTable = () => {
   const { requests, loading, fetchRequests } = useRequestsStore();
-  const { users, fetchUsers } = useUserStore();
 
   useEffect(() => {
     fetchRequests();
-    fetchUsers();
   }, []);
 
   const [statusFilter, setStatusFilter] = useState("All Status");
@@ -87,9 +86,6 @@ const RequestsTable = () => {
 
       // finds the information about specific equipment
       const reqEquipment = req.equipment_list.map((eq) => eq.equipment_type);
-      console.log(reqEquipment);
-
-      const reqUser = users.find((user) => user.id === req.user_id);
 
       const matchesCategory =
         categoryFilter === "All Categories"
@@ -97,9 +93,7 @@ const RequestsTable = () => {
           : reqEquipment?.some((eq) => eq === categoryFilter);
 
       const matchesSearch = searchFilter
-        ? reqUser?.username
-            .toLowerCase()
-            .includes(searchFilter.toLowerCase()) ||
+        ? req?.username.toLowerCase().includes(searchFilter.toLowerCase()) ||
           formatRequestsId(req.id)
             .toLowerCase()
             .includes(searchFilter.toLowerCase())
@@ -123,19 +117,36 @@ const RequestsTable = () => {
     onClose: onEditClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isViewOpen,
+    onOpen: onViewOpen,
+    onClose: onViewClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
+
   const handleEdit = (req) => {
     setSelectedRequest(req);
     onEditOpen();
   };
 
+  const handleViewDetails = (req) => {
+    setSelectedRequest(req);
+    onViewOpen();
+  };
+
+  const handleDelete = (req) => {
+    setSelectedRequest(req);
+    onDeleteOpen();
+  };
+
   const tabData = useMemo(() => {
     return tabConfigs.map(({ filter }) => filteredRequests.filter(filter));
   }, [filteredRequests]);
-
-  const usersMap = useMemo(
-    () => Object.fromEntries(users.map((u) => [u.id, u])),
-    [users]
-  );
 
   return (
     <Box w="99.5%" mx="auto" p={8}>
@@ -232,6 +243,7 @@ const RequestsTable = () => {
                           <Th>Date & Time</Th>
                           <Th>Status</Th>
                           <Th> </Th>
+                          <Th> </Th>
                         </Tr>
                       </Thead>
                       {loading ? (
@@ -249,114 +261,119 @@ const RequestsTable = () => {
                         </TableCaption>
                       ) : tab.length > 0 ? (
                         <Tbody>
-                          {tab.map((req) => {
-                            const user = usersMap[req.user_id];
-                            return (
-                              <Tr
-                                key={req.id}
-                                textColor="blackAlpha.900"
-                                bg="#f7f9fb"
-                              >
-                                <Td>{formatRequestsId(req.id)}</Td>
-                                <Td>{user?.username}</Td>
-                                <Td>{req.course_section}</Td>
-                                <Td>{req.faculty_in_charge}</Td>
-                                <Td>
-                                  <VStack>
-                                    {req.equipment_list.map((eq, index) => (
-                                      <Badge
-                                        key={index}
-                                        color="black"
-                                        border="1px"
-                                        borderColor="gray.300"
-                                        borderRadius="xl"
-                                        pl={2}
-                                        pr={2}
-                                        pb={0.5}
-                                      >
-                                        {eq.equipment_name}
-                                      </Badge>
-                                    ))}
-                                  </VStack>
-                                </Td>
-                                <Td>
-                                  <Text mb={1}>
-                                    {getDateOnly(req.date_use)}
-                                  </Text>
-                                  <Text>
-                                    {`${formatTime(
-                                      req.time_from
-                                    )} - ${formatTime(req.time_to)}`}
-                                  </Text>
-                                </Td>
-                                <Td>
-                                  <Badge
-                                    colorScheme={getRequestStatusColor(
-                                      req.status
-                                    )}
-                                    borderRadius="xl"
-                                    pl={2}
-                                    pr={2}
-                                    pb={0.5}
+                          {tab.map((req) => (
+                            <Tr
+                              key={req.id}
+                              textColor="blackAlpha.900"
+                              bg="#f7f9fb"
+                            >
+                              <Td>{formatRequestsId(req.id)}</Td>
+                              <Td>{req.username}</Td>
+                              <Td>{req.course_section}</Td>
+                              <Td>{req.faculty_in_charge}</Td>
+                              <Td>
+                                <VStack>
+                                  {req.equipment_list.map((eq, index) => (
+                                    <Badge
+                                      key={index}
+                                      color="black"
+                                      border="1px"
+                                      borderColor="gray.300"
+                                      borderRadius="xl"
+                                      pl={2}
+                                      pr={2}
+                                      pb={0.5}
+                                    >
+                                      {eq.equipment_name}
+                                    </Badge>
+                                  ))}
+                                </VStack>
+                              </Td>
+                              <Td>
+                                <Text mb={1}>{getDateOnly(req.date_use)}</Text>
+                                <Text>
+                                  {`${formatTime(req.time_from)} - ${formatTime(
+                                    req.time_to
+                                  )}`}
+                                </Text>
+                              </Td>
+                              <Td>
+                                <Badge
+                                  colorScheme={getRequestStatusColor(
+                                    req.status
+                                  )}
+                                  borderRadius="xl"
+                                  pl={2}
+                                  pr={2}
+                                  pb={0.5}
+                                >
+                                  {req.status}
+                                </Badge>
+                              </Td>
+                              <Td>
+                                <Flex gap={3} w="40px">
+                                  <HStack
+                                    display={
+                                      req.status === "Pending"
+                                        ? "contents"
+                                        : "none"
+                                    }
                                   >
-                                    {req.status}
-                                  </Badge>
-                                </Td>
-                                <Td>
-                                  <Flex gap={2}>
-                                    <HStack spacing={2}>
-                                      <Tooltip
-                                        label="Approve"
-                                        placement="bottom"
-                                        borderRadius="md"
-                                        p={1}
-                                        pr={3}
-                                        pl={3}
-                                        bg="white"
-                                        color="black"
-                                        border="1px solid #e5e5e5"
-                                        boxShadow="sm"
-                                      >
-                                        <IconButton
-                                          icon={<CheckIcon />}
-                                          colorScheme="green"
-                                          aria-label="Approve"
-                                          borderRadius="lg"
-                                          size="sm"
-                                          //onClick={handleApprove}
-                                        />
-                                      </Tooltip>
+                                    <Tooltip
+                                      label="Approve"
+                                      placement="bottom"
+                                      borderRadius="md"
+                                      p={1}
+                                      pr={3}
+                                      pl={3}
+                                      bg="white"
+                                      color="black"
+                                      border="1px solid #e5e5e5"
+                                      boxShadow="sm"
+                                    >
+                                      <IconButton
+                                        icon={<CheckIcon />}
+                                        colorScheme="green"
+                                        aria-label="Approve"
+                                        borderRadius="lg"
+                                        size="sm"
+                                        //onClick={handleApprove}
+                                      />
+                                    </Tooltip>
 
-                                      <Tooltip
-                                        label="Reject"
-                                        placement="bottom"
-                                        borderRadius="md"
-                                        p={1}
-                                        pr={3}
-                                        pl={3}
-                                        bg="white"
-                                        color="black"
-                                        border="1px solid #e5e5e5"
-                                        boxShadow="sm"
-                                      >
-                                        <IconButton
-                                          icon={<CloseIcon />}
-                                          colorScheme="red"
-                                          aria-label="Reject"
-                                          borderRadius="lg"
-                                          size="sm"
-                                          //onClick={handleReject}
-                                        />
-                                      </Tooltip>
-                                    </HStack>
-                                    <RequestActionButton
-                                      onEdit={() => handleEdit(req)}
-                                    />
-                                  </Flex>
-                                </Td>
-                              </Tr>
-                            );
-                          })}
+                                    <Tooltip
+                                      label="Reject"
+                                      placement="bottom"
+                                      borderRadius="md"
+                                      p={1}
+                                      pr={3}
+                                      pl={3}
+                                      bg="white"
+                                      color="black"
+                                      border="1px solid #e5e5e5"
+                                      boxShadow="sm"
+                                    >
+                                      <IconButton
+                                        icon={<CloseIcon />}
+                                        colorScheme="red"
+                                        aria-label="Reject"
+                                        borderRadius="lg"
+                                        size="sm"
+                                        //onClick={handleReject}
+                                      />
+                                    </Tooltip>
+                                  </HStack>
+                                </Flex>
+                              </Td>
+                              <Td>
+                                <RequestActionButton
+                                  onEdit={() => handleEdit(req)}
+                                  onViewDetails={() => handleViewDetails(req)}
+                                  onDelete={() => handleDelete(req)}
+                                />
+                              </Td>
+                            </Tr>
+                          ))}
                         </Tbody>
                       ) : (
                         <TableCaption
@@ -380,6 +397,16 @@ const RequestsTable = () => {
       <UpdateRequestModal
         isOpen={isEditOpen}
         onClose={onEditClose}
+        request={selectedRequest}
+      />
+      <ViewRequestModal
+        isOpen={isViewOpen}
+        onClose={onViewClose}
+        request={selectedRequest}
+      />
+      <DeleteRequestModal
+        isOpen={isDeleteOpen}
+        onClose={onDeleteClose}
         request={selectedRequest}
       />
     </Box>

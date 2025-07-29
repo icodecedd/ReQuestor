@@ -32,21 +32,7 @@ import UpdateUserModal from "@/components/modals/UpdateUserModal";
 import DeleteUserModal from "@/components/modals/DeleteUserModal";
 import ToggleStatusModal from "@/components/modals/ToggleStatusModal";
 import { UserStatusDropdown } from "@/components/dropdowns/UserStatusDropdown";
-
-const getColorScheme = (status) => {
-  switch (status) {
-    case "Admin":
-      return "maroon";
-    case "Student":
-      return "white";
-    case "Active":
-      return "green";
-    case "Inactive":
-      return "red";
-    default:
-      return "gray";
-  }
-};
+import { getUserColor } from "@/utils/getColorScheme";
 
 const UsersTable = () => {
   {
@@ -203,7 +189,7 @@ const UsersTable = () => {
                 <Th>Role</Th>
                 <Th>Status</Th>
                 <Th>Created date</Th>
-                <Th>{" "}</Th>
+                <Th> </Th>
               </Tr>
             </Thead>
             {loading ? (
@@ -227,10 +213,12 @@ const UsersTable = () => {
                     <Td>{user.email}</Td>
                     <Td>
                       <Badge
-                        bg={getColorScheme(user.role)}
-                        color={user.role === "Admin" ? "white" : "black"}
+                        bg={getUserColor(user.role)}
                         border="1px"
-                        borderColor="gray.300"
+                        color={user.role === "Admin" ? "white" : "black"}
+                        borderColor={
+                          user.role === "Admin" ? "maroon" : "gray.300"
+                        }
                         borderRadius="xl"
                         pl={2}
                         pr={2}
@@ -241,7 +229,7 @@ const UsersTable = () => {
                     </Td>
                     <Td>
                       <Badge
-                        colorScheme={getColorScheme(user.status)}
+                        colorScheme={getUserColor(user.status)}
                         borderRadius="xl"
                         pl={2}
                         pr={2}

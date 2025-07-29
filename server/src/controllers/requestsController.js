@@ -4,7 +4,7 @@ import pool from "../config/db.js";
 export const getAllRequests = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT req.*,
+      `SELECT req.*, u.username, u.role,
          json_agg(json_build_object(
            'request_item_id', ri.id,
            'equipment_id', eq.id,
@@ -12,9 +12,10 @@ export const getAllRequests = async (req, res) => {
            'equipment_type', eq.type
          )) AS equipment_list
        FROM requests req
+       LEFT JOIN users u ON u.id = req.user_id
        LEFT JOIN request_items ri ON req.id = ri.request_id
        LEFT JOIN equipments eq ON ri.equipment_id = eq.id
-       GROUP BY req.id
+       GROUP BY req.id, u.id
        ORDER BY req.created_at DESC`
     );
 
@@ -31,7 +32,20 @@ export const getAllRequests = async (req, res) => {
 export const getRecentRequests = async (req, res) => {
   try {
     const request = await pool.query(
-      "SELECT * FROM requests ORDER BY created_at DESC LIMIT 5"
+      `SELECT req.*, u.username, u.role,
+         json_agg(json_build_object(
+           'request_item_id', ri.id,
+           'equipment_id', eq.id,
+           'equipment_name', eq.name,
+           'equipment_type', eq.type
+         )) AS equipment_list
+       FROM requests req
+       LEFT JOIN users u ON u.id = req.user_id
+       LEFT JOIN request_items ri ON req.id = ri.request_id
+       LEFT JOIN equipments eq ON ri.equipment_id = eq.id
+       GROUP BY req.id, u.id
+       ORDER BY req.created_at DESC
+       LIMIT 5`
     );
     res.status(200).json({ success: true, data: request.rows });
   } catch (error) {

@@ -115,6 +115,11 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
               boxShadow="0 2px 8px rgba(0,0,0,0.12)"
               border="1px solid #e2e8f0"
               p={2}
+              transition="all 0.3s ease"
+              _hover={{
+                transform: "scale(1.02)",
+                boxShadow: "lg",
+              }}
             >
               <FiBox color="#800000" />
             </Box>
