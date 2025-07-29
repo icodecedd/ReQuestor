@@ -12,6 +12,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  SimpleGrid,
   Spacer,
   Text,
   VStack,
@@ -28,21 +29,26 @@ import {
   FiActivity,
   FiBox,
 } from "react-icons/fi";
+import { TbFileDescription } from "react-icons/tb";
+
+const selectedCategory = (type) => {
+  switch (type) {
+    case "Projector":
+      return <BsProjector fontSize="32px" color="white" />;
+    case "White Screen":
+      return <PiProjectorScreenChart fontSize="32px" color="white" />;
+    case "AVR":
+      return <FaChalkboardTeacher fontSize="32px" color="white" />;
+    default:
+      return <FiBox fontSize="32px" color="white" />; // fallback icon
+  }
+};
+
+const formatEquipmentId = (id) => {
+  return `EQ-${String(id).padStart(3, "0")}`;
+};
 
 const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
-  const selectedCategory = (type) => {
-    switch (type) {
-      case "Projector":
-        return <BsProjector fontSize="32px" color="white" />;
-      case "White Screen":
-        return <PiProjectorScreenChart fontSize="32px" color="white" />;
-      case "AVR":
-        return <FaChalkboardTeacher fontSize="32px" color="white" />;
-      default:
-        return <FiBox fontSize="32px" color="white" />; // fallback icon
-    }
-  };
-
   return (
     <Modal
       isOpen={isOpen}
@@ -62,12 +68,17 @@ const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
               boxShadow="0 2px 8px rgba(0,0,0,0.12)"
               border="1px solid #e2e8f0"
               p={2}
+              transition="all 0.3s ease"
+              _hover={{
+                transform: "scale(1.02)",
+                boxShadow: "lg",
+              }}
             >
               <MdOutlineViewInAr color="#800000" />
             </Box>
             <Box>
               <Text fontSize="lg" mt={0.5}>
-                Equipment Details
+                Equipment Details [#{formatEquipmentId(equipment.id)}]
               </Text>
               <Text color="gray.700" fontWeight="normal" fontSize="14px">
                 View and manage detailed information about the selected
@@ -83,7 +94,18 @@ const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
           borderRadius="lg"
         />
         <ModalBody>
-          <Box border="2px" borderRadius="xl" borderColor="#800000" p={2}>
+          <Box
+            border="2px"
+            borderRadius="xl"
+            borderColor="#800000"
+            p={2}
+            mb={2}
+            transition="all 0.3s ease"
+            _hover={{
+              transform: "scale(1.02)",
+              boxShadow: "lg",
+            }}
+          >
             <HStack>
               <Box
                 borderRadius="lg"
@@ -95,10 +117,10 @@ const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
                 {selectedCategory(equipment.type)}
               </Box>
               <Box>
-                <Heading as="h3" fontSize="15px" fontWeight="bold">
+                <Heading as="h3" fontSize="16px" fontWeight="bold">
                   {equipment.name}
                 </Heading>
-                <Text fontSize="12px" color="gray.600" mt={0.5}>
+                <Text fontSize="13px" color="gray.600" mt={0.5}>
                   {equipment.serial_number}
                 </Text>
               </Box>
@@ -116,38 +138,59 @@ const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
               </Badge>
             </HStack>
           </Box>
-          <Box p={4}>
-            <VStack align="start" spacing={4}>
-              <HStack spacing={12} align="start" w="full">
-                {/* Description */}
-                <VStack align="start" spacing={1}>
-                  <HStack>
-                    <FiInfo />
-                    <Text fontWeight="semibold" color="gray.600">
-                      Description
-                    </Text>
-                  </HStack>
-                  <Text fontSize="sm">{equipment.description}</Text>
-                </VStack>
-              </HStack>
+          <HStack mt={3} mb={1}>
+            <FiInfo />
+            <Text fontWeight="semibold" fontSize="15px" color="gray.600">
+              Equipment Information
+            </Text>
+          </HStack>
+          <Box
+            border="1px"
+            borderRadius="xl"
+            borderColor="gray.400"
+            p={4}
+            mb={3}
+            position="relative"
+            transition="all 0.3s ease"
+            _hover={{
+              transform: "scale(1.02)",
+              boxShadow: "lg",
+            }}
+          >
+            <VStack align="start" spacing={6}>
+              {/* Description */}
+              <Box>
+                <HStack spacing={1} align="center" mb={0.5}>
+                  <TbFileDescription fontSize={12} />
+                  <Text fontSize="12px" color="gray.500">
+                    Description
+                  </Text>
+                </HStack>
+                <Text fontWeight="medium" fontSize="15px">
+                  {equipment.description}
+                </Text>
+              </Box>
 
-              <HStack spacing={12} align="start" w="full">
+              {/* Info Grid: Location, Status, Condition */}
+              <SimpleGrid columns={3} spacing={6} w="full">
                 {/* Location */}
-                <VStack align="start" spacing={1}>
-                  <HStack>
-                    <FiMapPin />
-                    <Text fontWeight="semibold" color="gray.600">
+                <Box>
+                  <HStack spacing={1} align="center" mb={0.5}>
+                    <FiMapPin fontSize={12} />
+                    <Text fontSize="12px" color="gray.500">
                       Location
                     </Text>
                   </HStack>
-                  <Text fontSize="sm">{equipment.location}</Text>
-                </VStack>
+                  <Text fontWeight="medium" fontSize="15px">
+                    {equipment.location}
+                  </Text>
+                </Box>
 
                 {/* Status */}
-                <VStack align="start" spacing={1}>
-                  <HStack>
-                    <FiCheckCircle />
-                    <Text fontWeight="semibold" color="gray.600">
+                <Box>
+                  <HStack spacing={1} align="center" mb={0.5}>
+                    <FiCheckCircle fontSize={12} />
+                    <Text fontSize="12px" color="gray.500">
                       Status
                     </Text>
                   </HStack>
@@ -160,13 +203,13 @@ const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
                   >
                     {equipment.status}
                   </Badge>
-                </VStack>
+                </Box>
 
                 {/* Condition */}
-                <VStack align="start" spacing={1}>
-                  <HStack>
-                    <FiActivity />
-                    <Text fontWeight="semibold" color="gray.600">
+                <Box>
+                  <HStack spacing={1} align="center" mb={0.5}>
+                    <FiActivity fontSize={12} />
+                    <Text fontSize="12px" color="gray.500">
                       Condition
                     </Text>
                   </HStack>
@@ -178,8 +221,8 @@ const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
                   >
                     {equipment.condition}
                   </Badge>
-                </VStack>
-              </HStack>
+                </Box>
+              </SimpleGrid>
             </VStack>
           </Box>
         </ModalBody>

@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Checkbox,
+  CheckboxGroup,
   Divider,
   Flex,
   FormControl,
@@ -17,7 +18,6 @@ import {
   ModalHeader,
   ModalOverlay,
   SimpleGrid,
-  Spacer,
   Tab,
   TabList,
   TabPanel,
@@ -26,9 +26,10 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
+import { useState } from "react";
 import { BsProjector } from "react-icons/bs";
 import { FaChalkboardTeacher } from "react-icons/fa";
-import { FiFileText } from "react-icons/fi";
+import { FiFilePlus } from "react-icons/fi";
 import { PiProjectorScreenChart } from "react-icons/pi";
 
 const requestFields = [
@@ -83,11 +84,28 @@ const equipmentFields = [
 ];
 
 const AddRequestModal = ({ isOpen, onClose }) => {
+  const [form, setForm] = useState({
+    username: "",
+    course_section: "",
+    faculty_in_charge: "",
+    equipment_list: [],
+    date_use: "",
+    time_from: "",
+    time_to: "",
+    purpose: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    console.log({ [name]: value });
+  };
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="xl"
+      size="lg"
       motionPreset="slideInBottom"
     >
       <ModalOverlay />
@@ -101,8 +119,13 @@ const AddRequestModal = ({ isOpen, onClose }) => {
               boxShadow="0 2px 8px rgba(0,0,0,0.12)"
               border="1px solid #e2e8f0"
               p={2}
+              transition="all 0.3s ease"
+              _hover={{
+                transform: "scale(1.02)",
+                boxShadow: "lg",
+              }}
             >
-              <FiFileText color="#800000" />
+              <FiFilePlus color="#800000" />
             </Box>
             <Box>
               <Text fontSize="lg" mt={0.5}>
@@ -161,7 +184,7 @@ const AddRequestModal = ({ isOpen, onClose }) => {
                       focusBorderColor="maroon"
                       borderRadius="xl"
                       borderColor="gray.400"
-                      //onChange={handleChange}
+                      onChange={handleChange}
                     />
                   </FormControl>
                 ))}
@@ -177,52 +200,80 @@ const AddRequestModal = ({ isOpen, onClose }) => {
                       boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
                     }}
                   >
-                    <SimpleGrid columns={2} spacing="10px">
-                      {equipmentFields.map((field, index) => (
-                        <Checkbox
-                          key={index}
-                          colorScheme="red"
-                          fontWeight="medium"
-                          name={field.name}
-                          // onChange={handleCheckbox}
-                          sx={{
-                            "& span.chakra-checkbox__control": {
-                              borderRadius: "full",
-                            },
-                          }}
-                        >
-                          <Box
-                            border="1px"
-                            borderRadius="lg"
-                            borderColor="#800000"
-                            w={200}
-                            p={1}
-                            transition="all 0.3s ease"
-                            _hover={{
-                              transform: "scale(1.02)",
-                              boxShadow: "lg",
-                            }}
-                            transform={false ? "scale(1.02)" : "none"}
-                            boxShadow={false ? "lg" : "none"}
-                          >
-                            <HStack>
+                    <CheckboxGroup
+                      onChange={(newValues) =>
+                        setForm((prevForm) => ({
+                          ...prevForm,
+                          equipment_list: newValues,
+                        }))
+                      }
+                    >
+                      <SimpleGrid columns={2} spacing="10px">
+                        {equipmentFields.map((field, index) => {
+                          const isChecked = form.equipment_list.includes(
+                            field.label
+                          );
+
+                          const handleCheckboxChange = (e) => {
+                            const { checked } = e.target;
+
+                            setForm((prev) => ({
+                              ...prev,
+                              equipment_list: checked
+                                ? [...prev.equipment_list, field.label]
+                                : prev.equipment_list.filter(
+                                    (item) => item !== field.label
+                                  ),
+                            }));
+                          };
+                          return (
+                            <Checkbox
+                              key={index}
+                              colorScheme="red"
+                              fontWeight="medium"
+                              name={field.name}
+                              isChecked={isChecked}
+                              onChange={handleCheckboxChange}
+                              sx={{
+                                "& span.chakra-checkbox__control": {
+                                  borderRadius: "full",
+                                },
+                              }}
+                            >
                               <Box
-                                borderRadius="md"
-                                bgGradient="linear(to-br, maroon, #c75d5dff)"
-                                boxShadow="0 2px 8px rgba(0,0,0,0.12)"
-                                p={2}
-                                mr={2}
+                                border="1px"
+                                borderRadius="lg"
+                                borderColor="#800000"
+                                w={160}
+                                p={1}
+                                transition="all 0.3s ease"
+                                _hover={{
+                                  transform: "scale(1.02)",
+                                  boxShadow: "lg",
+                                }}
+                                transform={isChecked ? "scale(1.02)" : "none"}
+                                boxShadow={isChecked ? "lg" : "none"}
                               >
-                                {field.icon}
+                                <HStack>
+                                  <Box
+                                    borderRadius="md"
+                                    bgGradient="linear(to-br, maroon, #c75d5dff)"
+                                    boxShadow="0 2px 8px rgba(0,0,0,0.12)"
+                                    p={2}
+                                    mr={2}
+                                  >
+                                    {field.icon}
+                                  </Box>
+                                  <Heading fontSize="13px" fontWeight="bold">
+                                    {field.label}
+                                  </Heading>
+                                </HStack>
                               </Box>
-                              <Heading fontSize="13px" fontWeight="bold">
-                                {field.label}
-                              </Heading>
-                            </HStack>
-                          </Box>
-                        </Checkbox>
-                      ))}
-                    </SimpleGrid>
+                            </Checkbox>
+                          );
+                        })}
+                      </SimpleGrid>
+                    </CheckboxGroup>
                   </Box>
                 </FormControl>
               </TabPanel>
@@ -236,7 +287,7 @@ const AddRequestModal = ({ isOpen, onClose }) => {
                     focusBorderColor="maroon"
                     borderRadius="xl"
                     borderColor="gray.400"
-                    //onChange={handleChange}
+                    onChange={handleChange}
                   />
                 </FormControl>
                 <Flex gap={5}>
@@ -250,7 +301,7 @@ const AddRequestModal = ({ isOpen, onClose }) => {
                         focusBorderColor="maroon"
                         borderRadius="xl"
                         borderColor="gray.400"
-                        //onChange={handleChange}
+                        onChange={handleChange}
                       />
                     </FormControl>
                   ))}
@@ -263,7 +314,7 @@ const AddRequestModal = ({ isOpen, onClose }) => {
                     borderRadius="xl"
                     borderColor="gray.400"
                     placeholder="Enter purpose or any additional details..."
-                    //onChange={handleChange}
+                    onChange={handleChange}
                   />
                 </FormControl>
               </TabPanel>

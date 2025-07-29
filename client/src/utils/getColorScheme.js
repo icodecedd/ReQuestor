@@ -43,3 +43,18 @@ export const getRequestStatusColor = (status) => {
   }
 };
 
+export const getUserColor = (status) => {
+  switch (status) {
+    case "Admin":
+      return "maroon";
+    case "Student":
+      return "white";
+    case "Active":
+      return "green";
+    case "Inactive":
+      return "red";
+    default:
+      return "gray";
+  }
+};
+

@@ -17,7 +17,7 @@ import {
 import { FiAlertTriangle, FiTrash } from "react-icons/fi";
 import useEquipmentStore from "@/store/equipmentStore";
 
-const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
+const DeleteRequestModal = ({ isOpen, onClose, equipment }) => {
   const deleteEquipment = useEquipmentStore((state) => state.deleteEquipment);
   const toast = useToast();
 
@@ -68,11 +68,10 @@ const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
             </Box>
             <Box>
               <Text fontSize="lg" mt={0.5}>
-                Delete Equipment
+                Delete Request
               </Text>
               <Text color="gray.700" fontWeight="normal" fontSize="14px">
-                This will permanently remove the equipment record from the
-                system.
+                This will permanently remove the request from the system.
               </Text>
             </Box>
           </Flex>
@@ -103,7 +102,7 @@ const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
               </Text>
             </HStack>
             <Text color="#ef4444" pl={7} fontSize="14px">
-              Deleting this equipment is permanent and cannot be undone. All
+              Deleting this request is permanent and cannot be undone. All
               associated records will be lost.
             </Text>
           </Box>
@@ -125,7 +124,7 @@ const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
             _hover={{ bg: "#cc5a5aff" }}
             onClick={handleDelete}
           >
-            Delete Equipment
+            Delete Request
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -133,4 +132,4 @@ const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
   );
 };
 
-export default DeleteEquipmentModal;
+export default DeleteRequestModal;
