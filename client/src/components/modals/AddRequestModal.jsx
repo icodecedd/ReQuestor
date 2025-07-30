@@ -1,3 +1,4 @@
+import { useRequestsStore } from "@/store/requestsStore";
 import {
   Box,
   Button,
@@ -25,6 +26,7 @@ import {
   Tabs,
   Text,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { BsProjector } from "react-icons/bs";
@@ -34,7 +36,7 @@ import { PiProjectorScreenChart } from "react-icons/pi";
 
 const requestFields = [
   {
-    name: "requestor_name",
+    name: "username",
     label: "Requestor Name",
     placeholder: "Enter requestor name",
   },
@@ -84,6 +86,9 @@ const equipmentFields = [
 ];
 
 const AddRequestModal = ({ isOpen, onClose }) => {
+  const addRequest = useRequestsStore((state) => state.addRequest);
+  const toast = useToast();
+
   const [form, setForm] = useState({
     username: "",
     course_section: "",
@@ -99,6 +104,35 @@ const AddRequestModal = ({ isOpen, onClose }) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     console.log({ [name]: value });
+  };
+
+  const handleSubmit = async () => {
+    console.log(form);
+    const result = await addRequest(form);
+
+    toast({
+      title: result.success ? "Success" : "Error",
+      description: result.message,
+      status: result.success ? "success" : "error",
+      duration: 3000,
+      isClosable: true,
+      variant: "subtle",
+      position: "top-right",
+    });
+
+    if (result.success) {
+      onClose();
+      setForm({
+        username: "",
+        course_section: "",
+        faculty_in_charge: "",
+        equipment_list: [],
+        date_use: "",
+        time_from: "",
+        time_to: "",
+        purpose: "",
+      });
+    }
   };
 
   return (
@@ -337,7 +371,7 @@ const AddRequestModal = ({ isOpen, onClose }) => {
             borderRadius="xl"
             _hover={{ bg: "#a12828" }}
             transition="background-color 0.2s ease-in-out"
-            //onClick={handleSubmit}
+            onClick={handleSubmit}
           >
             Create Request
           </Button>

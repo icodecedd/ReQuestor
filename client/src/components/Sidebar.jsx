@@ -85,15 +85,15 @@ const Sidebar = ({ navItems }) => {
           <Tooltip
             label={collapsed ? label : undefined}
             placement="right"
-            key={label}
-            borderRadius="md"
-            p={1}
-            pr={3}
-            pl={3}
-            bg="white"
-            color="black"
-            border="1px solid #e5e5e5"
-            boxShadow="sm"
+            borderRadius="lg"
+            px={3}
+            py={2}
+            bg="#800000"
+            color="white"
+            fontSize="sm"
+            fontWeight="medium"
+            boxShadow="lg"
+            openDelay={200}
             isDisabled={!collapsed}
           >
             <NavLink to={path}>
@@ -141,12 +141,15 @@ const Sidebar = ({ navItems }) => {
         <Tooltip
           label={collapsed ? "Logout" : undefined}
           placement="right"
-          borderRadius="md"
-          p={1}
-          bg="white"
-          color="black"
-          border="1px solid #e5e5e5"
-          boxShadow="sm"
+          borderRadius="lg"
+          px={3}
+          py={2}
+          bg="#800000"
+          color="white"
+          fontSize="sm"
+          fontWeight="medium"
+          boxShadow="lg"
+          openDelay={200}
           isDisabled={!collapsed}
         >
           <NavLink to="/logout">

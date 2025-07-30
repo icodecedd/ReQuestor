@@ -5,7 +5,7 @@ export const getEqStatusColor = (status) => {
     case "In Use":
       return "blue";
     case "Reserved":
-      return "yellow";
+      return "purple";
     case "Under Repair":
       return "orange";
     default:
@@ -32,12 +32,14 @@ export const getEqConditionColor = (condition) => {
 
 export const getRequestStatusColor = (status) => {
   switch (status) {
-    case "Pending":
-      return "yellow";
     case "Approved":
-      return "green";
-    case "Rejected":
+      return "teal";
+    case "Waitlisted":
+      return "yellow";
+    case "Cancelled":
       return "red";
+    case "Completed":
+      return "green";
     default:
       return "gray";
   }
@@ -57,4 +59,3 @@ export const getUserColor = (status) => {
       return "gray";
   }
 };
-

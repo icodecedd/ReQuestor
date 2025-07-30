@@ -2,14 +2,13 @@ import RequestActionButton from "@/components/buttons/RequestActionButton";
 import { CategoryDropdown } from "@/components/dropdowns/CategoryDropdown";
 import { RequestsStatusDropdown } from "@/components/dropdowns/RequestsStatusDropdown";
 import AddRequestModal from "@/components/modals/AddRequestModal";
-import DeleteRequestModal from "@/components/modals/DeleteRequestModal";
-import UpdateRequestModal from "@/components/modals/UpdateRequestModal";
+import CancelRequestModal from "@/components/modals/CancelRequestModal";
+import MarkRequestModal from "@/components/modals/MarkRequestModal";
 import ViewRequestModal from "@/components/modals/ViewRequestModal";
 import { useRequestsStore } from "@/store/requestsStore";
 import { formatTime } from "@/utils/formatTime";
 import { getRequestStatusColor } from "@/utils/getColorScheme";
 import { getDateOnly } from "@/utils/getDate";
-import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Box,
   Flex,
@@ -53,16 +52,20 @@ const tabConfigs = [
     filter: () => true,
   },
   {
-    title: "Pending",
-    filter: (req) => req.status === "Pending",
-  },
-  {
     title: "Approved",
     filter: (req) => req.status === "Approved",
   },
   {
-    title: "Rejected",
-    filter: (req) => req.status === "Rejected",
+    title: "Waitlisted",
+    filter: (req) => req.status === "Waitlisted",
+  },
+  {
+    title: "Completed",
+    filter: (req) => req.status === "Completed",
+  },
+  {
+    title: "Cancelled",
+    filter: (req) => req.status === "Cancelled",
   },
 ];
 
@@ -112,36 +115,36 @@ const RequestsTable = () => {
   } = useDisclosure();
 
   const {
-    isOpen: isEditOpen,
-    onOpen: onEditOpen,
-    onClose: onEditClose,
-  } = useDisclosure();
-
-  const {
     isOpen: isViewOpen,
     onOpen: onViewOpen,
     onClose: onViewClose,
   } = useDisclosure();
 
   const {
-    isOpen: isDeleteOpen,
-    onOpen: onDeleteOpen,
-    onClose: onDeleteClose,
+    isOpen: isCancelOpen,
+    onOpen: onCancelOpen,
+    onClose: onCancelClose,
   } = useDisclosure();
 
-  const handleEdit = (req) => {
-    setSelectedRequest(req);
-    onEditOpen();
-  };
+  const {
+    isOpen: isMarkCompleteOpen,
+    onOpen: onMarkCompleteOpen,
+    onClose: onMarkCompleteClose,
+  } = useDisclosure();
 
   const handleViewDetails = (req) => {
     setSelectedRequest(req);
     onViewOpen();
   };
 
-  const handleDelete = (req) => {
+  const handleCancel = (req) => {
     setSelectedRequest(req);
-    onDeleteOpen();
+    onCancelOpen();
+  };
+
+  const handleMarkComplete = (req) => {
+    setSelectedRequest(req);
+    onMarkCompleteOpen();
   };
 
   const tabData = useMemo(() => {
@@ -243,7 +246,6 @@ const RequestsTable = () => {
                           <Th>Date & Time</Th>
                           <Th>Status</Th>
                           <Th> </Th>
-                          <Th> </Th>
                         </Tr>
                       </Thead>
                       {loading ? (
@@ -311,65 +313,11 @@ const RequestsTable = () => {
                                 </Badge>
                               </Td>
                               <Td>
-                                <Flex gap={3} w="40px">
-                                  <HStack
-                                    display={
-                                      req.status === "Pending"
-                                        ? "contents"
-                                        : "none"
-                                    }
-                                  >
-                                    <Tooltip
-                                      label="Approve"
-                                      placement="bottom"
-                                      borderRadius="md"
-                                      p={1}
-                                      pr={3}
-                                      pl={3}
-                                      bg="white"
-                                      color="black"
-                                      border="1px solid #e5e5e5"
-                                      boxShadow="sm"
-                                    >
-                                      <IconButton
-                                        icon={<CheckIcon />}
-                                        colorScheme="green"
-                                        aria-label="Approve"
-                                        borderRadius="lg"
-                                        size="sm"
-                                        //onClick={handleApprove}
-                                      />
-                                    </Tooltip>
-
-                                    <Tooltip
-                                      label="Reject"
-                                      placement="bottom"
-                                      borderRadius="md"
-                                      p={1}
-                                      pr={3}
-                                      pl={3}
-                                      bg="white"
-                                      color="black"
-                                      border="1px solid #e5e5e5"
-                                      boxShadow="sm"
-                                    >
-                                      <IconButton
-                                        icon={<CloseIcon />}
-                                        colorScheme="red"
-                                        aria-label="Reject"
-                                        borderRadius="lg"
-                                        size="sm"
-                                        //onClick={handleReject}
-                                      />
-                                    </Tooltip>
-                                  </HStack>
-                                </Flex>
-                              </Td>
-                              <Td>
                                 <RequestActionButton
-                                  onEdit={() => handleEdit(req)}
+                                  status={req.status}
                                   onViewDetails={() => handleViewDetails(req)}
-                                  onDelete={() => handleDelete(req)}
+                                  onCancel={() => handleCancel(req)}
+                                  onMarkComplete={() => handleMarkComplete(req)}
                                 />
                               </Td>
                             </Tr>
@@ -394,19 +342,19 @@ const RequestsTable = () => {
         </Tabs>
       </Box>
       <AddRequestModal isOpen={isAddOpen} onClose={onAddClose} />
-      <UpdateRequestModal
-        isOpen={isEditOpen}
-        onClose={onEditClose}
-        request={selectedRequest}
-      />
       <ViewRequestModal
         isOpen={isViewOpen}
         onClose={onViewClose}
         request={selectedRequest}
       />
-      <DeleteRequestModal
-        isOpen={isDeleteOpen}
-        onClose={onDeleteClose}
+      <CancelRequestModal
+        isOpen={isCancelOpen}
+        onClose={onCancelClose}
+        request={selectedRequest}
+      />
+      <MarkRequestModal
+        isOpen={isMarkCompleteOpen}
+        onClose={onMarkCompleteClose}
         request={selectedRequest}
       />
     </Box>

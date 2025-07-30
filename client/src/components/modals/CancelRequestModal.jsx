@@ -14,15 +14,16 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { FiAlertTriangle, FiTrash } from "react-icons/fi";
-import useEquipmentStore from "@/store/equipmentStore";
+import { FiAlertTriangle } from "react-icons/fi";
+import { useRequestsStore } from "@/store/requestsStore";
+import { TbCancel } from "react-icons/tb";
 
-const DeleteRequestModal = ({ isOpen, onClose, equipment }) => {
-  const deleteEquipment = useEquipmentStore((state) => state.deleteEquipment);
+const CancelRequestModal = ({ isOpen, onClose, request }) => {
+  const cancelRequest = useRequestsStore((state) => state.cancelRequest);
   const toast = useToast();
 
-  const handleDelete = async () => {
-    const result = await deleteEquipment(equipment.id);
+  const handleCancel = async () => {
+    const result = await cancelRequest(request.id);
 
     toast({
       title: result.success ? "Success" : "Error",
@@ -64,14 +65,15 @@ const DeleteRequestModal = ({ isOpen, onClose, equipment }) => {
                 boxShadow: "lg",
               }}
             >
-              <FiTrash color="#800000" />
+              <TbCancel color="#800000" />
             </Box>
             <Box>
               <Text fontSize="lg" mt={0.5}>
-                Delete Request
+                Cancel Request
               </Text>
               <Text color="gray.700" fontWeight="normal" fontSize="14px">
-                This will permanently remove the request from the system.
+                This will cancel the request. The equipment will be made
+                available again for others to reserve.
               </Text>
             </Box>
           </Flex>
@@ -84,8 +86,8 @@ const DeleteRequestModal = ({ isOpen, onClose, equipment }) => {
         />
         <ModalBody>
           <Box
-            bg="#fdecec"
-            color="#fda8a8ff"
+            bg="#fefce8"
+            color="#facc15"
             border="1px"
             borderRadius="xl"
             p="2.5"
@@ -96,14 +98,14 @@ const DeleteRequestModal = ({ isOpen, onClose, equipment }) => {
             }}
           >
             <HStack>
-              <FiAlertTriangle color="#922323ff" fontSize="20px" />
-              <Text color="#922323ff">
-                <strong>Security Notice:</strong>
+              <FiAlertTriangle color="#92400e" fontSize="20px" />
+              <Text color="#92400e">
+                <strong>Notice:</strong>
               </Text>
             </HStack>
-            <Text color="#ef4444" pl={7} fontSize="14px">
-              Deleting this request is permanent and cannot be undone. All
-              associated records will be lost.
+            <Text color="#ca8a04" pl={7} fontSize="14px">
+              Canceling this request will stop its processing. This action is
+              final and cannot be reversed.
             </Text>
           </Box>
         </ModalBody>
@@ -118,13 +120,14 @@ const DeleteRequestModal = ({ isOpen, onClose, equipment }) => {
             Close
           </Button>
           <Button
-            bg="#ef4444"
+            bg="#800000"
             color="white"
             borderRadius="xl"
-            _hover={{ bg: "#cc5a5aff" }}
-            onClick={handleDelete}
+            _hover={{ bg: "#a12828" }}
+            transition="background-color 0.2s ease-in-out"
+            onClick={handleCancel}
           >
-            Delete Request
+            Cancel Request
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -132,4 +135,4 @@ const DeleteRequestModal = ({ isOpen, onClose, equipment }) => {
   );
 };
 
-export default DeleteRequestModal;
+export default CancelRequestModal;
