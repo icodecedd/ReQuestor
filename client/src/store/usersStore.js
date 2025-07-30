@@ -17,6 +17,29 @@ const useUserStore = create((set) => ({
     }
   },
 
+  findUserById: async (id) => {
+    try {
+      const res = await axios.get(`/api/users/${id}`);
+
+      const user = res?.data?.data;
+
+      return {
+        success: true,
+        data: user,
+      };
+    } catch (error) {
+      console.error(
+        "Finding user error:",
+        error.response?.data || error.message
+      );
+
+      return {
+        success: false,
+        message: "Failed to find account. Please try again.",
+      };
+    }
+  },
+
   addUser: async (newUser) => {
     const username = newUser.username?.trim() || "";
     const email = newUser.email?.trim() || "";
@@ -51,7 +74,7 @@ const useUserStore = create((set) => ({
 
       const res = await axios.post("/api/users", payload);
       set((state) => ({
-        users: [...state.users, res.data.data], // Append new user
+        users: [res.data.data, ...state.users], // prepend new user
       }));
       return {
         success: true,
@@ -168,8 +191,8 @@ const useUserStore = create((set) => ({
   resetPassword: async (id, newPassword) => {
     const password = newPassword.password || "";
     const confirmPassword = newPassword.confirmPassword || "";
-    const forceLogin = newPassword.forceLogin
-    const sendNotification = newPassword.sendNotification
+    const forceLogin = newPassword.forceLogin;
+    const sendNotification = newPassword.sendNotification;
 
     if (!password || !confirmPassword) {
       return {
@@ -193,15 +216,15 @@ const useUserStore = create((set) => ({
     }
 
     // Note: Add a notification email logic here
-    if(sendNotification) {
-      console.log("Email has been sent to the user.")
+    if (sendNotification) {
+      console.log("Email has been sent to the user.");
     }
 
     try {
       const resetPayload = {
         password,
         confirmPassword,
-        must_change_password: forceLogin
+        must_change_password: forceLogin,
       };
 
       const res = await axios.patch(

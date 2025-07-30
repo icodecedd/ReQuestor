@@ -1,74 +1,87 @@
-import {
-  Menu,
-  MenuList,
-  MenuButton,
-  MenuItem,
-  IconButton,
-} from "@chakra-ui/react";
-import {
-  FiEdit,
-  FiEye,
-  FiTrash,
-  FiMoreHorizontal,
-} from "react-icons/fi";
-
-const hoverStyle = {
-  bg: "#f7eaea",
-  borderRadius: "lg",
-};
+import { IconButton, Tooltip, Flex } from "@chakra-ui/react";
+import { FiEye } from "react-icons/fi";
+import { HiCheckCircle } from "react-icons/hi";
+import { RiCloseCircleLine } from "react-icons/ri";
 
 const RequestActionButton = ({
-  onEdit,
+  status,
+  onMarkComplete,
   onViewDetails,
-  onDelete,
+  onCancel,
 }) => {
+  const getAvailableActions = (status) => {
+    const actions = [];
 
-  const actions = [
-    {
-      key: "edit",
-      icon: <FiEdit />,
-      label: "Edit",
-      onClick: onEdit,
-    },
-    {
-      key: "view",
-      icon: <FiEye />,
-      label: "View Details",
-      onClick: onViewDetails,
-    },
-    {
-      key: "delete",
-      icon: <FiTrash />,
-      label: "Delete",
-      onClick: onDelete,
-    },
-  ];
+    if (
+      ["Pending", "Approved", "Waitlisted", "Completed", "Cancelled"].includes(
+        status
+      )
+    ) {
+      actions.push({
+        key: "view",
+        icon: <FiEye />,
+        label: "View Details",
+        onClick: onViewDetails,
+      });
+    }
+
+    if (["Pending", "Approved"].includes(status)) {
+      actions.push({
+        key: "complete",
+        icon: <HiCheckCircle color="#16a34a" />,
+        label: "Mark Complete",
+        onClick: onMarkComplete,
+      });
+    }
+
+    if (["Pending", "Approved", "Waitlisted"].includes(status)) {
+      actions.push({
+        key: "cancel",
+        icon: <RiCloseCircleLine color="#dc2626" />,
+        label: "Cancel",
+        onClick: onCancel,
+      });
+    }
+
+    return actions;
+  };
 
   return (
-    <Menu autoSelect={false}>
-      <MenuButton
-        as={IconButton}
-        icon={<FiMoreHorizontal />}
-        variant={"ghost"}
-        _hover={{ bg: "#f7eaea" }}
-        _active={{ bg: "#f7eaea" }}
-        aria-label="Equipment actions"
-      />
-      <MenuList minW="170px" p={1}>
-        {actions.map(({ key, icon, label, onClick }) => (
-          <MenuItem
-            key={key}
+    <Flex gap={2} w="full" justify="center">
+      {getAvailableActions(status).map(({ key, label, icon, onClick }) => (
+        <Tooltip
+          key={key}
+          label={label}
+          placement="bottom"
+          borderRadius="lg"
+          px={3}
+          py={2}
+          bg="#800000"
+          color="white"
+          fontSize="sm"
+          fontWeight="medium"
+          boxShadow="lg"
+          openDelay={200}
+        >
+          <IconButton
+            icon={icon}
+            aria-label={label}
             onClick={onClick}
-            gap={2}
-            borderRadius="lg"
-            w="160px"
-            _hover={hoverStyle}
-          >
-            {icon} {label}
-          </MenuItem>
-        ))}
-      </MenuList>
-    </Menu>
+            size="sm"
+            rounded="lg"
+            variant="outline"
+            colorScheme={
+              key === "complete" ? "green" : key === "cancel" ? "red" : "gray"
+            }
+            _hover={{
+              boxShadow: "md",
+              transform: "translateY(-2px)",
+            }}
+            transition="all 0.2s ease"
+          />
+        </Tooltip>
+      ))}
+    </Flex>
   );
 };
 

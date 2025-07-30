@@ -194,7 +194,7 @@ export const deleteEquipment = async (req, res) => {
     if (rows.length === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "Equipment not found" });
+        .json({ success: false, message: "Equipment not found." });
     }
 
     const deletedEquipment = rows[0];

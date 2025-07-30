@@ -65,7 +65,7 @@ const useEquipmentStore = create((set, get) => ({
 
       const res = await axios.post("/api/equipment", payload);
       set((state) => ({
-        equipment: [...state.equipment, res.data.data], // Append new equipment
+        equipment: [res.data.data, ...state.equipment], // prepend new equipment
       }));
       return {
         success: true,
