@@ -13,7 +13,7 @@ ReQuest streamlines how academic institutions (e.g., PUP San Juan) manage equipm
 - **Paperless Requests**: Submit your reservation online in seconds.  
 - **First-Come, First-Served Queue**: Fair, timestamp-driven ordering.  
 - **Real-Time Availability**: Know which items are free at a glance.  
-- **Admin Dashboard**: Approve, reject, or modify bookings with one click.  
+- **Admin Dashboard**: Approve, reject, or cancel bookings with one click.  
 - **Notifications**: Instant e-mail and in-app updates on your request status.
 
 ---
