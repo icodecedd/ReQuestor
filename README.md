@@ -9,7 +9,7 @@ ReQuest is being built to eliminate paper-based reservation forms by providing a
 ---
 
 ## 📌 **Overview**  
-ReQuest streamlines how academic institutions (e.g., PUP San Juan) manage equipment requests—projectors, laptops, speakers, and more—by offering:  
+ReQuest streamlines how academic institutions (e.g., PUP San Juan) manage equipment requests—projectors, white screens, and more—by offering:  
 - **Paperless Requests**: Submit your reservation online in seconds.  
 - **First-Come, First-Served Queue**: Fair, timestamp-driven ordering.  
 - **Real-Time Availability**: Know which items are free at a glance.  
