@@ -3,11 +3,13 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import equipmentRoutes from "./routes/equipmentRoutes.js";
 import statRoutes from "./routes/statRoutes.js";
 import requestRoutes from "./routes/requestsRoutes.js"
 import activityRoutes from "./routes/activityRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
+import authRoutes from "./routes/authRoutes.js"
 
 dotenv.config();
 
@@ -26,6 +28,12 @@ app.use(helmet());
 // Logs HTTP requests in the console
 app.use(morgan("dev"));
 
+// Parse cookies
+app.use(cookieParser());
+
+app.use(express.urlencoded({ extended: false }));
+
+app.use("/api/auth", authRoutes);
 app.use("/api/equipment", equipmentRoutes);
 app.use("/api/stats", statRoutes);
 app.use("/api/requests", requestRoutes)
@@ -34,5 +42,5 @@ app.use("/api/users", userRoutes)
 
 // Start the server on the specified port
 app.listen(PORT, () => {
-  console.log(`\n🚀 Server is running at: http://localhost:${PORT}\n`);
+  console.log(`\n🚀 Server is running on port: ${PORT}\n`);
 });

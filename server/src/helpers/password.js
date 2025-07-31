@@ -1,7 +1,5 @@
 import bcrypt from "bcrypt";
 
-
-
 const rounds = Number(process.env.BCRYPT_ROUNDS || 12);
 
 export async function hashPassword(plain) {

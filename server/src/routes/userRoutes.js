@@ -3,7 +3,6 @@ import {
   addUser,
   deleteUser,
   getAllUsers,
-  getUserById,
   resetUserPasswordManual,
   toggleUserStatus,
   updateUser,
@@ -22,9 +21,6 @@ router.get("/check-username", checkUsernameAvailability);
 
 // Get all users
 router.get("/", getAllUsers);
-
-// Get user by ID
-router.get("/:id", getUserById);
 
 // Create a new user
 router.post("/", addUser);

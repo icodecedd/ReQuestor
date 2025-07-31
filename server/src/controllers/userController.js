@@ -18,32 +18,6 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-export const getUserById = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const result = await pool.query(
-      `SELECT id, username, email, role, status, must_change_password, created_at, verified
-       FROM users
-       WHERE id = $1;`,
-      [id]
-    );
-
-    if (result.rowCount === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found." });
-    }
-
-    return res.status(200).json({ success: true, data: result.rows[0] });
-  } catch (error) {
-    console.error("Error in getUserById:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
-  }
-};
-
 export const addUser = async (req, res) => {
   try {
     const { username, email, password_hash, role, status } = req.body;
