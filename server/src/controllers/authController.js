@@ -158,7 +158,7 @@ export const login = async (req, res) => {
     try {
         // Check if the user exists
         const result = await pool.query(`
-            SELECT id, name, student_number, email, role, status, is_verified, created_at, last_login 
+            SELECT id, name, student_number, password_hash, email, role, status, is_verified, created_at, last_login 
             FROM users WHERE email = $1`,
             [email]
         );
@@ -170,6 +170,8 @@ export const login = async (req, res) => {
         }
 
         const user = result.rows[0];
+
+        console.log(password, user.password_hash);
 
         // Check if the password is correct
         const match = await comparePassword(password, user.password_hash);
@@ -198,7 +200,10 @@ export const login = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "Login successfully.",
-            data: user
+            data: {
+                ...user,
+                password_hash: undefined
+            }
         });
 
     } catch (error) {
@@ -274,7 +279,9 @@ export const resetPassword = async (req, res) => {
     const {resetToken} = req.params;
     const {password} = req.body;
 
-    if (!resetToken || !password) {
+    const cleanToken = req.params.resetToken.trim(); // removes any trailing newline or space
+
+    if (!cleanToken || !password) {
         return res.status(400).json({
             success: false,
             message: "Reset token and password are required."
@@ -282,7 +289,7 @@ export const resetPassword = async (req, res) => {
     }
 
     try {
-        const decodedToken = jwt.verify(resetToken, process.env.PASSWORD_RESET_TOKEN_SECRET);
+        const decodedToken = jwt.verify(cleanToken, process.env.RESET_PASSWORD_TOKEN_SECRET);
         const userId = decodedToken.userId;
 
         // Check if the user exists
@@ -303,7 +310,7 @@ export const resetPassword = async (req, res) => {
         const result = await pool.query(
             `UPDATE public.users
              SET password_hash = $1
-             WHERE id = $2 RETURNING id, username, email, role, status, is_verified;`,
+             WHERE id = $2 RETURNING id, name, student_number, email, role, status, is_verified;`,
             [password_hash, userId]
         );
 
