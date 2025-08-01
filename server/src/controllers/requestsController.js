@@ -4,7 +4,7 @@ import pool from "../config/db.js";
 export const getAllRequests = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT req.*, u.username, u.role,
+      `SELECT req.*, u.name, u.role,
          json_agg(json_build_object(
            'request_item_id', ri.id,
            'equipment_id', eq.id,
@@ -33,7 +33,7 @@ export const getAllRequests = async (req, res) => {
 export const getRecentRequests = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT req.*, u.username, u.role,
+      `SELECT req.*, u.name, u.role,
          json_agg(json_build_object(
            'request_item_id', ri.id,
            'equipment_id', eq.id,

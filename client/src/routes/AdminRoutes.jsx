@@ -7,13 +7,12 @@ import Equipment from "@/pages/admin/Equipment/EquipmentsPage";
 import Activity from "@/pages/admin/ActivityLogsPage";
 import Settings from "@/pages/admin/SettingsPage";
 
-const adminRoutes = () => {
+const AdminRoutes = () => {
   return (
     <Routes>
-      <Route path="/dashboard" element={<AdminLayout />}>
-        {/* Default */}
-        <Route index element={<Dashboard />} />
-        {/* Sidebar */}
+      {/* Nested routes under /dashboard */}
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<ManageUsers />} />
         <Route path="requests" element={<Requests />} />
@@ -21,10 +20,8 @@ const adminRoutes = () => {
         <Route path="activity" element={<Activity />} />
         <Route path="settings" element={<Settings />} />
       </Route>
-
-      <Route path="*" element={<Navigate to="/dashboard" />} />
     </Routes>
   );
 };
 
-export default adminRoutes;
+export default AdminRoutes;
