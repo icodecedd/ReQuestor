@@ -14,6 +14,12 @@ export const generateTokenAndCookie = (res, userId) => {
     return token
 }
 
+export const generateVerificationToken = (userId) => {
+  return jwt.sign({ userId }, process.env.JWT_SECRET, {
+    expiresIn: "15m",
+  });
+};
+
 export const generateResetToken = (userId) => {
     return jwt.sign({userId}, process.env.RESET_PASSWORD_TOKEN_SECRET, {expiresIn: "15m"})
 }

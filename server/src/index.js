@@ -20,7 +20,12 @@ const PORT = process.env.PORT || 5001;
 app.use(express.json());
 
 // Controls how your server responds to requests from other origins
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Your frontend origin
+    credentials: true, // Required to accept cookies
+  })
+);
 
 // Helmet is a security middleware that helps protect the app by setting various HTTP headers
 app.use(helmet());
@@ -30,8 +35,6 @@ app.use(morgan("dev"));
 
 // Parse cookies
 app.use(cookieParser());
-
-app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/equipment", equipmentRoutes);

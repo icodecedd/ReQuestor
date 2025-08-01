@@ -5,6 +5,7 @@ import {
   Text,
   FormControl,
   FormLabel,
+  FormErrorMessage,
   Input,
   InputGroup,
   InputRightElement,
@@ -25,17 +26,23 @@ import logo from "@/assets/requestor.svg";
 import overviewBg from "@/assets/overview.webp";
 import { validateRequiredFields } from "@/utils/validateRequiredFields";
 
-export const LoginPage = () => {
-  const { login } = useAuth();
+export const SignupPage = () => {
+  const { signup } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
-
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    name: "",
+    student_number: "",
+  });
   const [errors, setErrors] = useState({
     email: false,
     password: false,
+    name: false,
+    student_number: false,
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
@@ -64,7 +71,7 @@ export const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const requiredFields = ["email", "password"];
+    const requiredFields = ["student_number", "name", "email", "password"];
 
     const hasMissing = validateRequiredFields(
       formData,
@@ -75,18 +82,45 @@ export const LoginPage = () => {
 
     if (hasMissing) return;
 
+    if (!formData.email.includes("@")) {
+      setErrors((prev) => ({ ...prev, email: true }));
+      showToast("Invalid email format.");
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      setErrors((prev) => ({ ...prev, password: true }));
+      showToast("Password must be at least 6 characters.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const { success, data } = await login(formData);
+      const { success } = await signup(formData);
+
       if (success) {
-        navigate(data.role === "Admin" ? "/admin/dashboard" : "/student");
+        navigate("/verification", {
+          state: { email: formData.email },
+        });
+        console.log("Signup successful");
       } else {
-        showToast("Invalid email or password.");
+        showToast("Something went wrong.");
       }
     } catch (err) {
       console.error(err);
-      showToast("Login failed. Please try again.");
+
+      const errorMessage =
+        err?.response?.data?.message || "Sign up failed. Please try again.";
+
+      showToast(errorMessage);
+
+      // Optionally navigate to verification page again
+      if (errorMessage.includes("not verified")) {
+        navigate("/verification", {
+          state: { email: formData.email },
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -102,6 +136,7 @@ export const LoginPage = () => {
       >
         <Flex
           direction={{ base: "column", md: "row" }}
+          height="1xl"
           bg="white"
           borderRadius="xl"
           boxShadow="lg"
@@ -128,7 +163,7 @@ export const LoginPage = () => {
             />
           </Box>
 
-          {/* RIGHT: Login Form */}
+          {/* RIGHT: Signup Form */}
           <Box
             w={{ base: "100%", md: "50%", lg: "45%" }}
             p={{ base: 6, sm: 8, md: 10 }}
@@ -139,16 +174,54 @@ export const LoginPage = () => {
               <Box textAlign="center">
                 <Image src={logo} boxSize="50px" mx="auto" />
                 <Heading fontSize="2xl" color="maroon">
-                  Welcome Back
+                  Create Account
                 </Heading>
                 <Text fontSize="sm" color="gray.600">
-                  Please sign in to your account
+                  Welcome to ReQuestor. Let's create your account
                 </Text>
               </Box>
 
               <form onSubmit={handleSubmit}>
                 <VStack spacing={4}>
-                  {/* Email Field */}
+                  {/* Student Number */}
+                  <FormControl isInvalid={errors.student_number}>
+                    <FormLabel>Student Number</FormLabel>
+                    <InputGroup>
+                      <Input
+                        type="text"
+                        name="student_number"
+                        value={formData.student_number}
+                        onChange={handleChange}
+                        placeholder="Enter your student number"
+                        focusBorderColor="maroon"
+                      />
+                      <InputRightElement>
+                        {errors.student_number && (
+                          <WarningIcon color="red.500" />
+                        )}
+                      </InputRightElement>
+                    </InputGroup>
+                  </FormControl>
+
+                  {/* Name */}
+                  <FormControl isInvalid={errors.name}>
+                    <FormLabel>Name</FormLabel>
+                    <InputGroup>
+                      <Input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="Enter your name"
+                        focusBorderColor="maroon"
+                      />
+                      <InputRightElement>
+                        {errors.name && <WarningIcon color="red.500" />}
+                      </InputRightElement>
+                    </InputGroup>
+                  </FormControl>
+
+                  {/* Email */}
                   <FormControl isInvalid={errors.email}>
                     <FormLabel>Email</FormLabel>
                     <InputGroup>
@@ -167,7 +240,7 @@ export const LoginPage = () => {
                     </InputGroup>
                   </FormControl>
 
-                  {/* Password Field */}
+                  {/* Password */}
                   <FormControl isInvalid={errors.password}>
                     <FormLabel>Password</FormLabel>
                     <InputGroup>
@@ -192,18 +265,6 @@ export const LoginPage = () => {
                     </InputGroup>
                   </FormControl>
 
-                  {/* Forgot Password */}
-                  <Box w="full" textAlign="right">
-                    <Link
-                      color="#800000"
-                      fontSize="sm"
-                      fontWeight="medium"
-                      _hover={{ textDecoration: "underline" }}
-                    >
-                      Forgot password?
-                    </Link>
-                  </Box>
-
                   {/* Submit Button */}
                   <Button
                     type="submit"
@@ -213,23 +274,24 @@ export const LoginPage = () => {
                     bg="#800000"
                     _hover={{ bg: "#a12828" }}
                     w="full"
+                    mt={3}
                   >
-                    {isSubmitting ? "Signing in..." : "Sign in"}
+                    {isSubmitting ? "Signing up..." : "Sign up"}
                   </Button>
                 </VStack>
               </form>
 
-              {/* Sign Up Prompt */}
+              {/* Already have an account */}
               <Center gap="1" mt={5}>
-                <Text fontSize={14}>Don't have an account?</Text>
+                <Text fontSize={14}>Have an account?</Text>
                 <Link
                   as={RouterLink}
-                  to="/signup"
+                  to="/login"
                   color="#800000"
                   fontSize={14}
                   fontWeight="medium"
                 >
-                  Sign up
+                  Sign in
                 </Link>
               </Center>
             </VStack>
@@ -240,4 +302,4 @@ export const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignupPage;

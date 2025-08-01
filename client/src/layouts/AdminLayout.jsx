@@ -12,12 +12,12 @@ import { LuLayoutDashboard } from "react-icons/lu";
 
 const DashboardLayout = () => {
   const navItems = [
-    { label: "Dashboard", icon: LuLayoutDashboard, path: "/dashboard/dashboard" },
-    { label: "Manage Users", icon: FiUsers, path: "/dashboard/users" },
-    { label: "Requests", icon: FiFileText, path: "/dashboard/requests" },
-    { label: "Equipment", icon: FiMonitor, path: "/dashboard/equipment" },
-    { label: "Activity Logs", icon: FiActivity, path: "/dashboard/activity" },
-    { label: "Settings", icon: FiSettings, path: "/dashboard/settings" },
+    { label: "Dashboard", icon: LuLayoutDashboard, path: "/admin/dashboard" },
+    { label: "Manage Users", icon: FiUsers, path: "/admin/users" },
+    { label: "Requests", icon: FiFileText, path: "/admin/requests" },
+    { label: "Equipment", icon: FiMonitor, path: "/admin/equipment" },
+    { label: "Activity Logs", icon: FiActivity, path: "/admin/activity" },
+    { label: "Settings", icon: FiSettings, path: "/admin/settings" },
   ];
 
   return (

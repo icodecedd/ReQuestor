@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   Box,
   IconButton,
@@ -14,8 +14,11 @@ import {
 import { FiLogOut } from "react-icons/fi";
 import logo from "@/assets/requestor.svg";
 import { LuPanelLeftClose, LuPanelRightClose } from "react-icons/lu";
+import { useAuth } from "@/hooks/useAuth";
 
 const Sidebar = ({ navItems }) => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [showText, setShowText] = useState(!collapsed);
 
@@ -83,6 +86,7 @@ const Sidebar = ({ navItems }) => {
 
         {navItems.map(({ label, icon: Icon, path }) => (
           <Tooltip
+            key={label}
             label={collapsed ? label : undefined}
             placement="right"
             borderRadius="lg"
@@ -152,36 +156,38 @@ const Sidebar = ({ navItems }) => {
           openDelay={200}
           isDisabled={!collapsed}
         >
-          <NavLink to="/logout">
-            {({ isActive }) => (
-              <Flex
-                align="center"
-                gap={4}
-                p={3}
-                w="full"
-                borderRadius="xl"
-                transition="background 0.2s"
-                fontWeight={isActive ? "bold" : "medium"}
-                bg={isActive ? "#e0b1b1" : "transparent"}
-                color={isActive ? "#800000" : "gray.600"}
-                _hover={{ bg: "#e0b1b1", color: "#800000" }}
-              >
-                <Box flexShrink={0} pl={1}>
-                  <FiLogOut size={18} />
-                </Box>
+          <Box
+            as="button"
+            onClick={() => {
+              logout();
+            }}
+            w="full"
+          >
+            <Flex
+              align="center"
+              gap={4}
+              p={3}
+              w="full"
+              borderRadius="xl"
+              transition="background 0.2s"
+              fontWeight="medium"
+              _hover={{ bg: "#e0b1b1", color: "#800000" }}
+            >
+              <Box flexShrink={0} pl={1}>
+                <FiLogOut size={18} />
+              </Box>
 
-                <Box
-                  overflow="hidden"
-                  whiteSpace="nowrap"
-                  transition="opacity 0.2s ease, width 0.2s ease"
-                  opacity={showText ? 1 : 0}
-                  width={showText ? "auto" : 0}
-                >
-                  <Text fontSize="90%">Logout</Text>
-                </Box>
-              </Flex>
-            )}
-          </NavLink>
+              <Box
+                overflow="hidden"
+                whiteSpace="nowrap"
+                transition="opacity 0.2s ease, width 0.2s ease"
+                opacity={showText ? 1 : 0}
+                width={showText ? "auto" : 0}
+              >
+                <Text fontSize="90%">Logout</Text>
+              </Box>
+            </Flex>
+          </Box>
         </Tooltip>
       </Box>
     </Box>
