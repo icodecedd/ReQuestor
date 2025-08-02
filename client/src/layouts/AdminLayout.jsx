@@ -23,7 +23,7 @@ const DashboardLayout = () => {
   return (
     <Flex>
       <Sidebar navItems={navItems} />
-      <Box flex="1" p={6} bg="#f5f5f6" minH="100vh">
+      <Box flex="2" p={6} bg="#f5f5f6" minH="100vh">
         <Outlet />
       </Box>
     </Flex>

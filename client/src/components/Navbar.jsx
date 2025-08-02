@@ -20,15 +20,19 @@ import { FiBell, FiSettings, FiLogOut, FiUser } from "react-icons/fi";
 import { IoIosArrowDown } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { ChevronRightIcon } from "@chakra-ui/icons";
+import { useAuth } from "@/hooks/useAuth";
 
 const Navbar = ({ pageName }) => {
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const lightMaroon = "#f7eaea";
+  const maroon = "#800000";
 
   return (
     <Box mb={10} mt={-4}>
       {/* Header */}
-      <Box borderBottom="1px solid #dee6f0ff" pl={8} pr={8} mx={-6}>
-        <Flex justify="space-between" align="center" pb={0.5}>
+      <Box borderBottom="1px solid #dbe2e9ff" pl={8} pr={8} mx={-6}>
+        <Flex justify="space-between" align="center" pb={0.4}>
           <Breadcrumb
             spacing="8px"
             separator={<ChevronRightIcon fontSize={"20px"} />}
@@ -45,79 +49,113 @@ const Navbar = ({ pageName }) => {
             </BreadcrumbItem>
 
             <BreadcrumbItem isCurrentPage>
-              <BreadcrumbLink href="#" fontWeight="semibold" color="#800000">
+              <BreadcrumbLink href="#" fontWeight="semibold" color={maroon}>
                 {pageName}
               </BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
           {/* Buttons */}
           <Flex align="center" gap={2} p={1}>
-            <IconButton
-              icon={<FiBell size={20} />}
-              aria-label="Notifications"
-              variant="ghost"
-              _hover={{ bg: "#f7eaea" }}
-              size="md"
-            />
-            <IconButton
-              icon={<FiSettings size={19} />}
-              aria-label="Settings"
-              variant="ghost"
-              size="md"
-              _hover={{ bg: "#f7eaea" }}
-              onClick={() => navigate("/dashboard/settings")}
-            />
-            <Box h="25px" w="1px" bg="gray.300" />
+            {/* Right-side Actions */}
+            <Flex align="center" gap={3}>
+              {/* Notification & Settings */}
+              <HStack spacing={1}>
+                <IconButton
+                  icon={<FiBell size={18} />}
+                  aria-label="Notifications"
+                  variant="ghost"
+                  borderRadius="full"
+                  _hover={{ bg: lightMaroon }}
+                  size="sm"
+                />
+                <IconButton
+                  icon={<FiSettings size={17} />}
+                  aria-label="Settings"
+                  variant="ghost"
+                  borderRadius="full"
+                  size="sm"
+                  _hover={{ bg: lightMaroon }}
+                  onClick={() => navigate("/admin/settings")}
+                />
+              </HStack>
+            </Flex>
+
+            {/* Divider */}
+            <Box h="25px" w="1px" bg="#c7c7c7ff" />
+
+            {/* User Menu */}
             <Menu autoSelect={false}>
               <MenuButton
                 as={Button}
                 variant="ghost"
-                borderRadius="md"
-                display="flex"
-                alignItems="center"
-                gap={2}
-                _hover={{ bg: "#f7eaea" }}
-                _active={{ bg: "#f7eaea" }}
+                borderRadius="lg"
+                px={2}
+                py={1}
+                _hover={{ bg: lightMaroon }}
+                _active={{ bg: lightMaroon }}
               >
-                {/* Change the name with the actual admin name */}
-                <HStack>
-                  <Avatar size="sm" name="Cedrick Joseph Mariano" src="" />
-                  <VStack align="start">
-                    <Text fontSize="14px" mb={-2}>
-                      Cedrick Joseph Mariano
+                <HStack spacing={2}>
+                  <Avatar
+                    size="sm"
+                    name={user.name}
+                    bg={maroon}
+                    color="white"
+                    fontWeight="bold"
+                  />
+                  <VStack spacing={0} align="start">
+                    <Text fontSize="13px" fontWeight="medium" lineHeight="1.2">
+                      {user.name}
                     </Text>
-                    <Text fontSize="12px" color="gray.600" fontWeight="normal">
-                      Administrator
+                    <Text
+                      fontSize="11px"
+                      color="gray.600"
+                      fontWeight="normal"
+                      mt={0}
+                    >
+                      {user.role}
                     </Text>
                   </VStack>
-                  <IoIosArrowDown />
+                  <IoIosArrowDown size={14} />
                 </HStack>
               </MenuButton>
-              <MenuList minW="250px">
-                <MenuGroup title="Profile">
+
+              <MenuList minW="220px" py={1} boxShadow="md">
+                <MenuGroup
+                  title="Account"
+                  fontSize="xs"
+                  fontWeight="semibold"
+                  color="gray.500"
+                  px={3}
+                  py={1}
+                >
                   <MenuItem
-                    gap={2}
+                    icon={<FiUser size={16} />}
                     _hover={{
-                      bg: "#f7eaea",
-                      borderRadius: "lg",
+                      bg: lightMaroon,
                     }}
-                    w="240px"
-                    ml={1}
+                    _focus={{
+                      bg: lightMaroon,
+                    }}
+                    fontSize="sm"
+                    py={2}
                   >
-                    <FiUser size="20px" />
-                    My Account
+                    My Profile
                   </MenuItem>
                   <MenuItem
-                    gap={2}
+                    icon={<FiLogOut size={15} />}
                     _hover={{
-                      bg: "#f7eaea",
-                      borderRadius: "lg",
+                      bg: lightMaroon,
                     }}
-                    w="240px"
-                    ml={1}
+                    _focus={{
+                      bg: lightMaroon,
+                    }}
+                    fontSize="sm"
+                    py={2}
+                    onClick={() => {
+                      logout();
+                    }}
                   >
-                    <FiLogOut size="19px" />
-                    Sign out
+                    Sign Out
                   </MenuItem>
                 </MenuGroup>
               </MenuList>

@@ -80,6 +80,7 @@ export const LoginPage = () => {
     try {
       const { success, data } = await login(formData);
       if (success) {
+        showToast("Successfully login.")
         navigate(data.role === "Admin" ? "/admin/dashboard" : "/student");
       } else {
         showToast("Invalid email or password.");

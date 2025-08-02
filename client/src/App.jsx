@@ -4,7 +4,6 @@ import StudentRoutes from "./routes/StudentRoutes";
 import AuthRoutes from "./routes/AuthRoutes";
 import "@/assets/global.css";
 import { useAuth } from "./hooks/useAuth";
-import { Box } from "@chakra-ui/react";
 import VerificationSuccessPage from "./pages/VerificationSuccessPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
