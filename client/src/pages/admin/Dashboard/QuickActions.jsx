@@ -7,55 +7,74 @@ import {
   Icon,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { FiPlus, FiMonitor, FiUsers, FiClock, FiBox } from "react-icons/fi";
+import {
+  FiPlus,
+  FiMonitor,
+  FiUsers,
+  FiClock,
+  FiBox,
+  FiUserPlus,
+} from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 const QuickActions = () => {
   const columns = useBreakpointValue({ base: 2, md: 3, lg: 5 });
-
   const navigate = useNavigate();
 
   const actions = [
     {
       label: "Create Request",
       icon: FiPlus,
-      color: "blue.500",
-      onClick: () => console.log("Open Create Request Modal"),
+      color: "#5a0000", // Dark maroon
+      hoverBg: "#f7eaea",
+      onClick: () => navigate("/dashboard/requests/new"),
     },
     {
       label: "Add Equipment",
       icon: FiMonitor,
-      color: "green.500",
-      onClick: () => console.log("Open Add Equipment Modal"),
+      color: "#800000", // Classic maroon
+      hoverBg: "#f7eaea",
+      onClick: () => navigate("/dashboard/equipment/new"),
     },
     {
       label: "Manage Users",
       icon: FiUsers,
-      color: "purple.500",
-      onClick: () => navigate("/dashboard/users"),
+      color: "#c87c7c", // Light maroon
+      hoverBg: "#f7eaea",
+      onClick: () => navigate("/admin/users"),
     },
     {
-      label: "Inventory Check",
+      label: "View Inventory",
       icon: FiBox,
-      color: "pink.500",
-      onClick: () => navigate("/dashboard/equipment"), // navigate to equipment
+      color: "#e0b1b1", // Lightest maroon
+      hoverBg: "#f7eaea",
+      onClick: () => navigate("/admin/equipment"),
     },
     {
       label: "View Requests",
       icon: FiClock,
-      color: "red.500",
-      onClick: () => navigate("/dashboard/requests"),
+      color: "#f5d3d3", // Very light maroon
+      hoverBg: "#f7eaea",
+      onClick: () => navigate("/admin/requests"),
     },
   ];
 
   return (
-    <Box bg="white" borderRadius="2xl" p={5} boxShadow="md" h="100%" w="100%">
-      <VStack align={"left"} mb={4}>
-        <Heading size="md" mb={-2}>
+    <Box
+      bg="white"
+      borderRadius="2xl"
+      p={6}
+      boxShadow="sm"
+      border="1px solid"
+      borderColor="gray.200"
+      w="100%"
+    >
+      <VStack align="flex-start" spacing={0} mb={6}>
+        <Heading size="md" fontWeight="semibold" color="maroon.600">
           Quick Actions
         </Heading>
-        <Text fontSize="13px" textColor="gray.500">
-          Frequently used actions
+        <Text fontSize="sm" color="gray.500">
+          Frequently used shortcuts
         </Text>
       </VStack>
 
@@ -66,15 +85,22 @@ const QuickActions = () => {
             onClick={action.onClick}
             cursor="pointer"
             borderRadius="xl"
-            p={3}
-            bg="#f7f3f3"
+            p={4}
+            bg="white"
+            border="1px solid"
+            borderColor="gray.200"
             textAlign="center"
-            transition="all 0.2s"
-            _hover={{ bg: "#f1e4e4", boxShadow: "md" }}
+            transition="all 0.2s ease"
+            _hover={{
+              bg: action.hoverBg,
+              borderColor: action.color,
+              transform: "translateY(-2px)",
+              boxShadow: "0 4px 8px rgba(122, 0, 2, 0.1)",
+            }}
           >
             <VStack spacing={2}>
               <Icon as={action.icon} boxSize={6} color={action.color} />
-              <Text fontSize="sm" fontWeight="medium">
+              <Text fontSize="sm" fontWeight="medium" color="gray.700">
                 {action.label}
               </Text>
             </VStack>

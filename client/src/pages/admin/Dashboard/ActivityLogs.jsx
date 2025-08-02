@@ -6,6 +6,7 @@ import {
   VStack,
   Skeleton,
   Button,
+  Center,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import ActivityLogItem from "@/components/cards/ActivityLogCard";
@@ -13,9 +14,9 @@ import { useRecentActivitiesStore } from "@/store/recentStore";
 import { useEffect } from "react";
 
 const ActivityLogs = () => {
-  const { /*recentActivities*/ loading, fetchRecentActivities } =
-    useRecentActivitiesStore();
+  const { loading, fetchRecentActivities } = useRecentActivitiesStore();
 
+  // Enhanced mock data with more details
   const data = [
     {
       action: "Approved",
@@ -48,40 +49,55 @@ const ActivityLogs = () => {
     fetchRecentActivities();
   }, [fetchRecentActivities]);
 
-  // if (loading) {
-  //   return <Skeleton height="100%" width="100%" borderRadius="xl" mx="auto" />;
-  // }
-
   return (
-    <Box bg="white" borderRadius="2xl" boxShadow="md" w="100%" h="100%">
+    <Box
+      bg="white"
+      borderRadius="2xl"
+      boxShadow="0px 2px 12px rgba(0, 0, 0, 0.08)"
+      border="1px solid"
+      borderColor="gray.100"
+      w="100%"
+      h="100%"
+      overflow="hidden"
+    >
+      {/* Header */}
       <Flex
         justify="space-between"
-        p={5}
-        mb={5}
-        borderBottom="1px"
-        color="gray.100"
+        align="center"
+        p={6}
+        pb={4}
+        borderBottom="1px solid"
+        borderColor="gray.100"
       >
-        <VStack>
-          <Heading size="md" mb={-2} mr={3} textColor="black">
+        <VStack align="flex-start" spacing={0}>
+          <Heading size="md" fontWeight="semibold" color="maroon.600" mb={1}>
             Activity Logs
           </Heading>
-          <Text fontSize="13px" textColor="gray.500">
+          <Text fontSize="sm" color="gray.500">
             Recent system activities
           </Text>
         </VStack>
-        <NavLink to="/dashboard/activity">
+
+        <NavLink to="/admin/activity">
           <Button
-            fontWeight="medium"
-            fontSize="14px"
             variant="outline"
-            borderRadius="xl"
-            _hover={{ bg: "#f7f1f1" }}
+            size="sm"
+            borderRadius="lg"
+            colorScheme="maroon"
+            _hover={{
+              bg: "#f7eaea",
+            }}
+            _active={{
+              bg: "#f0d8d8",
+            }}
           >
-            View all
+            View All
           </Button>
         </NavLink>
       </Flex>
-      <VStack>
+
+      {/* Content */}
+      <VStack mt={7}>
         {loading ? (
           [1, 2, 3, 4, 5].map((i) => (
             <Skeleton
@@ -97,9 +113,16 @@ const ActivityLogs = () => {
         ) : data.length > 0 ? (
           data.map((log, index) => <ActivityLogItem key={index} log={log} />)
         ) : (
-          <Heading fontSize="14px" color="#4a5568">
-            No activity log to display
-          </Heading>
+          <Center h="300px">
+            <VStack spacing={2}>
+              <Heading size="sm" color="gray.500">
+                No recent activities
+              </Heading>
+              <Text fontSize="sm" color="gray.400">
+                System activities will appear here
+              </Text>
+            </VStack>
+          </Center>
         )}
       </VStack>
     </Box>

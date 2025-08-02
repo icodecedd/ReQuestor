@@ -7,10 +7,10 @@ import {
   generateVerificationToken,
 } from "../helpers/tokenAndCookie.js";
 import {
-  sendPasswordResetEmail,
-  sendResetSuccessEmail,
-  sendVerificationEmail,
-} from "../mailtrap/emails.js";
+  sendPasswordResetFromResend,
+  sendResetSuccessFromResend,
+  sendVerificationFromResend,
+} from "../mailtrap/emailsResend.js";
 
 export const checkAuth = async (req, res) => {
   try {
@@ -67,7 +67,7 @@ export const register = async (req, res) => {
         // Optionally generate a new token
         const newToken = generateTokenAndCookie(res, user.id);
 
-        await sendVerificationEmail(user.email, newToken);
+        await sendVerificationFromResend(user.email, newToken);
 
         return res.status(400).json({
           success: false,
@@ -99,7 +99,7 @@ export const register = async (req, res) => {
     const token = generateTokenAndCookie(res, newUser.id);
 
     // Send verification email
-    await sendVerificationEmail(email, token);
+    await sendVerificationFromResend(email, token);
 
     return res.status(201).json({
       success: true,
@@ -141,7 +141,7 @@ export const resendVerification = async (req, res) => {
     // Generate new verification token (do not reuse session token)
     const verificationToken = generateVerificationToken(user.id);
 
-    await sendVerificationEmail(email, verificationToken);
+    await sendVerificationFromResend(email, verificationToken);
 
     return res.status(200).json({
       success: true,
@@ -329,7 +329,7 @@ export const forgotPassword = async (req, res) => {
     // Generate a JWT token for the user session
     const resetToken = generateResetToken(user.id);
 
-    await sendPasswordResetEmail(email, resetToken);
+    await sendPasswordResetFromResend(email, resetToken);
 
     return res.status(200).json({
       success: true,
@@ -387,7 +387,7 @@ export const resetPassword = async (req, res) => {
 
     const enrichedUser = result.rows[0];
 
-    await sendResetSuccessEmail(enrichedUser.email);
+    await sendResetSuccessFromResend(enrichedUser.email);
 
     return res.status(200).json({
       success: true,

@@ -7,8 +7,8 @@ import { useEffect } from "react";
 const DashboardStats = () => {
   const { stats, loading, fetchStats } = useStatsStore();
 
-  const renderCard = (label, value, icon, loading) => (
-    <StatCard label={label} value={value} icon={icon} loading={loading} />
+  const renderCard = (label, value, icon, loading, text) => (
+    <StatCard label={label} value={value} icon={icon} loading={loading} text={text} />
   );
 
   useEffect(() => {
@@ -24,24 +24,33 @@ const DashboardStats = () => {
       mx="auto"
       mt={6}
     >
-      {renderCard("Total Requests", stats?.totalRequests, FiFileText, loading)}
+      {renderCard(
+        "Total Requests",
+        stats?.totalRequests,
+        FiFileText,
+        loading,
+        "Total number of requests made"
+      )}
       {renderCard(
         "Active Equipment",
         stats?.availableEquipment,
         FiMonitor,
-        loading
+        loading,
+        "Number of equipment currently available"
       )}
       {renderCard(
         "Approved Requests",
         stats?.approvedRequests,
         FiUser,
-        loading
+        loading,
+        "Number of requests approved"
       )}
       {renderCard(
         "Pending Approvals",
         stats?.pendingApprovals,
         FiFileText,
-        loading
+        loading,
+        "Requests waiting for approval"
       )}
     </SimpleGrid>
   );

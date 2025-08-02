@@ -18,7 +18,6 @@ import { useAuth } from "@/hooks/useAuth";
 
 const Sidebar = ({ navItems }) => {
   const { logout } = useAuth();
-  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [showText, setShowText] = useState(!collapsed);
 
@@ -35,28 +34,31 @@ const Sidebar = ({ navItems }) => {
       transition="width 0.2s ease-in-out"
       h="100vh"
       bg="#f5f5f6"
-      borderRight="1px solid #e2e8f0"
+      borderRight="1px solid #dbe2e9ff"
       position="sticky"
       top="0"
       overflow="hidden"
     >
+      {/* Header */}
       <Flex
-        justify={collapsed ? "center" : "left"}
+        justify={collapsed ? "center" : "space-between"}
         align="center"
-        borderBottom="1px solid #e2e8f0"
+        borderBottom="1px solid #dbe2e9ff"
         p={3}
+        position="relative"
       >
-        {!collapsed && <Image src={logo} boxSize="40px" />}
-        {showText && (
-          <Text
-            fontWeight="bold"
-            mr={5}
-            fontSize={20}
-            bgGradient="linear-gradient(to bottom, #800020 0%, #b86575 100%)"
-            bgClip="text"
-          >
-            ReQuestor
-          </Text>
+        {!collapsed && (
+          <Flex align="center" minW="160px">
+            <Image src={logo} boxSize="40px" mr={2} />
+            <Text
+              fontWeight="bold"
+              fontSize={20}
+              bgGradient="linear(to bottom, #800020 0%, #b86575 100%)"
+              bgClip="text"
+            >
+              ReQuestor
+            </Text>
+          </Flex>
         )}
 
         <IconButton
@@ -67,12 +69,14 @@ const Sidebar = ({ navItems }) => {
               <LuPanelLeftClose fontSize={20} />
             )
           }
-          size="md"
+          size="sm"
           variant="ghost"
           onClick={() => setCollapsed(!collapsed)}
           _hover={{ bg: "#f7eaea" }}
           aria-label="Toggle sidebar"
           borderRadius="md"
+          position={collapsed ? "relative" : "absolute"}
+          right={collapsed ? "auto" : 3}
         />
       </Flex>
 
@@ -107,13 +111,13 @@ const Sidebar = ({ navItems }) => {
                   gap={4}
                   p={3}
                   w="full"
-                  borderRadius="xl"
+                  borderRadius="lg"
                   transition="background 0.2s"
                   fontWeight={isActive ? "bold" : "medium"}
                   bg={isActive ? "#800000" : "transparent"}
                   color={isActive ? "white" : "gray.600"}
                   _hover={{
-                    bg: isActive ? "#832222" : "#e0b1b1",
+                    bg: isActive ? "#832222" : "#f7eaea",
                     color: isActive ? "white" : "#800000",
                   }}
                 >
@@ -141,7 +145,7 @@ const Sidebar = ({ navItems }) => {
 
       {/* Footer */}
       <Box pos="absolute" bottom="5" left="0" right="0" px={collapsed ? 1 : 2}>
-        <Divider my={2} />
+        <Divider my={3} borderColor="#dbe2e9ff" />
         <Tooltip
           label={collapsed ? "Logout" : undefined}
           placement="right"
@@ -168,10 +172,11 @@ const Sidebar = ({ navItems }) => {
               gap={4}
               p={3}
               w="full"
-              borderRadius="xl"
+              borderRadius="lg"
               transition="background 0.2s"
               fontWeight="medium"
-              _hover={{ bg: "#e0b1b1", color: "#800000" }}
+              color="gray.600"
+              _hover={{ bg: "#f7eaea", color: "#800000" }}
             >
               <Box flexShrink={0} pl={1}>
                 <FiLogOut size={18} />

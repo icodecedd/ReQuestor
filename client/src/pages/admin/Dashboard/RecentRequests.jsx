@@ -72,6 +72,10 @@ const RecentRequests = () => {
     }
   };
 
+  const formatRequestsId = (id) => {
+    return `REQ-${String(id).padStart(3, "0")}`;
+  };
+
   const { /*recentRequests,*/ loading, fetchRecentRequests } =
     useRecentRequestsStore();
 
@@ -92,24 +96,35 @@ const RecentRequests = () => {
       w="100%"
       h="100%"
     >
-      <Flex justify="space-between" p={5}>
-        <VStack>
-          <Heading size="md" mb={-2}>
+      {/* Header */}
+      <Flex
+        justify="space-between"
+        align="center"
+        p={6}
+        pb={4}
+        borderBottom="1px solid"
+        borderColor="gray.100"
+      >
+        <VStack align="flex-start" spacing={0}>
+          <Heading size="md" fontWeight="semibold" color="maroon.600" mb={1}>
             Recent Requests
           </Heading>
-          <Text fontSize="13px" textColor="gray.500">
+          <Text fontSize="sm" color="gray.500">
             Latest equipment requests
           </Text>
         </VStack>
-        <NavLink to="/dashboard/requests">
+
+        <NavLink to="/admin/requests">
           <Button
-            fontWeight="medium"
-            fontSize="14px"
             variant="outline"
-            borderRadius="xl"
-            _hover={{ bg: "#f7f1f1" }}
+            size="sm"
+            borderRadius="lg"
+            colorScheme="maroon"
+            _hover={{
+              bg: "#f7eaea",
+            }}
           >
-            View all
+            View All
           </Button>
         </NavLink>
       </Flex>
@@ -124,33 +139,42 @@ const RecentRequests = () => {
           }}
         >
           <Thead>
-            <Tr bg="#f7f9fb">
-              <Th w="20%">Request ID</Th>
-              <Th w="20%">User</Th>
-              <Th w="20%">Equipment</Th>
-              <Th w="20%">Status</Th>
-              <Th w="20%">Date</Th>
+            <Tr bg="gray.50">
+              <Th fontSize="xs" color="gray.600" fontWeight="semibold" py={3}>
+                REQUEST ID
+              </Th>
+              <Th fontSize="xs" color="gray.600" fontWeight="semibold">
+                REQUESTER
+              </Th>
+              <Th fontSize="xs" color="gray.600" fontWeight="semibold">
+                EQUIPMENT
+              </Th>
+              <Th fontSize="xs" color="gray.600" fontWeight="semibold">
+                STATUS
+              </Th>
+              <Th fontSize="xs" color="gray.600" fontWeight="semibold">
+                DATE
+              </Th>
             </Tr>
           </Thead>
           {loading ? (
-            <TableCaption mt={3}>
+            <Tbody>
               {[1, 2, 3, 4, 5].map((i) => (
-                <Skeleton
-                  key={i}
-                  height="41px"
-                  width="95%"
-                  borderRadius="xl"
-                  mx="auto"
-                  mb={2}
-                />
+                <Tr key={i}>
+                  {[1, 2, 3, 4, 5].map((j) => (
+                    <Td key={j} py={3}>
+                      <Skeleton height="20px" width="90%" borderRadius="md" />
+                    </Td>
+                  ))}
+                </Tr>
               ))}
-            </TableCaption>
+            </Tbody>
           ) : data.length > 0 ? (
             <Tbody>
               {data.map((req, index) => (
                 <Tr key={index} textColor="blackAlpha.900">
                   <Td textColor="#157fc5ff" fontWeight="medium">
-                    #{req.id}
+                    {formatRequestsId(req.id)}
                   </Td>
                   <Td>{req.user}</Td>
                   <Td>{req.equipment}</Td>
@@ -164,9 +188,20 @@ const RecentRequests = () => {
               ))}
             </Tbody>
           ) : (
-            <TableCaption mt={20} fontSize="14px" fontWeight="bold">
-              No recent requests to display.
-            </TableCaption>
+            <Tbody>
+              <Tr>
+                <Td colSpan={5} py={10} textAlign="center">
+                  <VStack spacing={2}>
+                    <Heading fontSize="sm" color="gray.500">
+                      No recent requests found
+                    </Heading>
+                    <Text fontSize="sm" color="gray.400">
+                      New requests will appear here
+                    </Text>
+                  </VStack>
+                </Td>
+              </Tr>
+            </Tbody>
           )}
         </Table>
       </TableContainer>

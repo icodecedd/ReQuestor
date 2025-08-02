@@ -20,6 +20,8 @@ const AdminRoutes = () => {
         <Route path="activity" element={<Activity />} />
         <Route path="settings" element={<Settings />} />
       </Route>
+
+      <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
     </Routes>
   );
 };
