@@ -39,18 +39,19 @@ export function ModalDropdown({
 
   return (
     <FormControl isRequired={isRequired}>
-      <FormLabel>{label}</FormLabel>
+      <FormLabel fontSize={15}>{label}</FormLabel>
       <Menu>
         <MenuButton
           aria-label="Select role"
           as={Button}
           rightIcon={<RiArrowDropDownLine size={20} />}
-          borderRadius="xl"
+          borderRadius="lg"
           borderColor="gray.400"
           variant="outline"
           color="black"
           fontSize="15px"
           _hover={{ bg: "#f7eaea" }}
+          _active={{ bg: "#f7eaea" }}
           w={w}
           textAlign="left"
           fontWeight="normal"
@@ -69,7 +70,7 @@ export function ModalDropdown({
                 borderRadius="lg"
                 pr={2}
                 pl={2}
-                w={w-6}
+                w={w - 6}
                 _hover={
                   isSelected
                     ? {

@@ -64,14 +64,14 @@ export const SignupPage = () => {
       duration: 3000,
       isClosable: true,
       position: "top-right",
-      variant: "top-accent",
+      variant: "left-accent",
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const requiredFields = ["student_number", "name", "email", "password"];
+    const requiredFields = ["name", "email", "password"];
 
     const hasMissing = validateRequiredFields(
       formData,
@@ -84,13 +84,13 @@ export const SignupPage = () => {
 
     if (!formData.email.includes("@")) {
       setErrors((prev) => ({ ...prev, email: true }));
-      showToast("Invalid email format.");
+      showToast("Invalid email format");
       return;
     }
 
     if (formData.password.length < 8) {
       setErrors((prev) => ({ ...prev, password: true }));
-      showToast("Password must be at least 6 characters.");
+      showToast("Password must be at least 6 characters");
       return;
     }
 
@@ -183,26 +183,6 @@ export const SignupPage = () => {
 
               <form onSubmit={handleSubmit}>
                 <VStack spacing={4}>
-                  {/* Student Number */}
-                  <FormControl isInvalid={errors.student_number}>
-                    <FormLabel>Student Number</FormLabel>
-                    <InputGroup>
-                      <Input
-                        type="text"
-                        name="student_number"
-                        value={formData.student_number}
-                        onChange={handleChange}
-                        placeholder="Enter your student number"
-                        focusBorderColor="maroon"
-                      />
-                      <InputRightElement>
-                        {errors.student_number && (
-                          <WarningIcon color="red.500" />
-                        )}
-                      </InputRightElement>
-                    </InputGroup>
-                  </FormControl>
-
                   {/* Name */}
                   <FormControl isInvalid={errors.name}>
                     <FormLabel>Name</FormLabel>

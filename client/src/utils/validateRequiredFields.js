@@ -30,14 +30,14 @@ export function validateRequiredFields(
 
     const toastMessage =
       missing.length === requiredFields.length
-        ? "All fields are required."
+        ? "All fields are required"
         : `Missing field${missing.length > 1 ? "s" : ""}: ${missingLabels.join(
             ", "
           )}`;
 
     showToast(toastMessage);
 
-    return true; 
+    return true;
   }
 
   return false;

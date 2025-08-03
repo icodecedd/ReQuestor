@@ -18,6 +18,8 @@ import {
   Badge,
   useDisclosure,
   Skeleton,
+  VStack,
+  Text,
 } from "@chakra-ui/react";
 import { FiSearch } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
@@ -35,18 +37,11 @@ import { UserStatusDropdown } from "@/components/dropdowns/UserStatusDropdown";
 import { getUserColor } from "@/utils/getColorScheme";
 
 const UsersTable = () => {
-  {
-    /* Global State of Users */
-  }
   const { users, loading, fetchUsers } = useUserStore();
+  const [roleFilter, setRoleFilter] = useState("All Roles");
+  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [searchFilter, setSearchFilter] = useState("");
 
-  useEffect(() => {
-    fetchUsers();
-  }, []); // this fetch only once
-
-  {
-    /* Modal */
-  }
   const {
     isOpen: isAddOpen,
     onOpen: onAddOpen,
@@ -77,14 +72,9 @@ const UsersTable = () => {
     onClose: onStatusClose,
   } = useDisclosure();
 
-  {
-    /* User Filters */
-  }
-  const [roleFilter, setRoleFilter] = useState("All Roles");
-
-  const [statusFilter, setStatusFilter] = useState("All Status");
-
-  const [searchFilter, setSearchFilter] = useState("");
+  useEffect(() => {
+    fetchUsers();
+  }, []); // this fetch only once
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
@@ -95,7 +85,7 @@ const UsersTable = () => {
         statusFilter === "All Status" ? true : user.status === statusFilter;
 
       const matchesSearch = searchFilter
-        ? user.username.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        ? user.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
           user.email.toLowerCase().includes(searchFilter.toLowerCase())
         : true;
 
@@ -140,9 +130,9 @@ const UsersTable = () => {
               <FiSearch />
             </InputLeftElement>
             <Input
-              placeholder="Search by username or email"
+              placeholder="Search by name or email"
               focusBorderColor="maroon"
-              borderRadius="xl"
+              borderRadius="lg"
               borderColor="gray.400"
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
@@ -158,7 +148,7 @@ const UsersTable = () => {
             variant="primary"
             bg="#800000"
             color="white"
-            borderRadius="xl"
+            borderRadius="lg"
             _hover={{ bg: "#a12828" }}
             transition="background-color 0.2s ease-in-out"
             gap={1}
@@ -176,40 +166,55 @@ const UsersTable = () => {
         <TableContainer borderRadius="xl" border="1px" color="gray.300">
           <Table
             variant="simple"
-            size="sm"
+            borderTop="1px"
+            color="gray.100"
             sx={{
-              Th: { textAlign: "center", fontSize: "14px" },
-              Td: { textAlign: "center", fontSize: "14px" },
+              Th: { textAlign: "center", fontSize: "13px" },
+              Td: { textAlign: "center", fontSize: "13px", py: 2 },
             }}
           >
-            <Thead h="50px">
-              <Tr bg="#f7f9fb">
-                <Th>Username</Th>
-                <Th>Email</Th>
-                <Th>Role</Th>
-                <Th>Status</Th>
-                <Th>Created date</Th>
-                <Th> </Th>
+            <Thead>
+              <Tr>
+                <Th fontSize="xs" color="gray.600" fontWeight="semibold" py={4}>
+                  NAME
+                </Th>
+                <Th fontSize="xs" color="gray.600" fontWeight="semibold">
+                  EMAIL
+                </Th>
+                <Th fontSize="xs" color="gray.600" fontWeight="semibold">
+                  ROLE
+                </Th>
+                <Th fontSize="xs" color="gray.600" fontWeight="semibold">
+                  STATUS
+                </Th>
+                <Th fontSize="xs" color="gray.600" fontWeight="semibold">
+                  CREATED
+                </Th>
+                <Th fontSize="xs" color="gray.600" fontWeight="semibold">
+                  LAST LOGIN
+                </Th>
+                <Th fontSize="xs" color="gray.600" fontWeight="semibold">
+                  ACTIONS
+                </Th>
               </Tr>
             </Thead>
             {loading ? (
-              <TableCaption mt={3}>
+              <Tbody>
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <Skeleton
-                    key={i}
-                    height="41px"
-                    width="95%"
-                    borderRadius="xl"
-                    mx="auto"
-                    mb={2}
-                  />
+                  <Tr key={i}>
+                    {[1, 2, 3, 4, 5, 6, 7].map((j) => (
+                      <Td key={j} py={3}>
+                        <Skeleton height="20px" width="90%" borderRadius="md" />
+                      </Td>
+                    ))}
+                  </Tr>
                 ))}
-              </TableCaption>
+              </Tbody>
             ) : filteredUsers.length > 0 ? (
               <Tbody>
                 {filteredUsers.map((user) => (
                   <Tr key={user.id} textColor="blackAlpha.900" bg="#f7f9fb">
-                    <Td>{user.username}</Td>
+                    <Td>{user.name}</Td>
                     <Td>{user.email}</Td>
                     <Td>
                       <Badge
@@ -239,6 +244,7 @@ const UsersTable = () => {
                       </Badge>
                     </Td>
                     <Td>{getDateOnly(user.created_at)}</Td>
+                    <Td>{getDateOnly(user.last_login)}</Td>
                     <Td>
                       <UserActionButton
                         status={user.status}
@@ -252,13 +258,27 @@ const UsersTable = () => {
                 ))}
               </Tbody>
             ) : (
-              <TableCaption mt={20} mb={20} fontSize="14px" fontWeight="bold">
-                No users to display.
-              </TableCaption>
+              <Tbody>
+                <Tr>
+                  <Td colSpan={7} h="200px" textAlign="center">
+                    <VStack spacing={2}>
+                      <Heading fontSize="sm" color="gray.500">
+                        No users found
+                      </Heading>
+                      <Text fontSize="sm" color="gray.400">
+                        {searchFilter
+                          ? "Try a different search"
+                          : "Add a new user to get started"}
+                      </Text>
+                    </VStack>
+                  </Td>
+                </Tr>
+              </Tbody>
             )}
           </Table>
         </TableContainer>
       </Box>
+
       {/* Modals will be placed here */}
       <AddUserModal isOpen={isAddOpen} onClose={onAddClose} />
       <UpdateUserModal

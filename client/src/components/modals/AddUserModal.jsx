@@ -20,15 +20,17 @@ import {
   useToast,
   Box,
   Divider,
+  Badge,
 } from "@chakra-ui/react";
 import { FiUserPlus } from "react-icons/fi";
 import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
 import { useState } from "react";
 import useUserStore from "@/store/usersStore";
 import PasswordInput from "../inputs/PasswordInput";
+import { getUserColor } from "@/utils/getColorScheme";
 
 const userFields = [
-  { name: "username", label: "Username", placeholder: "Enter username" },
+  { name: "name", label: "Name", placeholder: "Enter name" },
   { name: "email", label: "Email", placeholder: "Enter email" },
   { name: "password", label: "Password", placeholder: "Enter password" },
   {
@@ -46,7 +48,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
   const toast = useToast();
 
   const [form, setForm] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -64,19 +66,18 @@ const AddUserModal = ({ isOpen, onClose }) => {
     const result = await addUser(form); // Direct call to Zustand store
 
     toast({
-      title: result.success ? "Success" : "Error",
-      description: result.message,
+      title: result.message,
       status: result.success ? "success" : "error",
       duration: 3000,
       isClosable: true,
-      variant: "subtle",
+      variant: "top-accent",
       position: "top-right",
     });
 
     if (result.success) {
       onClose();
       setForm({
-        username: "",
+        name: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -94,7 +95,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
       motionPreset="slideInBottom"
     >
       <ModalOverlay />
-      <ModalContent borderRadius="xl" overflow="hidden">
+      <ModalContent borderRadius="2xl" overflow="hidden">
         <ModalHeader>
           <Flex color="gray.900" gap={3} align="center" mb={3}>
             <Box
@@ -161,21 +162,21 @@ const AddUserModal = ({ isOpen, onClose }) => {
             <TabPanels>
               <TabPanel>
                 {userFields.slice(0, 2).map((field, index) => (
-                  <FormControl isRequired mb={4} key={index}>
-                    <FormLabel>{field.label}</FormLabel>
+                  <FormControl mb={4} key={index}>
+                    <FormLabel fontSize={15}>{field.label}</FormLabel>
                     <Input
                       name={field.name}
                       placeholder={field.placeholder}
                       focusBorderColor="maroon"
-                      borderRadius="xl"
+                      borderRadius="lg"
                       borderColor="gray.400"
                       onChange={handleChange}
                     />
                   </FormControl>
                 ))}
                 {userFields.slice(2).map((field, index) => (
-                  <FormControl isRequired mb="4" key={index}>
-                    <FormLabel>{field.label}</FormLabel>
+                  <FormControl mb="4" key={index}>
+                    <FormLabel fontSize={15}>{field.label}</FormLabel>
                     <PasswordInput
                       name={field.name}
                       placeholder={field.placeholder}
@@ -187,7 +188,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
                 ))}
               </TabPanel>
               <TabPanel>
-                <Box h="170px">
+                <Box h="250px">
                   <Flex gap={5}>
                     <ModalDropdown
                       value={form.role}
@@ -198,7 +199,36 @@ const AddUserModal = ({ isOpen, onClose }) => {
                       w={206}
                       label="Role"
                       placeholder="Select role"
+                      isRequired={false}
                     />
+                    <FormControl>
+                      <FormLabel fontSize={15}>Selected Role</FormLabel>
+                      <Box
+                        border="1px"
+                        borderRadius="lg"
+                        h="38px"
+                        borderColor="gray.400"
+                      >
+                        <Badge
+                          bg={getUserColor(form.role)}
+                          border="1px"
+                          color={form.role !== "Admin" ? "black" : "white"}
+                          borderColor={
+                            form.role === "Admin" ? "maroon" : "gray.300"
+                          }
+                          borderRadius="xl"
+                          pl={2}
+                          pr={2}
+                          pb={0.5}
+                          mt={2}
+                          ml={2}
+                        >
+                          {form.role || "No Selected Role"}
+                        </Badge>
+                      </Box>
+                    </FormControl>
+                  </Flex>
+                  <Flex gap={5} mt={5}>
                     <ModalDropdown
                       value={form.status}
                       onChange={(newStatus) =>
@@ -206,10 +236,31 @@ const AddUserModal = ({ isOpen, onClose }) => {
                       }
                       roles={statusOptions}
                       w={206}
-                      label="Status"
+                      label="Status (Optional)"
                       placeholder="Select status"
                       isRequired={false}
                     />
+                    <FormControl>
+                      <FormLabel>Selected Status</FormLabel>
+                      <Box
+                        border="1px"
+                        borderRadius="lg"
+                        h="38px"
+                        borderColor="gray.400"
+                      >
+                        <Badge
+                          colorScheme={getUserColor(form.status)}
+                          borderRadius="xl"
+                          pl={2}
+                          pr={2}
+                          pb={0.5}
+                          mt={2}
+                          ml={2}
+                        >
+                          {form.status || "No Selected Status"}
+                        </Badge>
+                      </Box>
+                    </FormControl>
                   </Flex>
                 </Box>
               </TabPanel>
@@ -221,7 +272,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
           <Button
             mr={3}
             variant="outline"
-            borderRadius="xl"
+            borderRadius="lg"
             onClick={onClose}
             _hover={{ bg: "#f7eaea" }}
           >
@@ -230,7 +281,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
           <Button
             bg="#800000"
             color="white"
-            borderRadius="xl"
+            borderRadius="lg"
             _hover={{ bg: "#a12828" }}
             transition="background-color 0.2s ease-in-out"
             onClick={handleSubmit}

@@ -17,55 +17,39 @@ const useUserStore = create((set) => ({
     }
   },
 
-  findUserById: async (id) => {
-    try {
-      const res = await axios.get(`/api/users/${id}`);
-
-      const user = res?.data?.data;
-
-      return {
-        success: true,
-        data: user,
-      };
-    } catch (error) {
-      console.error(
-        "Finding user error:",
-        error.response?.data || error.message
-      );
-
-      return {
-        success: false,
-        message: "Failed to find account. Please try again.",
-      };
-    }
-  },
-
   addUser: async (newUser) => {
-    const username = newUser.username?.trim() || "";
+    const name = newUser.name?.trim() || "";
     const email = newUser.email?.trim() || "";
     const role = toTitleCase(newUser.role?.trim() || "");
     const password = newUser.password || "";
     const confirmPassword = newUser.confirmPassword || "";
     const status = toTitleCase(newUser.status || "");
 
-    if (!username || !email || !password || !confirmPassword || !role) {
+    if (!name || !email || !password || !confirmPassword || !role) {
       return {
         success: false,
         message:
-          "Username, email, password, confirm password, and role are required.",
+          "All fields are required",
       };
     }
 
     if (password && confirmPassword && password !== confirmPassword) {
       return {
         success: false,
-        message: "Passwords do not match.",
+        message: "Passwords do not match",
       };
+    }
+
+    if(password.length < 6) {
+      return {
+        success: false,
+        message: "Password must be at least 6 characters"
+      }
     }
 
     try {
       const payload = {
-        username,
+        name,
         email,
         password_hash: password,
         role,
@@ -78,7 +62,7 @@ const useUserStore = create((set) => ({
       }));
       return {
         success: true,
-        message: "New account added successfully.",
+        message: "New account added successfully",
       };
     } catch (error) {
       console.error(
@@ -100,7 +84,7 @@ const useUserStore = create((set) => ({
       } else {
         return {
           success: false,
-          message: "Failed to add account. Please try again.",
+          message: "Failed to add account. Please try again",
         };
       }
     }
@@ -115,7 +99,7 @@ const useUserStore = create((set) => ({
     if (!username || !email || !role) {
       return {
         success: false,
-        message: "Username, email, and role are required.",
+        message: "All fields are required.",
       };
     }
 
@@ -135,7 +119,7 @@ const useUserStore = create((set) => ({
       }));
       return {
         success: true,
-        message: "Account updated successfully.",
+        message: "Account updated successfully",
       };
     } catch (error) {
       console.error(
@@ -157,7 +141,7 @@ const useUserStore = create((set) => ({
       } else {
         return {
           success: false,
-          message: "Failed to update account. Please try again.",
+          message: "Failed to update account. Please try again",
         };
       }
     }
@@ -173,7 +157,7 @@ const useUserStore = create((set) => ({
 
       return {
         success: true,
-        message: "Account deleted successfully.",
+        message: "Account deleted successfully",
       };
     } catch (error) {
       console.error(
@@ -183,7 +167,7 @@ const useUserStore = create((set) => ({
 
       return {
         success: false,
-        message: "Failed to delete account. Please try again.",
+        message: "Failed to delete account. Please try again",
       };
     }
   },
@@ -197,27 +181,27 @@ const useUserStore = create((set) => ({
     if (!password || !confirmPassword) {
       return {
         success: false,
-        message: "password and confirm password are required.",
+        message: "password and confirm password are required",
       };
     }
 
-    if (password.length < 8) {
+    if (password.length < 6) {
       return {
         success: false,
-        message: "Password must be at least 8 characters long.",
+        message: "Password must be at least 6 characters",
       };
     }
 
     if (password && confirmPassword && password !== confirmPassword) {
       return {
         success: false,
-        message: "Passwords do not match.",
+        message: "Passwords do not match",
       };
     }
 
     // Note: Add a notification email logic here
     if (sendNotification) {
-      console.log("Email has been sent to the user.");
+      console.log("Email has been sent to the user");
     }
 
     try {
@@ -233,7 +217,7 @@ const useUserStore = create((set) => ({
       );
       return {
         success: true,
-        message: "Account's password reset successfully.",
+        message: "Account's password reset successfully",
       };
     } catch (error) {
       console.error(
@@ -250,12 +234,12 @@ const useUserStore = create((set) => ({
       } else if (err.errorCode === "DO_NOT_MATCH") {
         return {
           success: false,
-          message: "Passwords do not match.",
+          message: "Passwords do not match",
         };
       }
       return {
         success: false,
-        message: "Failed to reset account's password. Please try again.",
+        message: "Failed to reset account's password. Please try again",
       };
     }
   },
@@ -279,7 +263,7 @@ const useUserStore = create((set) => ({
       } else {
         return {
           success: result.success,
-          message: "Something went wrong.",
+          message: "Something went wrong",
         };
       }
     } catch (error) {
@@ -290,7 +274,7 @@ const useUserStore = create((set) => ({
 
       return {
         success: false,
-        message: "Failed to reset account's password. Please try again.",
+        message: "Failed to reset account's password. Please try again",
       };
     }
   },

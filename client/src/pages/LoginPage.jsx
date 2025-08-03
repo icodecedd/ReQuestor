@@ -16,7 +16,8 @@ import {
   Image,
   useToast,
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon, WarningIcon } from "@chakra-ui/icons";
+import { WarningIcon } from "@chakra-ui/icons";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
@@ -24,6 +25,7 @@ import { useNavigate, Link as RouterLink } from "react-router-dom";
 import logo from "@/assets/requestor.svg";
 import overviewBg from "@/assets/overview.webp";
 import { validateRequiredFields } from "@/utils/validateRequiredFields";
+
 
 export const LoginPage = () => {
   const { login } = useAuth();
@@ -186,7 +188,7 @@ export const LoginPage = () => {
                           size="sm"
                           variant="ghost"
                           onClick={togglePasswordVisibility}
-                          icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                          icon={showPassword ? <FiEyeOff /> : <FiEye />}
                           aria-label="Toggle password visibility"
                         />
                       </InputRightElement>

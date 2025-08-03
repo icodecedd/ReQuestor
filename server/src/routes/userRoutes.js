@@ -6,7 +6,6 @@ import {
   resetUserPasswordManual,
   toggleUserStatus,
   updateUser,
-  checkUsernameAvailability,
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -15,9 +14,6 @@ const router = express.Router();
  * Important: Order matters
  * - Specific routes (like /check-username) must come before dynamic routes (/:id)
  */
-
-// Username availability check (specific route first)
-router.get("/check-username", checkUsernameAvailability);
 
 // Get all users
 router.get("/", getAllUsers);
