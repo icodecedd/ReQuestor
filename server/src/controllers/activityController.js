@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../config/dbConfig.js";
 
 // GET all activities
 export const getAllActivities = async (req, res) => {

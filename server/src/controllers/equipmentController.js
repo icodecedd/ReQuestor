@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../config/dbConfig.js";
 
 export const getAllEquipment = async (req, res) => {
   try {

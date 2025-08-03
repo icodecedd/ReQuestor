@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../config/dbConfig.js";
 import jwt from "jsonwebtoken";
 import { comparePassword, hashPassword } from "../helpers/password.js";
 import {
@@ -7,10 +7,10 @@ import {
   generateVerificationToken,
 } from "../helpers/tokenAndCookie.js";
 import {
-  sendPasswordResetFromResend,
-  sendResetSuccessFromResend,
-  sendVerificationFromResend,
-} from "../mailtrap/emailsResend.js";
+  sendPasswordResetEmail,
+  sendResetSuccessEmail,
+  sendVerificationEmail,
+} from "../emailservices/emailsGmail.js";
 
 export const checkAuth = async (req, res) => {
   try {
@@ -67,7 +67,7 @@ export const register = async (req, res) => {
         // Optionally generate a new token
         const newToken = generateTokenAndCookie(res, user.id);
 
-        await sendVerificationFromResend(user.email, newToken);
+        await sendVerificationEmail(user.email, newToken);
 
         return res.status(400).json({
           success: false,
@@ -99,7 +99,7 @@ export const register = async (req, res) => {
     const token = generateTokenAndCookie(res, newUser.id);
 
     // Send verification email
-    await sendVerificationFromResend(email, token);
+    await sendVerificationEmail(email, token);
 
     return res.status(201).json({
       success: true,
@@ -141,7 +141,7 @@ export const resendVerification = async (req, res) => {
     // Generate new verification token (do not reuse session token)
     const verificationToken = generateVerificationToken(user.id);
 
-    await sendVerificationFromResend(email, verificationToken);
+    await sendVerificationEmail(email, verificationToken);
 
     return res.status(200).json({
       success: true,
@@ -329,7 +329,7 @@ export const forgotPassword = async (req, res) => {
     // Generate a JWT token for the user session
     const resetToken = generateResetToken(user.id);
 
-    await sendPasswordResetFromResend(email, resetToken);
+    await sendPasswordResetEmail(email, resetToken);
 
     return res.status(200).json({
       success: true,
@@ -387,7 +387,7 @@ export const resetPassword = async (req, res) => {
 
     const enrichedUser = result.rows[0];
 
-    await sendResetSuccessFromResend(enrichedUser.email);
+    await sendResetSuccessEmail(enrichedUser.email);
 
     return res.status(200).json({
       success: true,

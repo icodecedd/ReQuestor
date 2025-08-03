@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../config/dbConfig.js";
 import { hashPassword } from "../helpers/password.js";
 
 export const getAllUsers = async (req, res) => {
