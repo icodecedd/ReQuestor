@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../config/dbConfig.js";
 
 export const getDashbordStatistics = async (req, res) => {
   try {
@@ -15,7 +15,7 @@ export const getDashbordStatistics = async (req, res) => {
     ]);
 
     const barGraphStats = await pool.query(`
-      SELECT 
+      SELECT
       TO_CHAR(DATE_TRUNC('month', created_at), 'Mon') AS month,
       COUNT(*) FILTER (WHERE status = 'Approved') AS approved,
       COUNT(*) FILTER (WHERE status = 'Pending') AS pending
@@ -27,7 +27,7 @@ export const getDashbordStatistics = async (req, res) => {
     `);
 
     const pieGraphStats = await pool.query(`
-      SELECT 
+      SELECT
       type,
       COUNT(*) AS count
       FROM equipments

@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../config/dbConfig.js";
 
 // GET all requests
 export const getAllRequests = async (req, res) => {
@@ -210,7 +210,6 @@ export const addRequest = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
-
 
 export const updateRequestStatus = async (req, res) => {
   const { id } = req.params;
