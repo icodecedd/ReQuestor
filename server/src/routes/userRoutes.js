@@ -3,7 +3,7 @@ import {
   addUser,
   deleteUser,
   getAllUsers,
-  resetUserPasswordManual,
+  resetUserPassword,
   toggleUserStatus,
   updateUser,
 } from "../controllers/userController.js";
@@ -31,6 +31,6 @@ router.delete("/:id", deleteUser);
 router.patch("/:id/set-status", toggleUserStatus);
 
 // Reset user password manually
-router.patch("/:id/set-password", resetUserPasswordManual);
+router.patch("/:id/set-password", resetUserPassword);
 
 export default router;
