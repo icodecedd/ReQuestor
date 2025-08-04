@@ -11,37 +11,51 @@ import {
   InputRightElement,
   Button,
   Link,
-  VStack,
+  Stack,
   IconButton,
   Center,
   Image,
   useToast,
+  useColorModeValue,
+  InputLeftElement,
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon, WarningIcon } from "@chakra-ui/icons";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
+import logoWhite from "@/assets/requestor-white.svg";
 import logo from "@/assets/requestor.svg";
 import overviewBg from "@/assets/overview.webp";
-import { validateRequiredFields } from "@/utils/validateRequiredFields";
+import { FiAlertCircle, FiEye, FiEyeOff, FiLock, FiMail, FiUser } from "react-icons/fi";
 
 export const SignupPage = () => {
   const { signup } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
+
+  // Modern color palette
+  const colors = {
+    maroon: "#800000",
+    lightMaroon: "#a04040",
+    paleMaroon: "#f8e8e8",
+    darkMaroon: "#600000",
+    slate: "#2D3748",
+  };
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     name: "",
     student_number: "",
   });
+
   const [errors, setErrors] = useState({
+    name: false,
     email: false,
     password: false,
-    name: false,
-    student_number: false,
   });
+
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -50,45 +64,33 @@ export const SignupPage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-    // Clear the error as soon as the field gets a value
-    if (value.trim()) {
-      setErrors((prev) => ({ ...prev, [name]: false }));
-    }
+    if (value.trim()) setErrors((prev) => ({ ...prev, [name]: false }));
   };
 
-  const showToast = (message, status = "error") => {
+  const showToast = (message, status = "error", duration = 1800) => {
     toast({
       title: message,
       status,
-      duration: 3000,
-      isClosable: true,
+      duration: duration,
       position: "top-right",
-      variant: "left-accent",
+      variant: "subtle",
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const requiredFields = ["name", "email", "password"];
-
-    const hasMissing = validateRequiredFields(
-      formData,
-      requiredFields,
-      setErrors,
-      showToast
-    );
-
-    if (hasMissing) return;
-
-    if (!formData.email.includes("@")) {
-      setErrors((prev) => ({ ...prev, email: true }));
-      showToast("Invalid email format");
+    if (!formData.name || !formData.email || !formData.password) {
+      setErrors({
+        name: !formData.name,
+        email: !formData.email,
+        password: !formData.password,
+      });
+      showToast("Please fill in all fields", "error");
       return;
     }
 
-    if (formData.password.length < 8) {
+    if (formData.password.length < 6) {
       setErrors((prev) => ({ ...prev, password: true }));
       showToast("Password must be at least 6 characters");
       return;
@@ -98,52 +100,53 @@ export const SignupPage = () => {
 
     try {
       const { success } = await signup(formData);
-
       if (success) {
-        navigate("/verification", {
-          state: { email: formData.email },
-        });
-        console.log("Signup successful");
-      } else {
-        showToast("Something went wrong.");
+        showToast("Account created successfully!", "success");
+        navigate("/verification", { state: { email: formData.email } });
       }
     } catch (err) {
       console.error(err);
-
       const errorMessage =
-        err?.response?.data?.message || "Sign up failed. Please try again.";
-
+        err?.response?.data?.message || "Sign up failed. Please try again";
       showToast(errorMessage);
 
-      // Optionally navigate to verification page again
       if (errorMessage.includes("not verified")) {
-        navigate("/verification", {
-          state: { email: formData.email },
-        });
+        navigate("/verification", { state: { email: formData.email } });
       }
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Modern card shadow
+  const cardShadow = useColorModeValue(
+    "0px 4px 20px rgba(0, 0, 0, 0.08)",
+    "0px 4px 20px rgba(0, 0, 0, 0.2)"
+  );
+
   return (
-    <Flex minH="100vh" align="center" justify="center" bg="gray.50" px={4}>
+    <Flex
+      minH="100vh"
+      align="center"
+      justify="center"
+      bg={colors.paleMaroon}
+      px={4}
+    >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         style={{ width: "100%", maxWidth: "1000px" }}
       >
         <Flex
           direction={{ base: "column", md: "row" }}
-          height="1xl"
           bg="white"
-          borderRadius="xl"
-          boxShadow="lg"
+          borderRadius="2xl"
+          boxShadow={cardShadow}
           overflow="hidden"
           w="full"
         >
-          {/* LEFT: Background Image */}
+          {/* LEFT: Branding Section */}
           <Box
             w={{ base: "100%", md: "50%", lg: "55%" }}
             bgImage={`url(${overviewBg})`}
@@ -161,85 +164,153 @@ export const SignupPage = () => {
               bg="rgba(97, 0, 0, 0.7)"
               zIndex={1}
             />
+            <Box
+              position="absolute"
+              bottom="8"
+              left="8"
+              zIndex={2}
+              color="white"
+              maxW="80%"
+            >
+              <Image src={logoWhite} boxSize="60px" mb={4} />
+              <Heading fontSize="2xl" fontWeight="600" mb={2}>
+                Join Our Community
+              </Heading>
+              <Text fontSize="md" opacity={0.95} mb={2}>
+                Welcome to <b>ReQuestor</b> — your paperless solution for
+                projector and equipment reservations.
+              </Text>
+              <Text fontSize="sm" opacity={0.9} mb={2}>
+                Reserve projectors and classroom equipment online, track your
+                requests, and enjoy a seamless, eco-friendly experience.
+              </Text>
+              <Text fontSize="sm" opacity={0.8}>
+                Say goodbye to paperwork and manual logs. With ReQuestor,
+                managing your equipment needs is just a few clicks away.
+              </Text>
+            </Box>
           </Box>
-
-          {/* RIGHT: Signup Form */}
           <Box
             w={{ base: "100%", md: "50%", lg: "45%" }}
-            p={{ base: 6, sm: 8, md: 10 }}
+            p={{ base: 8, md: 10, lg: 12 }}
             bg="white"
             zIndex={2}
           >
-            <VStack spacing={6} align="stretch">
-              <Box textAlign="center">
-                <Image src={logo} boxSize="50px" mx="auto" />
-                <Heading fontSize="2xl" color="maroon">
-                  Create Account
+            <Stack spacing={8}>
+              {/* Mobile Logo */}
+              <Box display={{ base: "block", md: "none" }} textAlign="center">
+                <Image src={logo} boxSize="60px" mx="auto" />
+              </Box>
+
+              <Box>
+                <Heading
+                  fontSize="2xl"
+                  fontWeight="600"
+                  color={colors.slate}
+                  mb={1}
+                >
+                  Create your account
                 </Heading>
-                <Text fontSize="sm" color="gray.600">
-                  Welcome to ReQuestor. Let's create your account
+                <Text fontSize="sm" color="gray.500">
+                  Get started with just a few details
                 </Text>
               </Box>
 
               <form onSubmit={handleSubmit}>
-                <VStack spacing={4}>
-                  {/* Name */}
+                <Stack spacing={5}>
+                  {/* Name Field */}
                   <FormControl isInvalid={errors.name}>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel
+                      fontSize="sm"
+                      fontWeight="500"
+                      color={colors.slate}
+                    >
+                      Full Name
+                    </FormLabel>
                     <InputGroup>
+                      <InputLeftElement pointerEvents="none" color="gray.400">
+                        <FiUser />
+                      </InputLeftElement>
                       <Input
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        placeholder="Enter your name"
-                        focusBorderColor="maroon"
+                        placeholder="Your full name"
+                        focusBorderColor={colors.maroon}
+                        borderRadius="lg"
+                        _placeholder={{ color: "gray.400" }}
                       />
-                      <InputRightElement>
-                        {errors.name && <WarningIcon color="red.500" />}
-                      </InputRightElement>
+                      {errors.name && (
+                        <InputRightElement>
+                          <FiAlertCircle color="maroon" />
+                        </InputRightElement>
+                      )}
                     </InputGroup>
                   </FormControl>
 
-                  {/* Email */}
+                  {/* Email Field */}
                   <FormControl isInvalid={errors.email}>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel
+                      fontSize="sm"
+                      fontWeight="500"
+                      color={colors.slate}
+                    >
+                      Email Address
+                    </FormLabel>
                     <InputGroup>
+                      <InputLeftElement pointerEvents="none" color="gray.400">
+                        <FiMail />
+                      </InputLeftElement>
                       <Input
-                        type="text"
+                        type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        placeholder="Enter your email"
-                        autoComplete="email"
-                        focusBorderColor="maroon"
+                        placeholder="your@email.com"
+                        focusBorderColor={colors.maroon}
+                        borderRadius="lg"
+                        _placeholder={{ color: "gray.400" }}
                       />
-                      <InputRightElement>
-                        {errors.email && <WarningIcon color="red.500" />}
-                      </InputRightElement>
+                      {errors.email && (
+                        <InputRightElement>
+                          <FiAlertCircle color="maroon" />
+                        </InputRightElement>
+                      )}
                     </InputGroup>
                   </FormControl>
 
-                  {/* Password */}
+                  {/* Password Field */}
                   <FormControl isInvalid={errors.password}>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel
+                      fontSize="sm"
+                      fontWeight="500"
+                      color={colors.slate}
+                    >
+                      Password
+                    </FormLabel>
                     <InputGroup>
+                      <InputLeftElement pointerEvents="none" color="gray.400">
+                        <FiLock />
+                      </InputLeftElement>
                       <Input
                         type={showPassword ? "text" : "password"}
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
-                        placeholder="Enter your password"
-                        autoComplete="current-password"
-                        focusBorderColor="maroon"
+                        placeholder="At least 6 characters"
+                        focusBorderColor={colors.maroon}
+                        borderRadius="lg"
+                        _placeholder={{ color: "gray.400" }}
                       />
                       <InputRightElement>
                         <IconButton
                           size="sm"
                           variant="ghost"
                           onClick={togglePasswordVisibility}
-                          icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                          icon={showPassword ? <FiEyeOff /> : <FiEye />}
                           aria-label="Toggle password visibility"
+                          color="gray.500"
                         />
                       </InputRightElement>
                     </InputGroup>
@@ -248,33 +319,44 @@ export const SignupPage = () => {
                   {/* Submit Button */}
                   <Button
                     type="submit"
-                    variant="solid"
                     isLoading={isSubmitting}
+                    loadingText="Creating account..."
+                    colorScheme="maroon"
+                    bg={colors.maroon}
                     color="white"
-                    bg="#800000"
-                    _hover={{ bg: "#a12828" }}
-                    w="full"
+                    size="md"
+                    borderRadius="lg"
+                    fontWeight="500"
                     mt={3}
+                    _hover={{
+                      bg: colors.darkMaroon,
+                      transform: "translateY(-1px)",
+                      boxShadow: "lg",
+                    }}
+                    _active={{
+                      bg: colors.darkMaroon,
+                      transform: "translateY(0)",
+                    }}
                   >
-                    {isSubmitting ? "Signing up..." : "Sign up"}
+                    Create Account
                   </Button>
-                </VStack>
+                </Stack>
               </form>
 
-              {/* Already have an account */}
-              <Center gap="1" mt={5}>
-                <Text fontSize={14}>Have an account?</Text>
+              {/* Login Prompt */}
+              <Center fontSize="sm" color="gray.500" gap={1}>
+                <Text>Already have an account?</Text>
                 <Link
                   as={RouterLink}
                   to="/login"
-                  color="#800000"
-                  fontSize={14}
-                  fontWeight="medium"
+                  color={colors.maroon}
+                  fontWeight="500"
+                  _hover={{ textDecoration: "underline" }}
                 >
                   Sign in
                 </Link>
               </Center>
-            </VStack>
+            </Stack>
           </Box>
         </Flex>
       </motion.div>

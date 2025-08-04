@@ -23,14 +23,13 @@ export function validateRequiredFields(
       email: "Email",
       password: "Password",
       name: "Name",
-      student_number: "Student Number",
     };
 
     const missingLabels = missing.map((f) => fieldLabels[f] || f);
 
     const toastMessage =
       missing.length === requiredFields.length
-        ? "All fields are required"
+        ? "All fields are required."
         : `Missing field${missing.length > 1 ? "s" : ""}: ${missingLabels.join(
             ", "
           )}`;

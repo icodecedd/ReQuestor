@@ -10,15 +10,17 @@ import SignupPage from "./pages/SignupPage";
 import PublicRoute from "./components/routes/PublicRoute";
 import PrivateRoute from "./components/routes/PrivateRoute";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
+import { useAxiosInterceptor } from "./hooks/useAxiosInterceptor";
 
 function App() {
   const { user, loading } = useAuth();
+  useAxiosInterceptor();
 
   if (loading) return null;
 
   return (
     <Routes>
-      {(!user || user.status === "Inactive") && (
+      {(!user || !user.is_verified) && (
         <Route path="/*" element={<AuthRoutes />} />
       )}
 
@@ -43,15 +45,13 @@ function App() {
       <Route
         path="/verification-success"
         element={
-          <PublicRoute>
             <VerificationSuccessPage />
-          </PublicRoute>
         }
       />
 
       {/* Admin Routes */}
       <Route
-        path="/*"
+        path="/admin/*"
         element={
           <PrivateRoute allowedRoles={["Admin"]}>
             <AdminRoutes />
@@ -61,7 +61,7 @@ function App() {
 
       {/* Student Routes */}
       <Route
-        path="/*"
+        path="/student/*"
         element={
           <PrivateRoute allowedRoles={["Student"]}>
             <StudentRoutes />

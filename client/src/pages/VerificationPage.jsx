@@ -1,19 +1,17 @@
-import { useAuth } from "@/hooks/useAuth";
 import {
   Flex,
   Box,
   Stack,
   Button,
   Text,
-  Divider,
   Heading,
   Icon,
-  useBreakpointValue,
   useToast,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { MdEmail } from "react-icons/md";
+import { MdEmail, MdOutlineMarkEmailRead } from "react-icons/md";
 import { useLocation } from "react-router-dom";
 
 const VerificationPage = () => {
@@ -21,124 +19,141 @@ const VerificationPage = () => {
   const email = location.state?.email || "";
   const toast = useToast();
 
-const handleResentVerification = async () => {
-  try {
-    const { data } = await axios.post("/api/auth/resend-verification", {
-      email,
-    });
+  // Modern color palette
+  const colors = {
+    maroon: "#800000",
+    lightMaroon: "#a04040",
+    paleMaroon: "#f8e8e8",
+    darkMaroon: "#600000",
+    slate: "#2D3748",
+  };
 
-    if (data?.success) {
-      toast({
-        title: data.message || "Verification email resent.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-        position: "top-right",
-        variant: "top-accent",
+  const handleResendVerification = async () => {
+    try {
+      const { data } = await axios.post("/api/auth/resend-verification", {
+        email,
       });
-    } else {
+
       toast({
-        title: data.message || "Failed to resend verification email.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
+        title: data?.message || "Verification email resent",
+        status: "success",
+        duration: 1800,
         position: "top-right",
-        variant: "top-accent",
+        variant: "subtle",
+      });
+    } catch (error) {
+      toast({
+        title: error.response?.data?.message || "Failed to resend verification",
+        status: "error",
+        duration: 1800,
+        position: "top-right",
+        variant: "subtle",
       });
     }
-  } catch (error) {
-    toast({
-      title: "Something went wrong. Please try again.",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-      position: "top-right",
-      variant: "top-accent",
-    });
-  }
-};
+  };
+
+  // Modern card shadow
+  const cardShadow = useColorModeValue(
+    "0px 4px 20px rgba(0, 0, 0, 0.08)",
+    "0px 4px 20px rgba(0, 0, 0, 0.2)"
+  );
 
   return (
-    <Flex minH="100vh" align="center" justify="center" bg="gray.50" px={4}>
-      <motion.div>
-        <Flex
-          direction="column"
-          align="center"
-          justify="center"
-          minH="100vh"
-          px={4}
-          bg="gray.50"
+    <Flex
+      minH="100vh"
+      align="center"
+      justify="center"
+      bg={colors.paleMaroon}
+      px={4}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        style={{ width: "100%", maxWidth: "480px" }}
+      >
+        <Box
+          bg="white"
+          rounded="2xl"
+          p={8}
+          shadow={cardShadow}
+          textAlign="center"
+          borderWidth={1}
+          borderColor="rgba(0, 0, 0, 0.05)"
         >
-          <Box
-            maxW="lg"
-            w="full"
-            bg="white"
-            rounded="xl"
-            shadow="lg"
-            p={8}
-            textAlign="center"
+          <Flex
+            align="center"
+            justify="center"
+            w={20}
+            h={20}
+            rounded="full"
+            bg={colors.maroon}
+            color="white"
+            mx="auto"
+            mb={6}
           >
-            <Flex
-              align="center"
-              justify="center"
-              w={16}
-              h={16}
-              rounded="full"
-              bg="maroon"
-              color="white"
-              mx="auto"
-              mb={4}
-            >
-              <Icon as={MdEmail} boxSize={8} />
-            </Flex>
+            <Icon as={MdOutlineMarkEmailRead} boxSize={8} />
+          </Flex>
 
-            <Heading
-              fontSize={useBreakpointValue({ base: "2xl", md: "3xl" })}
-              mb={2}
-            >
-              Verify your email address
-            </Heading>
+          <Heading
+            as="h1"
+            fontSize={{ base: "2xl", md: "3xl" }}
+            fontWeight="600"
+            color={colors.slate}
+            mb={3}
+          >
+            Verify your email
+          </Heading>
 
-            <Text fontSize="md" color="gray.600">
-              We've sent a verification link to{" "}
-              <Text as="span" fontWeight="bold" color="maroon">
-                {email}
-              </Text>
+          <Text fontSize="md" color="gray.600" lineHeight="tall" mb={6}>
+            We've sent a verification link to{" "}
+            <Text as="span" fontWeight="600" color={colors.maroon}>
+              {email}
             </Text>
+          </Text>
 
-            <Text mt={2} fontSize="sm" color="gray.500">
-              Click the link in the email to complete your registration and
-              access your account.
-            </Text>
+          <Text fontSize="sm" color="gray.500" mb={8}>
+            Check your inbox and click the link in the email to complete your
+            registration. The link will expire in 24 hours.
+          </Text>
 
-            <Divider my={6} />
-
-            <Stack
-              direction={{ base: "column", sm: "row" }}
-              spacing={4}
-              justify="center"
+          <Stack spacing={4}>
+            <Button
+              leftIcon={<MdEmail />}
+              colorScheme="maroon"
+              bg={colors.maroon}
+              _hover={{ bg: colors.darkMaroon }}
+              _active={{ bg: colors.darkMaroon }}
+              size="md"
+              onClick={() => window.open("https://mail.google.com", "_blank")}
             >
-              <Button
-                bg="maroon"
-                color="white"
-                w="100%"
-                _hover={{ bg: "#a12828" }}
-                transition="background-color 0.2s ease-in-out"
-                onClick={() => window.open("https://mail.google.com", "_blank")}
-              >
-                Open Email App
-              </Button>
-              <Button
-                variant="outline"
-                w="100%"
-                _hover={{ bg: "#f7eaea" }}
-                onClick={() => handleResentVerification()}
-              >
-                Resend Verification Email
-              </Button>
-            </Stack>
-          </Box>
-        </Flex>
+              Open Email App
+            </Button>
+
+            <Button
+              variant="outline"
+              color={colors.maroon}
+              borderColor={colors.lightMaroon}
+              _hover={{ bg: colors.paleMaroon }}
+              size="md"
+              onClick={handleResendVerification}
+            >
+              Resend Verification Email
+            </Button>
+          </Stack>
+
+          <Text mt={8} fontSize="sm" color="gray.500">
+            Didn't receive the email? Check your spam folder or{" "}
+            <Button
+              variant="link"
+              color={colors.maroon}
+              fontWeight="500"
+              onClick={handleResendVerification}
+            >
+              resend it
+            </Button>
+          </Text>
+        </Box>
       </motion.div>
     </Flex>
   );

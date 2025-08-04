@@ -45,7 +45,7 @@ export const sendWelcomeEmail = async (email, name) => {
 
 // Send Password Reset Email
 export const sendPasswordResetEmail = async (email, resetToken) => {
-    const resetLink = `${process.env.CLIENT_URL}/api/auth/reset-password/${resetToken}`;
+    const resetLink = `${process.env.CLIENT_URL}/reset-password/token=${resetToken}`;
 
     const mailOptions = {
         from: `"ReQuestor System" <${process.env.GMAIL_USER}>`,

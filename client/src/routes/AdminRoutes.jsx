@@ -11,7 +11,7 @@ const AdminRoutes = () => {
   return (
     <Routes>
       {/* Nested routes under /dashboard */}
-      <Route path="/admin" element={<AdminLayout />}>
+      <Route path="/" element={<AdminLayout />}>
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<ManageUsers />} />

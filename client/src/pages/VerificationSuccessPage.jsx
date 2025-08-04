@@ -4,113 +4,104 @@ import {
   Stack,
   Button,
   Text,
-  Divider,
   Heading,
   Icon,
-  useToast,
-  useBreakpointValue,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { MdMarkEmailRead } from "react-icons/md";
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
+import { MdMarkEmailRead, MdLogin } from "react-icons/md";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const VerificationSuccessPage = () => {
   const navigate = useNavigate();
-  const toast = useToast();
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
-  const verified = searchParams.get("verified");
 
-  if (verified !== "true" || !email) {
-    return <Navigate to="/login" replace />;
-  }
-
-  const handleResend = async () => {
-    try {
-      const { data } = await axios.post("/api/auth/resend-verification", {
-        email,
-      });
-
-      toast({
-        title: data?.message || "Verification email resent.",
-        status: data?.success ? "success" : "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top-right",
-        variant: "top-accent",
-      });
-    } catch (err) {
-      toast({
-        title: "Error sending email. Try again later.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top-right",
-        variant: "top-accent",
-      });
-    }
+  // Modern color palette
+  const colors = {
+    success: "#38A169",
+    lightSuccess: "#9AE6B4",
+    paleSuccess: "#F0FFF4",
+    darkSuccess: "#25855A",
+    slate: "#2D3748",
   };
 
+  // Modern card shadow
+  const cardShadow = useColorModeValue(
+    "0px 4px 20px rgba(0, 0, 0, 0.08)",
+    "0px 4px 20px rgba(0, 0, 0, 0.2)"
+  );
+
   return (
-    <Flex minH="100vh" align="center" justify="center" bg="gray.50" px={4}>
-      <motion.div>
+    <Flex
+      minH="100vh"
+      align="center"
+      justify="center"
+      bg={colors.paleSuccess}
+      px={4}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        style={{ width: "100%", maxWidth: "480px" }}
+      >
         <Box
-          maxW="lg"
-          w="full"
           bg="white"
-          rounded="xl"
-          shadow="lg"
+          rounded="2xl"
           p={8}
+          shadow={cardShadow}
           textAlign="center"
+          borderWidth={1}
+          borderColor="rgba(0, 0, 0, 0.05)"
         >
           <Flex
             align="center"
             justify="center"
-            w={16}
-            h={16}
+            w={20}
+            h={20}
             rounded="full"
-            bg="green.500"
+            bg={colors.success}
             color="white"
             mx="auto"
-            mb={4}
+            mb={6}
           >
             <Icon as={MdMarkEmailRead} boxSize={8} />
           </Flex>
 
-          <Heading fontSize={useBreakpointValue({ base: "2xl", md: "3xl" })}>
-            Email Verified Successfully
+          <Heading
+            as="h1"
+            fontSize={{ base: "2xl", md: "3xl" }}
+            fontWeight="600"
+            color={colors.slate}
+            mb={3}
+          >
+            Email Verified!
           </Heading>
 
-          <Text mt={2} fontSize="md" color="gray.600">
+          <Text fontSize="md" color="gray.600" lineHeight="tall" mb={2}>
             Your email{" "}
-            <Text as="span" fontWeight="bold">
+            <Text as="span" fontWeight="600" color={colors.success}>
               {email}
             </Text>{" "}
-            has been verified.
+            has been successfully verified.
           </Text>
 
-          <Text fontSize="sm" color="gray.500" mt={1}>
-            You can now log in to your account.
+          <Text fontSize="sm" color="gray.500" mb={8}>
+            You can now access all features of your account.
           </Text>
-
-          <Divider my={6} />
 
           <Stack spacing={4}>
             <Button
+              leftIcon={<MdLogin />}
               colorScheme="green"
+              bg={colors.success}
+              _hover={{ bg: colors.darkSuccess }}
+              _active={{ bg: colors.darkSuccess }}
+              size="md"
               onClick={() => navigate("/login")}
-              w="100%"
             >
-              Go to Login
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleResend}
-              w="100%"
-              _hover={{ bg: "gray.100" }}
-            >
-              Resend Email Again
+              Continue to Dashboard
             </Button>
           </Stack>
         </Box>
