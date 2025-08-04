@@ -28,12 +28,13 @@ export function UserRoleDropdown({ onChange }) {
       <MenuButton
         as={Button}
         rightIcon={<GoFilter size={20} />}
-        borderRadius="xl"
+        borderRadius="lg"
         borderColor="gray.400"
         variant="outline"
         color="black"
         fontSize="15px"
         _hover={{ bg: "#f7eaea" }}
+        _active={{ bg: "#f7eaea" }}
         w="130px"
         textAlign="left"
       >

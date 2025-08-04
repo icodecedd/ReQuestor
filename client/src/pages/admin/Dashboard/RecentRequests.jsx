@@ -83,10 +83,6 @@ const RecentRequests = () => {
     fetchRecentRequests();
   }, [fetchRecentRequests]);
 
-  // if (loading) {
-  //   return <Skeleton height="400px" width="100%" borderRadius="xl" mx="auto" />;
-  // }
-
   return (
     <Box
       overflow="hidden"

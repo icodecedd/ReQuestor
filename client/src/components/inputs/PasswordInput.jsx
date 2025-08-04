@@ -23,7 +23,7 @@ const PasswordInput = ({ name, placeholder, onChange }) => {
         name={name}
         placeholder={placeholder}
         focusBorderColor="maroon"
-        borderRadius="xl"
+        borderRadius="lg"
         borderColor="gray.400"
         onChange={handlePassword}
       />
