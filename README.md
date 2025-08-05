@@ -28,9 +28,9 @@ ReQuest streamlines how academic institutions (e.g., PUP San Juan) manage equipm
 ---
 
 ## 🚀 **Planned Features**  
-- [ ] **User Accounts** (Faculty, Student)  
+- [ ] **User Accounts** (Admin, Student)  
 - [ ] **Online Reservation Form** (no more paper)  
-- [ ] **Queue Management** (pending → approved → waitlist)  
+- [ ] **Queue Management** (pending → approved → in use)  
 - [ ] **Admin Panel** (review & action)  
 - [ ] **Email & In-App Notifications**
 
