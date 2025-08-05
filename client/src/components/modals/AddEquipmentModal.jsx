@@ -22,28 +22,41 @@ import {
   Divider,
   Badge,
   Textarea,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  Show,
 } from "@chakra-ui/react";
-import { FiBox } from "react-icons/fi";
+import { FiAlertCircle, FiBox, FiHash, FiMapPin, FiTag } from "react-icons/fi";
 import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
 import { useState } from "react";
 import useEquipmentStore from "@/store/equipmentStore";
-import { getEqConditionColor } from "@/utils/getColorScheme";
+import { getEqConditionColor, getEqStatusColor } from "@/utils/getColorScheme";
 
 const equipmentFields = [
   {
     name: "name",
     label: "Name",
     placeholder: "Enter equipment name",
+    icon: <FiBox />,
+  },
+  {
+    name: "serial_number",
+    label: "Serial Number",
+    placeholder: "Enter serial number",
+    icon: <FiHash />,
   },
   {
     name: "type",
     label: "Type",
     placeholder: "Enter equipment type",
+    icon: <FiTag />,
   },
   {
     name: "location",
     label: "Location",
     placeholder: "Enter equipment location",
+    icon: <FiMapPin />,
   },
 ];
 
@@ -63,49 +76,107 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
     condition: "",
     description: "",
   });
+  const [errors, setErrors] = useState({
+    name: false,
+    type: false,
+    location: false,
+    serial_number: false,
+    condition: false,
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    console.log({ [name]: value });
+
+    // Clear the error as soon as the field gets a value
+    if (value.trim()) {
+      setErrors((prev) => ({ ...prev, [name]: false }));
+    }
+  };
+
+  const showToast = (message, status) => {
+    toast({
+      title: message,
+      status: status,
+      duration: 2000,
+      position: "top-right",
+      variant: "subtle",
+    });
   };
 
   const handleSubmit = async () => {
-    const result = await addEquipment(form); // Direct call to Zustand store
+    setIsSubmitting(true);
 
-    toast({
-      title: result.success ? "Success" : "Error",
-      description: result.message,
-      status: result.success ? "success" : "error",
-      duration: 3000,
-      isClosable: true,
-      variant: "subtle",
-      position: "top-right",
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const result = await addEquipment(form);
+
+      if (result.message.includes("All")) {
+        setErrors({
+          name: !form.name.trim(),
+          type: !form.type.trim(),
+          location: !form.location.trim(),
+          serial_number: !form.serial_number.trim(),
+          condition: !form.condition.trim(),
+        });
+        showToast(result.message, "error");
+        return;
+      }
+
+      showToast(result.message, result.success ? "success" : "error");
+      if (result.success) {
+        onClose();
+        setForm({
+          name: "",
+          type: "",
+          status: "Available",
+          location: "",
+          serial_number: "",
+          condition: "",
+          description: "",
+        });
+      }
+    } catch (error) {
+      showToast("An error occurred while adding equipment.", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleClose = () => {
+    setForm({
+      name: "",
+      type: "",
+      status: "Available",
+      location: "",
+      serial_number: "",
+      condition: "",
+      description: "",
     });
 
-    if (result.success) {
-      onClose();
-      setForm({
-        name: "",
-        type: "",
-        status: "Available",
-        location: "",
-        serial_number: "",
-        condition: "",
-        description: "",
-      });
-    }
+    setErrors({
+      name: false,
+      type: false,
+      location: false,
+      serial_number: false,
+      condition: false,
+    });
+
+    onClose(); // actually close the modal
   };
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
-      size="lg"
+      onClose={handleClose}
+      size="2xl"
       motionPreset="slideInBottom"
     >
       <ModalOverlay />
-      <ModalContent borderRadius="xl" overflow="hidden">
+      <ModalContent borderRadius="2xl" overflow="hidden">
         <ModalHeader>
           <Flex color="gray.900" gap={3} align="center" mb={3}>
             <Box
@@ -172,18 +243,35 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
             <TabPanels>
               <TabPanel>
                 {equipmentFields.map((field, index) => (
-                  <FormControl isRequired mb={4} key={index}>
-                    <FormLabel>{field.label}</FormLabel>
-                    <Input
-                      name={field.name}
-                      placeholder={field.placeholder}
-                      focusBorderColor="maroon"
-                      borderRadius="xl"
-                      borderColor="gray.400"
-                      onChange={handleChange}
-                    />
+                  <FormControl
+                    mb={4}
+                    key={index}
+                    isInvalid={errors[field.name]}
+                  >
+                    <FormLabel fontSize={14}>{field.label}</FormLabel>
+                    <InputGroup>
+                      <InputLeftElement pointerEvents="none" color="gray.400">
+                        {field.icon}
+                      </InputLeftElement>
+                      <Input
+                        name={field.name}
+                        placeholder={field.placeholder}
+                        focusBorderColor="maroon"
+                        borderRadius="lg"
+                        borderColor="gray.400"
+                        onChange={handleChange}
+                      />
+                      {errors[field.name] && (
+                        <InputRightElement>
+                          <FiAlertCircle color="maroon" />
+                        </InputRightElement>
+                      )}
+                    </InputGroup>
                   </FormControl>
                 ))}
+              </TabPanel>
+              <TabPanel>
+                {/* Condition Field */}
                 <Flex gap={5}>
                   <ModalDropdown
                     value={form.condition}
@@ -191,15 +279,17 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
                       setForm({ ...form, condition: newCondition })
                     }
                     roles={conditionOptions}
-                    w={206}
+                    w={"100%"}
                     label="Condition"
                     placeholder="Select condition"
+                    isRequired={false}
+                    isInvalid={errors.condition}
                   />
                   <FormControl>
-                    <FormLabel>Selected Condition</FormLabel>
+                    <FormLabel fontSize={14}>Selected Condition</FormLabel>
                     <Box
                       border="1px"
-                      borderRadius="xl"
+                      borderRadius="lg"
                       h="38px"
                       borderColor="gray.400"
                     >
@@ -217,63 +307,77 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
                     </Box>
                   </FormControl>
                 </Flex>
-              </TabPanel>
-              <TabPanel>
-                <Box>
-                  <Flex gap={5}>
-                    <FormControl mb={4}>
-                      <FormLabel>Serial Number</FormLabel>
-                      <Input
-                        name="serial_number"
-                        placeholder="Enter serial number"
-                        focusBorderColor="maroon"
-                        borderRadius="xl"
-                        borderColor="gray.400"
-                        onChange={handleChange}
-                      />
-                    </FormControl>
-                    <ModalDropdown
-                      value={form.status}
-                      onChange={(newStatus) =>
-                        setForm({ ...form, status: newStatus })
-                      }
-                      roles={statusOptions}
-                      w={206}
-                      label="Status"
-                      placeholder="Select status"
-                      isRequired={false}
-                    />
-                  </Flex>
+
+                {/* Status Field */}
+                <Flex gap={5} mt={4}>
+                  <ModalDropdown
+                    value={form.status}
+                    onChange={(newStatus) =>
+                      setForm({ ...form, status: newStatus })
+                    }
+                    roles={statusOptions}
+                    w={"100%"}
+                    label="Status (Optional)"
+                    placeholder="Select status"
+                    isRequired={false}
+                  />
                   <FormControl>
-                    <FormLabel>Description & Specifications</FormLabel>
-                    <Textarea
-                      name="description"
-                      focusBorderColor="maroon"
-                      borderRadius="xl"
+                    <FormLabel fontSize={14}>Selected Status</FormLabel>
+                    <Box
+                      border="1px"
+                      borderRadius="lg"
+                      h="38px"
                       borderColor="gray.400"
-                      placeholder="Equipment description, specifications, and additional details..."
-                      onChange={handleChange}
-                    />
+                    >
+                      <Badge
+                        colorScheme={getEqStatusColor(form.status)}
+                        borderRadius="xl"
+                        pl={2}
+                        pr={2}
+                        pb={0.5}
+                        mt={2}
+                        ml={2}
+                      >
+                        {form.status || "No Selected Condition"}
+                      </Badge>
+                    </Box>
                   </FormControl>
-                </Box>
+                </Flex>
+                <FormControl mt={4}>
+                  <FormLabel fontSize={14}>
+                    Description & Specifications (Optional)
+                  </FormLabel>
+                  <Textarea
+                    name="description"
+                    focusBorderColor="maroon"
+                    borderRadius="lg"
+                    h="140px"
+                    borderColor="gray.400"
+                    placeholder="Equipment description, specifications, and additional details..."
+                    onChange={handleChange}
+                  />
+                </FormControl>
               </TabPanel>
             </TabPanels>
           </Tabs>
         </ModalBody>
-        <ModalFooter>
+
+        <ModalFooter borderTop="1px solid #e2e8f0">
           <Button
             mr={3}
             variant="outline"
-            borderRadius="xl"
-            onClick={onClose}
+            borderRadius="lg"
+            onClick={handleClose}
             _hover={{ bg: "#f7eaea" }}
           >
             Close
           </Button>
           <Button
+            isLoading={isSubmitting}
+            loadingText="Creating..."
             bg="#800000"
             color="white"
-            borderRadius="xl"
+            borderRadius="lg"
             _hover={{ bg: "#a12828" }}
             transition="background-color 0.2s ease-in-out"
             onClick={handleSubmit}

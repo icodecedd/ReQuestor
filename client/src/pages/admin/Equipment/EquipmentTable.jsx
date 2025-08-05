@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Flex,
+  Heading,
   Input,
   InputGroup,
   InputLeftElement,
@@ -17,10 +18,12 @@ import {
   Tabs,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
   useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
 import { CategoryDropdown } from "@/components/dropdowns/CategoryDropdown";
 import { EquipmentStatusDropdown } from "@/components/dropdowns/EquipmentStatusDropdown";
@@ -34,7 +37,6 @@ import { getEqStatusColor, getEqConditionColor } from "@/utils/getColorScheme";
 import AddEquipmentModal from "@/components/modals/AddEquipmentModal";
 import UpdateEquipmentModal from "@/components/modals/UpdateEquipmentModal";
 import DeleteEquipmentModal from "@/components/modals/DeleteEquipmentModal";
-// import { equipment } from "@/data/equipment";
 
 const formatEquipmentId = (id) => {
   return `EQ-${String(id).padStart(3, "0")}`;
@@ -62,18 +64,10 @@ const tabConfigs = [
 const EquipmentTable = () => {
   const { equipment, loading, fetchEquipment } = useEquipmentStore();
 
-  useEffect(() => {
-    fetchEquipment();
-  }, []);
-
-  {
-    /* Equipment Filters */
-  }
   const [statusFilter, setStatusFilter] = useState("All Status");
-
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
-
   const [searchFilter, setSearchFilter] = useState("");
+  const [selectedEquipment, setSelectedEquipment] = useState("");
 
   const filteredEquipment = useMemo(() => {
     return equipment.filter((eq) => {
@@ -94,7 +88,9 @@ const EquipmentTable = () => {
     });
   }, [equipment, statusFilter, categoryFilter, searchFilter]);
 
-  const [selectedEquipment, setSelectedEquipment] = useState("");
+  useEffect(() => {
+    fetchEquipment();
+  }, []);
 
   const {
     isOpen: isAddOpen,
@@ -137,7 +133,7 @@ const EquipmentTable = () => {
 
   return (
     <Box w="99.5%" mx="auto" p={8}>
-      {/* Right: Search, Filter, Add User */}
+      {/* Right: Search, Filter, Add Equipment */}
       <Flex align="flex-end" justify="flex-end" gap={3} w="100%">
         <InputGroup w="400px">
           <InputLeftElement color="gray.500">
@@ -146,7 +142,7 @@ const EquipmentTable = () => {
           <Input
             placeholder="Search by equipment id or name"
             focusBorderColor="maroon"
-            borderRadius="xl"
+            borderRadius="lg"
             borderColor="gray.400"
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
@@ -157,12 +153,12 @@ const EquipmentTable = () => {
         <EquipmentStatusDropdown onChange={setStatusFilter} />
         <CategoryDropdown onChange={setCategoryFilter} />
 
-        {/*Add User Button*/}
+        {/*Add Equipment Button*/}
         <Button
           variant="primary"
           bg="#800000"
           color="white"
-          borderRadius="xl"
+          borderRadius="lg"
           _hover={{ bg: "#a12828" }}
           transition="background-color 0.2s ease-in-out"
           gap={1}
@@ -218,36 +214,83 @@ const EquipmentTable = () => {
                   >
                     <Table
                       variant="simple"
-                      size="sm"
+                      borderTop="1px"
+                      color="gray.100"
                       sx={{
-                        Th: { textAlign: "center", fontSize: "14px" },
-                        Td: { textAlign: "center", fontSize: "14px" },
+                        Th: { textAlign: "center", fontSize: "13px" },
+                        Td: { textAlign: "center", fontSize: "13px", py: 2 },
                       }}
                     >
-                      <Thead h="50px">
-                        <Tr bg="#f7f9fb">
-                          <Th>Equipment ID</Th>
-                          <Th>Name</Th>
-                          <Th>Category</Th>
-                          <Th>Location</Th>
-                          <Th>Status</Th>
-                          <Th>Condition</Th>
-                          <Th>{" "}</Th>
+                      <Thead>
+                        <Tr>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                            py={4}
+                          >
+                            EQUIPMENT ID
+                          </Th>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                          >
+                            NAME
+                          </Th>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                          >
+                            CATEGORY
+                          </Th>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                          >
+                            ROOM
+                          </Th>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                          >
+                            STATUS
+                          </Th>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                          >
+                            CONDITION
+                          </Th>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                          >
+                            ACTIONS
+                          </Th>
                         </Tr>
                       </Thead>
                       {loading ? (
-                        <TableCaption mt={3}>
-                          {[1, 2].map((i) => (
-                            <Skeleton
-                              key={i}
-                              height="41px"
-                              width="95%"
-                              borderRadius="xl"
-                              mx="auto"
-                              mb={2}
-                            />
+                        <Tbody>
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <Tr key={i}>
+                              {[1, 2, 3, 4, 5, 6, 7].map((j) => (
+                                <Td key={j} py={3}>
+                                  <Skeleton
+                                    height="20px"
+                                    width="90%"
+                                    borderRadius="md"
+                                  />
+                                </Td>
+                              ))}
+                            </Tr>
                           ))}
-                        </TableCaption>
+                        </Tbody>
                       ) : filteredTabData.length > 0 ? (
                         <Tbody>
                           {filteredTabData.map((eq) => (
@@ -308,14 +351,22 @@ const EquipmentTable = () => {
                           ))}
                         </Tbody>
                       ) : (
-                        <TableCaption
-                          mt={20}
-                          mb={20}
-                          fontSize="14px"
-                          fontWeight="bold"
-                        >
-                          No equipment to display.
-                        </TableCaption>
+                        <Tbody>
+                          <Tr>
+                            <Td colSpan={7} h="200px" textAlign="center">
+                              <VStack spacing={2}>
+                                <Heading fontSize="sm" color="gray.500">
+                                  No equipment found
+                                </Heading>
+                                <Text fontSize="sm" color="gray.400">
+                                  {searchFilter
+                                    ? "Try a different search"
+                                    : "Add a new equipment to get started"}
+                                </Text>
+                              </VStack>
+                            </Td>
+                          </Tr>
+                        </Tbody>
                       )}
                     </Table>
                   </TableContainer>
@@ -325,6 +376,7 @@ const EquipmentTable = () => {
           </TabPanels>
         </Tabs>
       </Box>
+      
       {/* Modals will be placed here */}
       <AddEquipmentModal isOpen={isAddOpen} onClose={onAddClose} />
       <UpdateEquipmentModal

@@ -16,26 +16,41 @@ import {
 } from "@chakra-ui/react";
 import { FiAlertTriangle, FiTrash } from "react-icons/fi";
 import useEquipmentStore from "@/store/equipmentStore";
+import { useState } from "react";
 
 const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
   const deleteEquipment = useEquipmentStore((state) => state.deleteEquipment);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
 
   const handleDelete = async () => {
-    const result = await deleteEquipment(equipment.id);
+    setIsSubmitting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    toast({
-      title: result.success ? "Success" : "Error",
-      description: result.message,
-      status: result.success ? "success" : "error",
-      duration: 3000,
-      isClosable: true,
-      variant: "subtle",
-      position: "top-right",
-    });
+      const result = await deleteEquipment(equipment.id);
 
-    if (result.success) {
-      onClose();
+      toast({
+        title: result.message,
+        status: result.success ? "success" : "error",
+        duration: 2000,
+        position: "top-right",
+        variant: "subtle",
+      });
+
+      if (result.success) {
+        onClose();
+      }
+    } catch (error) {
+      toast({
+        title: "An error occurred while deleting equipment",
+        status: "error",
+        duration: 2000,
+        position: "top-right",
+        variant: "subtle",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -48,7 +63,7 @@ const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
       isCentered
     >
       <ModalOverlay />
-      <ModalContent borderRadius="xl" overflow="hidden">
+      <ModalContent borderRadius="2xl" overflow="hidden">
         <ModalHeader>
           <Flex color="gray.900" gap={3} align="center" mb={3}>
             <Box
@@ -108,20 +123,14 @@ const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
             </Text>
           </Box>
         </ModalBody>
-        <ModalFooter>
-          <Button
-            mr={3}
-            variant="outline"
-            borderRadius="xl"
-            onClick={onClose}
-            _hover={{ bg: "#f7eaea" }}
-          >
-            Close
-          </Button>
+        <ModalFooter borderTop="1px solid #e2e8f0" mt={4}>
           <Button
             bg="#ef4444"
             color="white"
-            borderRadius="xl"
+            borderRadius="lg"
+            isLoading={isSubmitting}
+            loadingText="Deleting..."
+            w="full"
             _hover={{ bg: "#cc5a5aff" }}
             onClick={handleDelete}
           >

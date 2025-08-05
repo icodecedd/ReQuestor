@@ -45,7 +45,7 @@ const useEquipmentStore = create((set, get) => ({
     const condition = toTitleCase(newEquipment.condition);
     const description = newEquipment.description?.trim() || "";
 
-    if (!name || !type || !location || !condition) {
+    if (!name || !type || !location || !condition || !serial_number) {
       return {
         success: false,
         message: "All fields are required",
@@ -101,7 +101,7 @@ const useEquipmentStore = create((set, get) => ({
     const condition = toTitleCase(updatedEquipment.condition);
     const description = updatedEquipment.description?.trim() || "";
 
-    if (!name || !type || !location || !condition) {
+    if (!name || !type || !location || !condition || !serial_number) {
       return {
         success: false,
         message: "All fields are required",

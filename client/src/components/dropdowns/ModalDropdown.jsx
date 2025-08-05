@@ -17,7 +17,7 @@ export function ModalDropdown({
   value = "",
   onChange,
   roles,
-  w = 150,
+  w = "100%",
   label,
   placeholder,
   isRequired = true,
@@ -39,7 +39,7 @@ export function ModalDropdown({
 
   return (
     <FormControl isRequired={isRequired}>
-      <FormLabel fontSize={15}>{label}</FormLabel>
+      <FormLabel fontSize={14}>{label}</FormLabel>
       <Menu>
         <MenuButton
           aria-label="Select role"
@@ -58,7 +58,7 @@ export function ModalDropdown({
         >
           {selectedRole || placeholder}
         </MenuButton>
-        <MenuList borderRadius="xl" p={1} minW="140px">
+        <MenuList borderRadius="xl" p={1} w={"128%"}>
           {roles.map((role) => {
             const isSelected = selectedRole === role;
             return (
@@ -68,9 +68,8 @@ export function ModalDropdown({
                 bg={isSelected ? "#800000" : "transparent"}
                 color={isSelected ? "white" : "black"}
                 borderRadius="lg"
-                pr={2}
-                pl={2}
-                w={w - 6}
+                pr={3}
+                pl={3}
                 _hover={
                   isSelected
                     ? {
