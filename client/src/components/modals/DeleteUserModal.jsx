@@ -27,7 +27,7 @@ const DeleteUserModal = ({ isOpen, onClose, user }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const result = await deleteUser(user.id);
 
@@ -44,7 +44,7 @@ const DeleteUserModal = ({ isOpen, onClose, user }) => {
       }
     } catch (error) {
       toast({
-        title: "An error occurred while adding equipment",
+        title: "An error occurred while adding equipment.",
         status: "error",
         duration: 2000,
         position: "top-right",

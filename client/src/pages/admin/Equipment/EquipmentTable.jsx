@@ -172,11 +172,10 @@ const EquipmentTable = () => {
         </Button>
       </Flex>
       <Box mt={2}>
-        <Tabs variant="unstyle" size="sm">
+        <Tabs isFitted variant="unstyle" size="sm">
           <TabList
             bg="#e9e9e9ff"
             borderRadius="lg"
-            display="inline-flex"
             p={1.5}
             pr={1.5}
             pl={1.5}
@@ -376,7 +375,7 @@ const EquipmentTable = () => {
           </TabPanels>
         </Tabs>
       </Box>
-      
+
       {/* Modals will be placed here */}
       <AddEquipmentModal isOpen={isAddOpen} onClose={onAddClose} />
       <UpdateEquipmentModal

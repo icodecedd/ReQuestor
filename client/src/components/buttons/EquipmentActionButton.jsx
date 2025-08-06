@@ -1,28 +1,7 @@
-import {
-  Menu,
-  MenuList,
-  MenuButton,
-  MenuItem,
-  IconButton,
-} from "@chakra-ui/react";
-import {
-  FiEdit,
-  FiEye,
-  FiTrash,
-  FiMoreHorizontal,
-} from "react-icons/fi";
+import { IconButton, Flex, Tooltip } from "@chakra-ui/react";
+import { FiEdit, FiEye, FiTrash } from "react-icons/fi";
 
-const hoverStyle = {
-  bg: "#f7eaea",
-  borderRadius: "lg",
-};
-
-const EquipmentActionButton = ({
-  onEdit,
-  onViewDetails,
-  onDelete,
-}) => {
-
+const EquipmentActionButton = ({ onEdit, onViewDetails, onDelete }) => {
   const actions = [
     {
       key: "edit",
@@ -45,30 +24,39 @@ const EquipmentActionButton = ({
   ];
 
   return (
-    <Menu autoSelect={false}>
-      <MenuButton
-        as={IconButton}
-        icon={<FiMoreHorizontal />}
-        variant={"ghost"}
-        _hover={{ bg: "#f7eaea" }}
-        _active={{ bg: "#f7eaea" }}
-        aria-label="Equipment actions"
-      />
-      <MenuList minW="170px" p={1}>
-        {actions.map(({ key, icon, label, onClick }) => (
-          <MenuItem
-            key={key}
+    <Flex gap={2} w="full" justify="center">
+      {actions.map(({ key, label, icon, onClick }) => (
+        <Tooltip
+          key={key}
+          label={label}
+          placement="bottom"
+          borderRadius="lg"
+          px={3}
+          py={2}
+          bg="#800000"
+          color="white"
+          fontSize="sm"
+          fontWeight="medium"
+          boxShadow="lg"
+          openDelay={200}
+        >
+          <IconButton
+            icon={icon}
+            aria-label={label}
             onClick={onClick}
-            gap={2}
-            borderRadius="lg"
-            w="160px"
-            _hover={hoverStyle}
-          >
-            {icon} {label}
-          </MenuItem>
-        ))}
-      </MenuList>
-    </Menu>
+            size="sm"
+            rounded="lg"
+            variant="outline"
+            colorScheme={key === "delete" ? "red" : "gray"}
+            _hover={{
+              boxShadow: "md",
+              transform: "translateY(-2px)",
+            }}
+            transition="all 0.2s ease"
+          />
+        </Tooltip>
+      ))}
+    </Flex>
   );
 };
 

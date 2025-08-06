@@ -25,7 +25,6 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  Show,
 } from "@chakra-ui/react";
 import { FiAlertCircle, FiBox, FiHash, FiMapPin, FiTag } from "react-icons/fi";
 import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
@@ -81,7 +80,6 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
     type: false,
     location: false,
     serial_number: false,
-    condition: false,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -110,7 +108,7 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const result = await addEquipment(form);
 

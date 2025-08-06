@@ -1,4 +1,4 @@
-import { Box, Grid, GridItem } from "@chakra-ui/react";
+import { Grid, GridItem } from "@chakra-ui/react";
 import Navbar from "@/components/Navbar";
 import DashboardStats from "./DashboardStats";
 import DashboardBanner from "./DashboardBanner";
@@ -10,7 +10,7 @@ import QuickActions from "./QuickActions";
 
 const DashboardPage = () => {
   return (
-    <Box>
+    <>
       <Navbar pageName={"Overview"} />
       <DashboardBanner />
       <DashboardStats />
@@ -49,7 +49,7 @@ const DashboardPage = () => {
           <RecentRequests />
         </GridItem>
       </Grid>
-    </Box>
+    </>
   );
 };
 

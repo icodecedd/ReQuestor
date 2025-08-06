@@ -26,7 +26,7 @@ const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
   const handleDelete = async () => {
     setIsSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const result = await deleteEquipment(equipment.id);
 
@@ -43,7 +43,7 @@ const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
       }
     } catch (error) {
       toast({
-        title: "An error occurred while deleting equipment",
+        title: "An error occurred while deleting equipment.",
         status: "error",
         duration: 2000,
         position: "top-right",

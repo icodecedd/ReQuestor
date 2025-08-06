@@ -17,26 +17,40 @@ import {
 import { FiAlertTriangle } from "react-icons/fi";
 import { useRequestsStore } from "@/store/requestsStore";
 import { TbCancel } from "react-icons/tb";
+import { useState } from "react";
 
 const CancelRequestModal = ({ isOpen, onClose, request }) => {
   const cancelRequest = useRequestsStore((state) => state.cancelRequest);
   const toast = useToast();
 
-  const handleCancel = async () => {
-    const result = await cancelRequest(request.id);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const showToast = (message, status) => {
     toast({
-      title: result.success ? "Success" : "Error",
-      description: result.message,
-      status: result.success ? "success" : "error",
-      duration: 3000,
-      isClosable: true,
-      variant: "subtle",
+      title: message,
+      status: status,
+      duration: 2000,
       position: "top-right",
+      variant: "subtle",
     });
+  };
 
-    if (result.success) {
-      onClose();
+  const handleCancel = async () => {
+    setIsSubmitting(true);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
+      const result = await cancelRequest(request.id);
+
+      showToast(result.message, result.success ? "success" : "error");
+
+      if (result.success) {
+        onClose();
+      }
+    } catch (error) {
+      showToast("Failed to cancel request. Please try again.", "error");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -49,7 +63,7 @@ const CancelRequestModal = ({ isOpen, onClose, request }) => {
       isCentered
     >
       <ModalOverlay />
-      <ModalContent borderRadius="xl" overflow="hidden">
+      <ModalContent borderRadius="2xl" overflow="hidden">
         <ModalHeader>
           <Flex color="gray.900" gap={3} align="center" mb={3}>
             <Box
@@ -109,20 +123,14 @@ const CancelRequestModal = ({ isOpen, onClose, request }) => {
             </Text>
           </Box>
         </ModalBody>
-        <ModalFooter>
-          <Button
-            mr={3}
-            variant="outline"
-            borderRadius="xl"
-            onClick={onClose}
-            _hover={{ bg: "#f7eaea" }}
-          >
-            Close
-          </Button>
+        <ModalFooter borderTop="1px solid #e2e8f0" mt={4}>
           <Button
             bg="#800000"
             color="white"
-            borderRadius="xl"
+            borderRadius="lg"
+            w="100%"
+            isLoading={isSubmitting}
+            loadingText="Cancelling..."
             _hover={{ bg: "#a12828" }}
             transition="background-color 0.2s ease-in-out"
             onClick={handleCancel}

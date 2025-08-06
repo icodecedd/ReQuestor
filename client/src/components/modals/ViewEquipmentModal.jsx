@@ -55,7 +55,7 @@ const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="lg"
+      size="xl"
       motionPreset="slideInBottom"
       isCentered
     >
