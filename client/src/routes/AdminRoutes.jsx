@@ -5,13 +5,13 @@ import ManageUsers from "@/pages/admin/ManageUsers/ManageUsersPage";
 import Requests from "@/pages/admin/Requests/RequestsPage";
 import Equipment from "@/pages/admin/Equipment/EquipmentsPage";
 import Activity from "@/pages/admin/ActivityLogsPage";
-import Settings from "@/pages/admin/SettingsPage";
+import Settings from "@/pages/admin/Settings/AdminSettingsPage";
 
 const AdminRoutes = () => {
   return (
     <Routes>
       {/* Nested routes under /dashboard */}
-      <Route path="/admin" element={<AdminLayout />}>
+      <Route path="/" element={<AdminLayout />}>
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<ManageUsers />} />

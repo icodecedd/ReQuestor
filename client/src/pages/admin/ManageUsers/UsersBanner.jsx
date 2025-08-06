@@ -1,8 +1,7 @@
 import { Box, Text, Flex } from "@chakra-ui/react";
 import overviewBg from "@/assets/overview.webp";
-import { useAuth } from "@/hooks/useAuth";
 
-const DashboardBanner = () => {
+const UsersBanner = () => {
 
   const maroonColors = {
     900: "#3a0000", // Deepest maroon
@@ -111,4 +110,4 @@ const DashboardBanner = () => {
   );
 };
 
-export default DashboardBanner;
+export default UsersBanner;

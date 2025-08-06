@@ -27,6 +27,18 @@ import {
   Text,
   Textarea,
   useToast,
+  Step,
+  StepDescription,
+  StepIcon,
+  StepIndicator,
+  StepNumber,
+  StepSeparator,
+  StepStatus,
+  StepTitle,
+  Stepper,
+  useSteps,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { BsProjector } from "react-icons/bs";
@@ -100,10 +112,32 @@ const AddRequestModal = ({ isOpen, onClose }) => {
     purpose: "",
   });
 
+  const steps = [
+    { title: "Schedule", description: "Select date and time" },
+    { title: "Request Details", description: "Fill in request information" },
+    { title: "Review", description: "Confirm your request" },
+  ];
+
+  const { activeStep, setActiveStep } = useSteps({
+    index: 0,
+    count: steps.length,
+  });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    console.log({ [name]: value });
+  };
+
+  const nextStep = () => {
+    if (activeStep < steps.length - 1) {
+      setActiveStep(activeStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (activeStep > 0) {
+      setActiveStep(activeStep - 1);
+    }
   };
 
   const handleSubmit = async () => {
@@ -111,11 +145,9 @@ const AddRequestModal = ({ isOpen, onClose }) => {
     const result = await addRequest(form);
 
     toast({
-      title: result.success ? "Success" : "Error",
-      description: result.message,
+      title: result.message,
       status: result.success ? "success" : "error",
-      duration: 3000,
-      isClosable: true,
+      duration: 2000,
       variant: "subtle",
       position: "top-right",
     });
@@ -132,6 +164,7 @@ const AddRequestModal = ({ isOpen, onClose }) => {
         time_to: "",
         purpose: "",
       });
+      setActiveStep(0);
     }
   };
 
@@ -139,7 +172,7 @@ const AddRequestModal = ({ isOpen, onClose }) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="lg"
+      size="4xl"
       motionPreset="slideInBottom"
     >
       <ModalOverlay />
@@ -176,205 +209,284 @@ const AddRequestModal = ({ isOpen, onClose }) => {
           size="md"
           _hover={{ bg: "#f7eaea" }}
           borderRadius="lg"
+          onClick={() => {
+            onClose();
+            setActiveStep(0);
+          }}
         />
         <ModalBody>
-          <Tabs isFitted variant="unstyle" size="sm">
-            <TabList bg="#e9e9e9ff" borderRadius="lg" p={1.5} pr={1.5} pl={1.5}>
-              <Tab
-                _selected={{
-                  bg: "white",
-                  color: "black",
-                  borderRadius: "md",
-                  boxShadow: "0 0.5px 1px rgba(0, 0, 0, 0.15)",
-                }}
-                borderRadius="md"
-                color="#71717e"
-                fontWeight="bold"
-              >
-                Request Details
-              </Tab>
-              <Tab
-                _selected={{
-                  bg: "white",
-                  color: "black",
-                  borderRadius: "md",
-                  boxShadow: "0 0.5px 1px rgba(0, 0, 0, 0.15)",
-                }}
-                borderRadius="md"
-                color="#71717e"
-                fontWeight="bold"
-              >
-                Schedule Info
-              </Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                {requestFields.map((field, index) => (
-                  <FormControl isRequired mb={4} key={index}>
-                    <FormLabel>{field.label}</FormLabel>
+          <Stepper index={activeStep} colorScheme="red" mb={6}>
+            {steps.map((step, index) => (
+              <Step key={index}>
+                <StepIndicator>
+                  <StepStatus
+                    complete={<StepIcon />}
+                    incomplete={<StepNumber />}
+                    active={<StepNumber />}
+                  />
+                </StepIndicator>
+                <Box flexShrink="0">
+                  <StepTitle>{step.title}</StepTitle>
+                  <StepDescription>{step.description}</StepDescription>
+                </Box>
+                <StepSeparator />
+              </Step>
+            ))}
+          </Stepper>
+
+          {/* Step 1: Schedule */}
+          {activeStep === 0 && (
+            <Box>
+              <Heading size="md" mb={4}>
+                Schedule Details
+              </Heading>
+              <Grid templateColumns="repeat(2, 1fr)" gap={3}>
+                <GridItem colSpan={2}>
+                  <FormControl>
+                    <FormLabel fontSize={14}>Date of Use</FormLabel>
+                    <Input
+                      type="date"
+                      name="date_use"
+                      value={form.date_use}
+                      onChange={handleChange}
+                      focusBorderColor="maroon"
+                      borderRadius="lg"
+                      borderColor="gray.400"
+                    />
+                  </FormControl>
+                </GridItem>
+                {scheduleFields.map((field) => (
+                  <GridItem key={field.name} colSpan={1}>
+                    <FormControl>
+                      <FormLabel fontSize={14}>{field.label}</FormLabel>
+                      <Input
+                        type={field.type}
+                        name={field.name}
+                        value={form[field.name]}
+                        onChange={handleChange}
+                        focusBorderColor="maroon"
+                        borderRadius="lg"
+                        borderColor="gray.400"
+                        placeholder={field.placeholder}
+                      />
+                    </FormControl>
+                  </GridItem>
+                ))}
+                <GridItem colSpan={2}>
+                  <FormControl>
+                    <FormLabel fontSize={14}>
+                      Equipment (Check all that apply)
+                    </FormLabel>
+                    <Box>
+                      <CheckboxGroup
+                        onChange={(newValues) =>
+                          setForm((prevForm) => ({
+                            ...prevForm,
+                            equipment_list: newValues,
+                          }))
+                        }
+                      >
+                        <SimpleGrid columns={3} spacing="10px" gap={7}>
+                          {equipmentFields.map((field, index) => {
+                            const isChecked = form.equipment_list.includes(
+                              field.label
+                            );
+
+                            const handleCheckboxChange = (e) => {
+                              const { checked } = e.target;
+
+                              setForm((prev) => ({
+                                ...prev,
+                                equipment_list: checked
+                                  ? [...prev.equipment_list, field.label]
+                                  : prev.equipment_list.filter(
+                                      (item) => item !== field.label
+                                    ),
+                              }));
+                            };
+                            return (
+                              <Checkbox
+                                key={index}
+                                colorScheme="red"
+                                fontWeight="medium"
+                                name={field.name}
+                                isChecked={isChecked}
+                                onChange={handleCheckboxChange}
+                                sx={{
+                                  "& span.chakra-checkbox__control": {
+                                    borderRadius: "full",
+                                    borderColor: "#800000",
+                                    _checked: {
+                                      bg: "#800000",
+                                      borderColor: "#800000",
+                                    },
+                                  },
+                                }}
+                              >
+                                <Box
+                                  border="1px"
+                                  borderRadius="lg"
+                                  borderColor="#800000"
+                                  w={{
+                                    base: "150px",
+                                    md: "150px",
+                                    lg: "240px",
+                                  }}
+                                  p={1}
+                                  transition="all 0.3s ease"
+                                  _hover={{
+                                    transform: "scale(1.02)",
+                                    boxShadow: "lg",
+                                  }}
+                                  transform={isChecked ? "scale(1.02)" : "none"}
+                                  boxShadow={isChecked ? "lg" : "none"}
+                                >
+                                  <HStack>
+                                    <Box
+                                      borderRadius="md"
+                                      bgGradient="linear(to-br, maroon, #c75d5dff)"
+                                      boxShadow="0 2px 8px rgba(0,0,0,0.12)"
+                                      p={2}
+                                      mr={2}
+                                    >
+                                      {field.icon}
+                                    </Box>
+                                    <Heading fontSize="13px" fontWeight="bold">
+                                      {field.label}
+                                    </Heading>
+                                  </HStack>
+                                </Box>
+                              </Checkbox>
+                            );
+                          })}
+                        </SimpleGrid>
+                      </CheckboxGroup>
+                    </Box>
+                  </FormControl>
+                </GridItem>
+                {/* // TODO: Add more fields as needed*/}
+                <GridItem colSpan={2}></GridItem>
+              </Grid>
+            </Box>
+          )}
+
+          {/* Step 2: Request Details */}
+          {activeStep === 1 && (
+            <Box>
+              <Heading size="md" mb={4}>
+                Request Information
+              </Heading>
+              <SimpleGrid columns={2} spacing={4}>
+                {requestFields.map((field) => (
+                  <FormControl key={field.name}>
+                    <FormLabel fontSize={14}>{field.label}</FormLabel>
                     <Input
                       name={field.name}
-                      placeholder={field.placeholder}
-                      focusBorderColor="maroon"
-                      borderRadius="xl"
-                      borderColor="gray.400"
+                      value={form[field.name]}
                       onChange={handleChange}
+                      focusBorderColor="maroon"
+                      borderRadius="lg"
+                      borderColor="gray.400"
+                      placeholder={field.placeholder}
                     />
                   </FormControl>
                 ))}
-                <FormControl isRequired>
-                  <FormLabel>Equipment</FormLabel>
-                  <Box
-                    border="1px"
-                    borderRadius="xl"
-                    borderColor="gray.400"
-                    p={4}
-                    _hover={{
-                      borderColor: "maroon",
-                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                    }}
-                  >
-                    <CheckboxGroup
-                      onChange={(newValues) =>
-                        setForm((prevForm) => ({
-                          ...prevForm,
-                          equipment_list: newValues,
-                        }))
-                      }
-                    >
-                      <SimpleGrid columns={2} spacing="10px">
-                        {equipmentFields.map((field, index) => {
-                          const isChecked = form.equipment_list.includes(
-                            field.label
-                          );
-
-                          const handleCheckboxChange = (e) => {
-                            const { checked } = e.target;
-
-                            setForm((prev) => ({
-                              ...prev,
-                              equipment_list: checked
-                                ? [...prev.equipment_list, field.label]
-                                : prev.equipment_list.filter(
-                                    (item) => item !== field.label
-                                  ),
-                            }));
-                          };
-                          return (
-                            <Checkbox
-                              key={index}
-                              colorScheme="red"
-                              fontWeight="medium"
-                              name={field.name}
-                              isChecked={isChecked}
-                              onChange={handleCheckboxChange}
-                              sx={{
-                                "& span.chakra-checkbox__control": {
-                                  borderRadius: "full",
-                                },
-                              }}
-                            >
-                              <Box
-                                border="1px"
-                                borderRadius="lg"
-                                borderColor="#800000"
-                                w={160}
-                                p={1}
-                                transition="all 0.3s ease"
-                                _hover={{
-                                  transform: "scale(1.02)",
-                                  boxShadow: "lg",
-                                }}
-                                transform={isChecked ? "scale(1.02)" : "none"}
-                                boxShadow={isChecked ? "lg" : "none"}
-                              >
-                                <HStack>
-                                  <Box
-                                    borderRadius="md"
-                                    bgGradient="linear(to-br, maroon, #c75d5dff)"
-                                    boxShadow="0 2px 8px rgba(0,0,0,0.12)"
-                                    p={2}
-                                    mr={2}
-                                  >
-                                    {field.icon}
-                                  </Box>
-                                  <Heading fontSize="13px" fontWeight="bold">
-                                    {field.label}
-                                  </Heading>
-                                </HStack>
-                              </Box>
-                            </Checkbox>
-                          );
-                        })}
-                      </SimpleGrid>
-                    </CheckboxGroup>
-                  </Box>
-                </FormControl>
-              </TabPanel>
-              <TabPanel>
-                <FormControl isRequired mb={4}>
-                  <FormLabel>Date of Use</FormLabel>
-                  <Input
-                    name="date_use"
-                    type="date"
-                    placeholder="Select date of use"
-                    focusBorderColor="maroon"
-                    borderRadius="xl"
-                    borderColor="gray.400"
-                    onChange={handleChange}
-                  />
-                </FormControl>
-                <Flex gap={5}>
-                  {scheduleFields.map((field, index) => (
-                    <FormControl isRequired mb={4} key={index}>
-                      <FormLabel>{field.label}</FormLabel>
-                      <Input
-                        name={field.name}
-                        type={field.type}
-                        placeholder={field.placeholder}
-                        focusBorderColor="maroon"
-                        borderRadius="xl"
-                        borderColor="gray.400"
-                        onChange={handleChange}
-                      />
-                    </FormControl>
-                  ))}
-                </Flex>
-                <FormControl>
-                  <FormLabel>Purpose</FormLabel>
+                <FormControl gridColumn="1 / -1">
+                  <FormLabel fontSize={14}>Purpose (Optional)</FormLabel>
                   <Textarea
                     name="purpose"
+                    value={form.purpose}
+                    onChange={handleChange}
                     focusBorderColor="maroon"
-                    borderRadius="xl"
+                    borderRadius="lg"
                     borderColor="gray.400"
                     placeholder="Enter purpose or any additional details..."
-                    onChange={handleChange}
                   />
                 </FormControl>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+              </SimpleGrid>
+            </Box>
+          )}
+
+          {/* Step 3: Review */}
+          {activeStep === 2 && (
+            <Box>
+              <Heading size="md" mb={4}>
+                Review Your Request
+              </Heading>
+              <Box bg="gray.50" p={4} borderRadius="md">
+                <Text fontWeight="bold" mb={2}>
+                  Schedule
+                </Text>
+                <Text>
+                  Date: {form.date_use} | Time: {form.time_from} -{" "}
+                  {form.time_to}
+                </Text>
+
+                <Text fontWeight="bold" mt={4} mb={2}>
+                  Request Details
+                </Text>
+                <Text>Requestor: {form.username}</Text>
+                <Text>Course & Section: {form.course_section}</Text>
+                <Text>Faculty In-Charge: {form.faculty_in_charge}</Text>
+                <Text>Purpose: {form.purpose}</Text>
+
+                <Text fontWeight="bold" mt={4} mb={2}>
+                  Equipment
+                </Text>
+                {form.equipment_list.length > 0 ? (
+                  <Text>{form.equipment_list.join(", ")}</Text>
+                ) : (
+                  <Text>No equipment selected</Text>
+                )}
+              </Box>
+            </Box>
+          )}
         </ModalBody>
         <ModalFooter>
-          <Button
-            mr={3}
-            variant="outline"
-            borderRadius="xl"
-            onClick={onClose}
-            _hover={{ bg: "#f7eaea" }}
-          >
-            Close
-          </Button>
-          <Button
-            bg="#800000"
-            color="white"
-            borderRadius="xl"
-            _hover={{ bg: "#a12828" }}
-            transition="background-color 0.2s ease-in-out"
-            onClick={handleSubmit}
-          >
-            Create Request
-          </Button>
+          {activeStep > 0 && (
+            <Button
+              mr={3}
+              variant="outline"
+              borderRadius="xl"
+              onClick={prevStep}
+              _hover={{ bg: "#f7eaea" }}
+            >
+              Back
+            </Button>
+          )}
+          {activeStep === 0 && (
+            <Button
+              bg="#800000"
+              color="white"
+              borderRadius="xl"
+              _hover={{ bg: "#a12828" }}
+              onClick={nextStep}
+            >
+              Check Availability
+            </Button>
+          )}
+          {activeStep === 1 && (
+            <Button
+              bg="#800000"
+              color="white"
+              borderRadius="xl"
+              _hover={{ bg: "#a12828" }}
+              onClick={nextStep}
+            >
+              Proceed to Review
+            </Button>
+          )}
+          {activeStep === 2 && (
+            <Button
+              bg="#800000"
+              color="white"
+              borderRadius="xl"
+              _hover={{ bg: "#a12828" }}
+              onClick={handleSubmit}
+            >
+              Submit Request
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>

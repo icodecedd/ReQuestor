@@ -1,11 +1,20 @@
 import express from "express";
-import {checkAuth, forgotPassword, login, logout, register, resendVerification, resetPassword, verifyEmail} from "../controllers/authController.js";
+import {
+  checkAuth,
+  forgotPassword,
+  login,
+  logout,
+  register,
+  resendVerification,
+  resetPassword,
+  verifyEmail,
+} from "../controllers/authController.js";
 import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/me", verifyToken, checkAuth)
-router.get("/verify-email/:token", verifyEmail)
+router.get("/me", verifyToken, checkAuth);
+router.get("/verify-email/:token", verifyEmail);
 router.post("/resend-verification", resendVerification);
 router.post("/register", register);
 router.post("/login", login);

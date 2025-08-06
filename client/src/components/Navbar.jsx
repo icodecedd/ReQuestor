@@ -41,7 +41,7 @@ const Navbar = ({ pageName }) => {
           >
             <BreadcrumbItem>
               <BreadcrumbLink
-                href="/dashboard"
+                href="/admin/dashboard"
                 _hover={{ textDecoration: "none" }}
               >
                 Dashboard

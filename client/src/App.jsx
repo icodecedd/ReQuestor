@@ -4,21 +4,26 @@ import StudentRoutes from "./routes/StudentRoutes";
 import AuthRoutes from "./routes/AuthRoutes";
 import "@/assets/global.css";
 import { useAuth } from "./hooks/useAuth";
-import VerificationSuccessPage from "./pages/VerificationSuccessPage";
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
+import VerificationSuccessPage from "./pages/Authentication/VerificationSuccessPage";
+import LoginPage from "./pages/Authentication/LoginPage";
+import SignupPage from "./pages/Authentication/SignupPage";
 import PublicRoute from "./components/routes/PublicRoute";
 import PrivateRoute from "./components/routes/PrivateRoute";
-import UnauthorizedPage from "./pages/UnauthorizedPage";
+import UnauthorizedPage from "./pages/Authentication/UnauthorizedPage";
+import { useAxiosInterceptor } from "./hooks/useAxiosInterceptor";
+import ResetPasswordPage from "./pages/Authentication/ResetPasswordPage";
+import VerificationPage from "./pages/Authentication/VerificationPage";
+import ForgotPasswordPage from "./pages/Authentication/ForgotPasswordPage";
 
 function App() {
   const { user, loading } = useAuth();
+  useAxiosInterceptor();
 
   if (loading) return null;
 
   return (
     <Routes>
-      {(!user || user.status === "Inactive") && (
+      {(!user || !user.is_verified) && (
         <Route path="/*" element={<AuthRoutes />} />
       )}
 
@@ -41,6 +46,15 @@ function App() {
       />
 
       <Route
+        path="/verification"
+        element={
+          <PublicRoute>
+            <VerificationPage />
+          </PublicRoute>
+        }
+      />
+
+      <Route
         path="/verification-success"
         element={
           <PublicRoute>
@@ -49,9 +63,27 @@ function App() {
         }
       />
 
+      <Route
+        path="/forgot-password"
+        element={
+          <PublicRoute>
+            <ForgotPasswordPage />
+          </PublicRoute>
+        }
+      />
+
+      <Route
+        path="/reset-password"
+        element={
+          <PublicRoute>
+            <ResetPasswordPage />
+          </PublicRoute>
+        }
+      />
+
       {/* Admin Routes */}
       <Route
-        path="/*"
+        path="/admin/*"
         element={
           <PrivateRoute allowedRoles={["Admin"]}>
             <AdminRoutes />
@@ -61,7 +93,7 @@ function App() {
 
       {/* Student Routes */}
       <Route
-        path="/*"
+        path="/student/*"
         element={
           <PrivateRoute allowedRoles={["Student"]}>
             <StudentRoutes />

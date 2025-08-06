@@ -10,8 +10,8 @@ import {
 } from "@chakra-ui/react";
 
 const StatCard = ({ label, value, icon, loading = false, text }) => {
-  if (loading) {
-    return <Skeleton w="100%" h="114px" borderRadius="2xl" />;
+  if (false) {
+    return <Skeleton w="100%" h="135px" borderRadius="2xl" />;
   }
 
   return (

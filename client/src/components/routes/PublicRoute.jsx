@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 const PublicRoute = ({ children }) => {
   const { user } = useAuth();
 
-  if (user && user.status === "Active") {
+  if (user && user.is_verified) {
     const redirectPath = user.role === "Admin" ? "/admin" : "/student";
     return <Navigate to={redirectPath} replace />;
   }

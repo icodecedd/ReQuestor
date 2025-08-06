@@ -6,10 +6,17 @@ import { FiBox, FiCheckCircle, FiMonitor, FiPieChart } from "react-icons/fi";
 
 const EquipmentStats = () => {
   const { stats, loading, fetchEquipment } = useEquipmentStore();
-  const { totalEquipment, totalAvailable, totalInUse, utilizationPercentage} = stats()
+  const { totalEquipment, totalAvailable, totalInUse, utilizationPercentage } =
+    stats();
 
-  const renderCard = (label, value, icon, loading) => (
-    <StatCard label={label} value={value} icon={icon} loading={loading} />
+  const renderCard = (label, value, icon, loading, text) => (
+    <StatCard
+      label={label}
+      value={value}
+      icon={icon}
+      loading={loading}
+      text={text}
+    />
   );
 
   useEffect(() => {
@@ -25,19 +32,25 @@ const EquipmentStats = () => {
       mx="auto"
       mt={6}
     >
-      {renderCard("Total Equipment", totalEquipment, FiBox, loading)}
       {renderCard(
-        "Total Available",
-        totalAvailable,
-        FiCheckCircle,
-        loading
+        "Total Equipment",
+        totalEquipment,
+        FiBox,
+        loading,
+        "Total number of equipment managed"
       )}
-      {renderCard("Total In Use", totalInUse, FiMonitor, loading)}
+      {renderCard("Total Available", totalAvailable, FiCheckCircle, loading,
+        "Number of equipment currently available"
+      )}
+      {renderCard("Total In Use", totalInUse, FiMonitor, loading,
+        "Number of equipment currently in use"
+      )}
       {renderCard(
         "Equipment Usage %",
         utilizationPercentage + "%",
         FiPieChart,
-        loading
+        loading,
+        "Percentage of equipment currently in use"
       )}
     </SimpleGrid>
   );

@@ -1,11 +1,9 @@
-import {
-  getRequestStatusColor,
-  getUserColor,
-} from "@/utils/getColorScheme";
+import { getRequestStatusColor, getUserColor } from "@/utils/getColorScheme";
 import {
   Avatar,
   Badge,
   Box,
+  Button,
   Divider,
   Flex,
   Heading,
@@ -14,6 +12,7 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   ModalOverlay,
   SimpleGrid,
@@ -341,6 +340,18 @@ const ViewRequestModal = ({ isOpen, onClose, request }) => {
               </TabPanels>
             </Tabs>
           </ModalBody>
+          <ModalFooter borderTop="1px solid #e2e8f0" mt={4}>
+            <Button
+              variant="outline"
+              borderColor={"#2D3748"}
+              borderRadius="lg"
+              w="full"
+              onClick={onClose}
+              _hover={{ bg: "#f7eaea" }}
+            >
+              Close
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     )

@@ -78,7 +78,7 @@ export const register = async (req, res) => {
 
       return res.status(409).json({
         success: false,
-        message: "User already in use.",
+        message: "User already in use",
       });
     }
 
@@ -243,11 +243,21 @@ export const login = async (req, res) => {
 
     const user = result.rows[0];
 
+    // Check if the user is active
+    if(user.status !== "Active") {
+      return res.status(403).json({
+        success: false,
+        errorCode: "INACTIVE_USER",
+        message: "User account is inactive. Please contact support",
+      });
+    }
+
     // Check if the password is correct
     const match = await comparePassword(password, user.password_hash);
     if (!match) {
       return res.status(401).json({
         success: false,
+        errorCode: "WRONG_CREDENTIALS",
         message: "Invalid email or password",
       });
     }
@@ -255,6 +265,7 @@ export const login = async (req, res) => {
     if (!user.is_verified) {
       return res.status(403).json({
         success: false,
+        errorCode: "UNVERIFIED",
         message: "Please verify your email before logging in",
       });
     }
@@ -276,6 +287,14 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in login:", error);
+
+    if (error.name === "TokenExpiredError") {
+      return res.status(400).json({
+        success: false,
+        message: "Verification link expired. Please request a new one",
+      });
+    }
+
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
@@ -337,6 +356,7 @@ export const forgotPassword = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in forgotPassword:", error);
+
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
@@ -348,7 +368,7 @@ export const resetPassword = async (req, res) => {
   const { resetToken } = req.params;
   const { password } = req.body;
 
-  const cleanToken = req.params.resetToken.trim(); // removes any trailing newline or space
+  const cleanToken = resetToken.trim(); // removes any trailing newline or space
 
   if (!cleanToken || !password) {
     return res.status(400).json({
@@ -396,6 +416,14 @@ export const resetPassword = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in resetPassword:", error);
+
+    if (error.name === "TokenExpiredError") {
+      return res.status(400).json({
+        success: false,
+        message: "Verification link expired. Please request a new one",
+      });
+    }
+
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",

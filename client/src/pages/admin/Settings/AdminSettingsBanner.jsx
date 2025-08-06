@@ -1,7 +1,7 @@
 import { Box, Text, Flex } from "@chakra-ui/react";
 import overviewBg from "@/assets/overview.webp";
 
-const EquipmentBanner = () => {
+const AdminSettingsBanner = () => {
   const maroonColors = {
     900: "#3a0000", // Deepest maroon
     700: "#800000", // Classic maroon
@@ -69,17 +69,17 @@ const EquipmentBanner = () => {
             0 0 12px ${maroonColors[300]}80
           `}
         >
-          EQUIPMENT MANAGEMENT
+          ADMIN SETTINGS
         </Text>
 
         <Text
           fontSize={{ base: "md", md: "lg" }}
           fontWeight="medium"
           color="whiteAlpha.900"
-          maxW="600px"
+          maxW="650px"
           textShadow="0 1px 2px rgba(0,0,0,0.2)"
         >
-          Manage and track all equipment inventory and usage efficiently
+          Customize your experience and manage core system settings in one place
         </Text>
 
         {/* Glowing accent line */}
@@ -109,4 +109,4 @@ const EquipmentBanner = () => {
   );
 };
 
-export default EquipmentBanner;
+export default AdminSettingsBanner;
