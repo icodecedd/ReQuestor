@@ -27,7 +27,7 @@ const DeleteUserModal = ({ isOpen, onClose, user }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const result = await deleteUser(user.id);
 

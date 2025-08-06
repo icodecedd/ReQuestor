@@ -81,7 +81,6 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
     type: false,
     location: false,
     serial_number: false,
-    condition: false,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -110,7 +109,7 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const result = await addEquipment(form);
 
@@ -140,7 +139,7 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
         });
       }
     } catch (error) {
-      showToast("An error occurred while adding equipment.", "error");
+      showToast("An error occurred while adding equipment", "error");
     } finally {
       setIsSubmitting(false);
     }

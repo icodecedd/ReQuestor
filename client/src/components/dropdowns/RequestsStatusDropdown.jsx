@@ -34,6 +34,7 @@ export function RequestsStatusDropdown({ onChange }) {
         color="black"
         fontSize="15px"
         _hover={{ bg: "#f7eaea" }}
+        _active={{ bg: "#f7eaea" }}
         w="130px"
         textAlign="left"
       >

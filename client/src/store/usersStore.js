@@ -198,7 +198,7 @@ const useUserStore = create((set) => ({
 
             return {
                 success: true,
-                message: "User's password was reset successfully.",
+                message: "User's password was reset successfully",
             };
         } catch (error) {
             const errMsg = error.response?.data?.message || "Unexpected error occurred";
@@ -207,7 +207,7 @@ const useUserStore = create((set) => ({
 
             return {
                 success: false,
-                message: "Failed to reset password. Please try again.",
+                message: "Failed to reset password. Please try again",
             };
         }
     },

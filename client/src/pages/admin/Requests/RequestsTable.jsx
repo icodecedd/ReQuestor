@@ -37,6 +37,7 @@ import {
   VStack,
   HStack,
   IconButton,
+  Heading,
 } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
@@ -56,8 +57,8 @@ const tabConfigs = [
     filter: (req) => req.status === "Approved",
   },
   {
-    title: "Waitlisted",
-    filter: (req) => req.status === "Waitlisted",
+    title: "Rejected",
+    filter: (req) => req.status === "Rejected",
   },
   {
     title: "Completed",
@@ -71,16 +72,10 @@ const tabConfigs = [
 
 const RequestsTable = () => {
   const { requests, loading, fetchRequests } = useRequestsStore();
-
-  useEffect(() => {
-    fetchRequests();
-  }, []);
-
   const [statusFilter, setStatusFilter] = useState("All Status");
-
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
-
   const [searchFilter, setSearchFilter] = useState("");
+  const [selectedRequest, setSelectedRequest] = useState("");
 
   const filteredRequests = useMemo(() => {
     return requests.filter((req) => {
@@ -106,7 +101,9 @@ const RequestsTable = () => {
     });
   }, [requests, statusFilter, categoryFilter, searchFilter]);
 
-  const [selectedRequest, setSelectedRequest] = useState("");
+  useEffect(() => {
+    fetchRequests();
+  }, []);
 
   const {
     isOpen: isAddOpen,
@@ -147,10 +144,6 @@ const RequestsTable = () => {
     onMarkCompleteOpen();
   };
 
-  const tabData = useMemo(() => {
-    return tabConfigs.map(({ filter }) => filteredRequests.filter(filter));
-  }, [filteredRequests]);
-
   return (
     <Box w="99.5%" mx="auto" p={8}>
       <Flex align="flex-end" justify="flex-end" gap={3} w="100%">
@@ -161,7 +154,7 @@ const RequestsTable = () => {
           <Input
             placeholder="Search by request id or user"
             focusBorderColor="maroon"
-            borderRadius="xl"
+            borderRadius="lg"
             borderColor="gray.400"
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
@@ -177,7 +170,7 @@ const RequestsTable = () => {
           variant="primary"
           bg="#800000"
           color="white"
-          borderRadius="xl"
+          borderRadius="lg"
           _hover={{ bg: "#a12828" }}
           transition="background-color 0.2s ease-in-out"
           gap={1}
@@ -190,16 +183,9 @@ const RequestsTable = () => {
           Add Request
         </Button>
       </Flex>
-      <Box mt={2}>
-        <Tabs variant="unstyle" size="sm">
-          <TabList
-            bg="#e9e9e9ff"
-            borderRadius="lg"
-            display="inline-flex"
-            p={1.5}
-            pr={1.5}
-            pl={1.5}
-          >
+      <Box mt={2}> 
+        <Tabs isFitted variant="unstyle" size="sm">
+          <TabList bg="#e9e9e9ff" borderRadius="lg" p={1.5} pr={1.5} pl={1.5}>
             {tabConfigs.map((tab, index) => {
               return (
                 <Tab
@@ -220,7 +206,10 @@ const RequestsTable = () => {
             })}
           </TabList>
           <TabPanels>
-            {tabData.map((tab, index) => {
+            {tabConfigs.map((tab, index) => {
+              const filteredTabData = useMemo(() => {
+                return filteredRequests.filter(tab.filter);
+              }, [requests, statusFilter, categoryFilter, searchFilter]);
               return (
                 <TabPanel key={index} mt={2} p={0}>
                   <TableContainer
@@ -230,40 +219,93 @@ const RequestsTable = () => {
                   >
                     <Table
                       variant="simple"
-                      size="sm"
+                      borderTop="1px"
+                      color="gray.100"
                       sx={{
-                        Th: { textAlign: "center", fontSize: "14px" },
-                        Td: { textAlign: "center", fontSize: "14px" },
+                        Th: { textAlign: "center", fontSize: "13px" },
+                        Td: { textAlign: "center", fontSize: "13px", py: 2 },
                       }}
                     >
-                      <Thead h="50px">
-                        <Tr bg="#f7f9fb">
-                          <Th>Request ID</Th>
-                          <Th>User</Th>
-                          <Th>Section</Th>
-                          <Th>Faculty-In-Charge</Th>
-                          <Th>Equipment</Th>
-                          <Th>Date & Time</Th>
-                          <Th>Status</Th>
-                          <Th> </Th>
+                      <Thead>
+                        <Tr>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                            py={4}
+                          >
+                            Request ID
+                          </Th>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                          >
+                            Name
+                          </Th>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                          >
+                            SECTION
+                          </Th>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                          >
+                            FACULTY-IN-CHARGE
+                          </Th>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                          >
+                            EQUIPMENT
+                          </Th>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                          >
+                            DATE & TIME
+                          </Th>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                          >
+                            STATUS
+                          </Th>
+                          <Th
+                            fontSize="xs"
+                            color="gray.600"
+                            fontWeight="semibold"
+                          >
+                            ACTIONS
+                          </Th>
                         </Tr>
                       </Thead>
                       {loading ? (
-                        <TableCaption mt={3}>
-                          {[1, 2].map((i) => (
-                            <Skeleton
-                              key={i}
-                              height="41px"
-                              width="95%"
-                              borderRadius="xl"
-                              mx="auto"
-                              mb={2}
-                            />
-                          ))}
-                        </TableCaption>
-                      ) : tab.length > 0 ? (
                         <Tbody>
-                          {tab.map((req) => (
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <Tr key={i}>
+                              {[1, 2, 3, 4, 5, 6, 7, 8].map((j) => (
+                                <Td key={j} py={3}>
+                                  <Skeleton
+                                    height="20px"
+                                    width="90%"
+                                    borderRadius="md"
+                                  />
+                                </Td>
+                              ))}
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      ) : filteredTabData.length > 0 ? (
+                        <Tbody>
+                          {filteredTabData.map((req) => (
                             <Tr
                               key={req.id}
                               textColor="blackAlpha.900"
@@ -324,14 +366,22 @@ const RequestsTable = () => {
                           ))}
                         </Tbody>
                       ) : (
-                        <TableCaption
-                          mt={20}
-                          mb={20}
-                          fontSize="14px"
-                          fontWeight="bold"
-                        >
-                          No requests to display.
-                        </TableCaption>
+                        <Tbody>
+                          <Tr>
+                            <Td colSpan={8} h="200px" textAlign="center">
+                              <VStack spacing={2}>
+                                <Heading fontSize="sm" color="gray.500">
+                                  No requests found
+                                </Heading>
+                                <Text fontSize="sm" color="gray.400">
+                                  {searchFilter
+                                    ? "Try a different search"
+                                    : "Add a new request to get started"}
+                                </Text>
+                              </VStack>
+                            </Td>
+                          </Tr>
+                        </Tbody>
                       )}
                     </Table>
                   </TableContainer>

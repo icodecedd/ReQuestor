@@ -124,7 +124,7 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const result = await updateEquipment(equipment.id, form);
 
@@ -145,7 +145,7 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
         onClose();
       }
     } catch (error) {
-      showToast("An error occurred while adding equipment.", "error");
+      showToast("An error occurred while adding equipment", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -158,6 +158,16 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
       location: false,
       serial_number: false,
       condition: false,
+    });
+
+    setForm({
+      name: equipment.name || "",
+      type: equipment.type || "",
+      status: equipment.status || "Available",
+      location: equipment.location || "",
+      serial_number: equipment.serial_number || "",
+      condition: equipment.condition || "",
+      description: equipment.description || "",
     });
 
     onClose(); // actually close the modal
