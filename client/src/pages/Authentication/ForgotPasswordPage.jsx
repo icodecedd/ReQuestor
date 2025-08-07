@@ -13,7 +13,7 @@ import {
   InputLeftElement,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { MdEmail, MdOutlineLockReset } from "react-icons/md";
+import { MdOutlineLockReset } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -42,7 +42,7 @@ const ForgotPasswordPage = () => {
     "0px 4px 20px rgba(0, 0, 0, 0.2)"
   );
 
-  const showToast = (message, status, duration = 1800) => {
+  const showToast = (message, status, duration = 2000) => {
     toast({
       title: message,
       status,
@@ -56,12 +56,12 @@ const ForgotPasswordPage = () => {
     e.preventDefault();
 
     if (!email) {
-      showToast("Please enter your email address", "error");
+      showToast("Please enter your email address.", "error");
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showToast("Please enter a valid email address", "error");
+      showToast("Please enter a valid email address.", "error");
       return;
     }
 
@@ -72,7 +72,7 @@ const ForgotPasswordPage = () => {
 
       if (response.success) {
         showToast(
-          "If an account exists with this email, you'll receive a password reset link shortly",
+          "If an account exists with this email, you'll receive a password reset link shortly.",
           "success",
           4000
         );

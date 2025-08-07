@@ -6,10 +6,10 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import equipmentRoutes from "./routes/equipmentRoutes.js";
 import statRoutes from "./routes/statRoutes.js";
-import requestRoutes from "./routes/requestsRoutes.js"
-import activityRoutes from "./routes/activityRoutes.js"
-import userRoutes from "./routes/userRoutes.js"
-import authRoutes from "./routes/authRoutes.js"
+import requestRoutes from "./routes/requestsRoutes.js";
+import activityRoutes from "./routes/activityRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 
@@ -39,9 +39,9 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/equipment", equipmentRoutes);
 app.use("/api/stats", statRoutes);
-app.use("/api/requests", requestRoutes)
-app.use("/api/activities", activityRoutes)
-app.use("/api/users", userRoutes)
+app.use("/api/requests", requestRoutes);
+app.use("/api/activities", activityRoutes);
+app.use("/api/users", userRoutes);
 
 // Start the server on the specified port
 app.listen(PORT, () => {

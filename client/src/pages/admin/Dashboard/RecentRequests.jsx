@@ -12,7 +12,6 @@ import {
   Tr,
   Th,
   Td,
-  TableCaption,
   Skeleton,
   Button,
 } from "@chakra-ui/react";

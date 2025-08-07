@@ -28,7 +28,7 @@ export function RequestsStatusDropdown({ onChange }) {
       <MenuButton
         as={Button}
         rightIcon={<GoFilter size={20} />}
-        borderRadius="xl"
+        borderRadius="lg"
         borderColor="gray.400"
         variant="outline"
         color="black"

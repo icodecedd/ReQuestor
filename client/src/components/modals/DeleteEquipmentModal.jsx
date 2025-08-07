@@ -43,7 +43,7 @@ const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
       }
     } catch (error) {
       toast({
-        title: "An error occurred while deleting equipment",
+        title: "An error occurred while deleting equipment.",
         status: "error",
         duration: 2000,
         position: "top-right",

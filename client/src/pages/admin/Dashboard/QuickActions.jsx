@@ -7,14 +7,7 @@ import {
   Icon,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import {
-  FiPlus,
-  FiMonitor,
-  FiUsers,
-  FiClock,
-  FiBox,
-  FiUserPlus,
-} from "react-icons/fi";
+import { FiPlus, FiMonitor, FiUsers, FiClock, FiBox } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 const QuickActions = () => {

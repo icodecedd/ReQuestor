@@ -108,7 +108,7 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
         onClose();
       }
     } catch (error) {
-      showToast("Failed to update user. Please try again", "error");
+      showToast("Failed to update user. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
     }

@@ -123,7 +123,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
         });
       }
     } catch (error) {
-      showToast("Failed to add user. Please try again", "error");
+      showToast("Failed to add user. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
     }

@@ -69,11 +69,11 @@ const ViewRequestModal = ({ isOpen, onClose, request }) => {
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        size="lg"
+        size="2xl"
         motionPreset="slideInBottom"
       >
         <ModalOverlay />
-        <ModalContent borderRadius="xl" overflow="hidden">
+        <ModalContent borderRadius="2xl" overflow="hidden">
           <ModalHeader>
             <Flex color="gray.900" gap={3} align="center" mb={3}>
               <Box

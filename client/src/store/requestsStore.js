@@ -35,8 +35,77 @@ export const useRequestsStore = create((set, get) => ({
     };
   },
 
+  checkAvailability: async (dateDetails) => {
+    const equipment_list = dateDetails?.equipment_list || [];
+    const date_use = dateDetails?.date_use || "";
+    const time_from = dateDetails?.time_from || "";
+    const time_to = dateDetails?.time_to || "";
+
+    if (
+      !equipment_list ||
+      !Array.isArray(equipment_list) ||
+      equipment_list.length === 0 ||
+      !date_use ||
+      !time_from ||
+      !time_to
+    ) {
+      return {
+        success: false,
+        message: "All fields are required.",
+        target: "all",
+      };
+    }
+
+    // Apply the requirement for request of at least 3 days in advance
+    const dateNow = new Date();
+    const dateUse = new Date(date_use);
+
+    dateNow.setHours(0, 0, 0, 0);
+    dateUse.setHours(0, 0, 0, 0);
+
+    const dayDiff = (dateUse - dateNow) / (1000 * 60 * 60 * 24);
+
+    if (dayDiff < 3) {
+      return {
+        success: false,
+        message:
+          "You must request equipment at least 3 days before the intended use.",
+        target: "date_use",
+      };
+    }
+
+    const requestPayload = {
+      equipment_list,
+      date_use,
+      time_from,
+      time_to,
+    };
+
+    try {
+      const res = await axios.post(
+        "/api/requests/check-availability",
+        requestPayload
+      );
+
+      return {
+        success: res.data.success,
+        message: res.data.message,
+        available: res.data.available,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message:
+          error.response?.data?.message ||
+          "Failed to check availability. Please try again.",
+        available: error.response?.data?.available || [],
+        unavailable: error.response?.data?.unavailable || [],
+      };
+    }
+  },
+
   addRequest: async (newRequest) => {
-    const username = newRequest.username?.trim() || "";
+    const name = newRequest.username?.trim() || "";
     const course_section =
       newRequest.course_section?.trim()?.toUpperCase() || "";
     const faculty_in_charge =
@@ -62,23 +131,6 @@ export const useRequestsStore = create((set, get) => ({
         success: false,
         message: "All fields are required.",
       };
-    }
-
-    // Apply the requirement for request of at least 3 days in advance
-    const dateNow = new Date();
-    const dateUse = new Date(date_use);
-
-    dateNow.setHours(0, 0, 0, 0);
-    dateUse.setHours(0, 0, 0, 0);
-
-    const dayDiff = (dateUse - dateNow) / (1000 * 60 * 60 * 24);
-
-    if (dayDiff < 3) {
-      return {
-        success: false,
-        message:
-          "You must request equipment at least 3 days before the intended use.",
-      }
     }
 
     try {

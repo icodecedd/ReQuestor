@@ -19,11 +19,6 @@ import {
   ModalHeader,
   ModalOverlay,
   SimpleGrid,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
   Text,
   Textarea,
   useToast,
@@ -39,16 +34,18 @@ import {
   useSteps,
   Grid,
   GridItem,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { BsProjector } from "react-icons/bs";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { FiFilePlus } from "react-icons/fi";
 import { PiProjectorScreenChart } from "react-icons/pi";
+import CheckAvailabilityModal from "./CheckAvailabilityModal";
 
 const requestFields = [
   {
-    name: "username",
+    name: "name",
     label: "Requestor Name",
     placeholder: "Enter requestor name",
   },
@@ -99,10 +96,24 @@ const equipmentFields = [
 
 const AddRequestModal = ({ isOpen, onClose }) => {
   const addRequest = useRequestsStore((state) => state.addRequest);
+  const checkAvailability = useRequestsStore(
+    (state) => state.checkAvailability
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({
+    name: false,
+    course_section: false,
+    faculty_in_charge: false,
+    equipment_list: false,
+    date_use: false,
+    time_from: false,
+    time_to: false,
+    purpose: false,
+  });
   const toast = useToast();
 
   const [form, setForm] = useState({
-    username: "",
+    name: "",
     course_section: "",
     faculty_in_charge: "",
     equipment_list: [],
@@ -110,6 +121,16 @@ const AddRequestModal = ({ isOpen, onClose }) => {
     time_from: "",
     time_to: "",
     purpose: "",
+  });
+
+  const [scheduleDetails, setScheduleDetails] = useState({
+    date_use: form.date_use || "",
+    time_from: form.time_from || "",
+    time_to: form.time_to || "",
+    success: false,
+    message: "",
+    available: null,
+    unavailable: null,
   });
 
   const steps = [
@@ -126,6 +147,11 @@ const AddRequestModal = ({ isOpen, onClose }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+
+    // Reset errors for the field being changed
+    if (value.trim()) {
+      setErrors((prev) => ({ ...prev, [name]: false }));
+    }
   };
 
   const nextStep = () => {
@@ -140,38 +166,128 @@ const AddRequestModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleSubmit = async () => {
-    console.log(form);
-    const result = await addRequest(form);
+  const {
+    isOpen: isCheckAvailabilityOpen,
+    onOpen: openCheckAvailability,
+    onClose: closeCheckAvailability,
+  } = useDisclosure();
 
+  const showToast = (message, status) => {
     toast({
-      title: result.message,
-      status: result.success ? "success" : "error",
+      title: message,
+      status: status,
       duration: 2000,
-      variant: "subtle",
       position: "top-right",
+      variant: "subtle",
+    });
+  };
+
+  const handleCheckAvailability = async () => {
+    setIsSubmitting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
+
+      const dateDetails = {
+        equipment_list: form.equipment_list,
+        date_use: form.date_use,
+        time_from: form.time_from,
+        time_to: form.time_to,
+      };
+
+      const result = await checkAvailability(dateDetails);
+      if (result.target === "all") {
+        setErrors({
+          date_use: !form.date_use.trim(),
+          time_from: !form.time_from.trim(),
+          time_to: !form.time_to.trim(),
+        });
+        showToast(result.message, "error");
+        return;
+      } else if (result.target === "date_use") {
+        setErrors({
+          date_use: !form.date_use.trim(),
+        });
+        showToast(result.message, "error");
+        return;
+      }
+      setScheduleDetails({
+        success: result.success,
+        message: result.message,
+        available: result.available,
+        unavailable: result.unavailable,
+        date_use: form.date_use,
+        time_from: form.time_from,
+        time_to: form.time_to,
+      });
+
+      openCheckAvailability();
+    } catch (error) {
+      showToast(error.response.data.message, "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const result = await addRequest(form);
+
+      showToast(result.message, result.success ? "success" : "error");
+
+      if (result.success) {
+        onClose();
+        setForm({
+          name: "",
+          course_section: "",
+          faculty_in_charge: "",
+          equipment_list: [],
+          date_use: "",
+          time_from: "",
+          time_to: "",
+          purpose: "",
+        });
+        setActiveStep(0);
+      }
+    } catch (error) {
+      showToast(error.response.data.message, "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleClose = () => {
+    setForm({
+      name: "",
+      course_section: "",
+      faculty_in_charge: "",
+      equipment_list: [],
+      date_use: "",
+      time_from: "",
+      time_to: "",
+      purpose: "",
     });
 
-    if (result.success) {
-      onClose();
-      setForm({
-        username: "",
-        course_section: "",
-        faculty_in_charge: "",
-        equipment_list: [],
-        date_use: "",
-        time_from: "",
-        time_to: "",
-        purpose: "",
-      });
-      setActiveStep(0);
-    }
+    setErrors({
+      name: false,
+      course_section: false,
+      faculty_in_charge: false,
+      equipment_list: false,
+      date_use: false,
+      time_from: false,
+      time_to: false,
+      purpose: false,
+    });
+
+    onClose(); // actually close the modal
   };
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       size="4xl"
       motionPreset="slideInBottom"
     >
@@ -237,12 +353,14 @@ const AddRequestModal = ({ isOpen, onClose }) => {
           {/* Step 1: Schedule */}
           {activeStep === 0 && (
             <Box>
-              <Heading size="md" mb={4}>
-                Schedule Details
-              </Heading>
+              <Heading size="md">Schedule Details</Heading>
+              <Text mb={4} fontSize="sm" color="gray.600">
+                <b>Note: </b>Availability is subject to change. Your request
+                will be confirmed at submission.
+              </Text>
               <Grid templateColumns="repeat(2, 1fr)" gap={3}>
                 <GridItem colSpan={2}>
-                  <FormControl>
+                  <FormControl isInvalid={errors.date_use}>
                     <FormLabel fontSize={14}>Date of Use</FormLabel>
                     <Input
                       type="date"
@@ -257,7 +375,7 @@ const AddRequestModal = ({ isOpen, onClose }) => {
                 </GridItem>
                 {scheduleFields.map((field) => (
                   <GridItem key={field.name} colSpan={1}>
-                    <FormControl>
+                    <FormControl isInvalid={errors[field.name]}>
                       <FormLabel fontSize={14}>{field.label}</FormLabel>
                       <Input
                         type={field.type}
@@ -364,8 +482,17 @@ const AddRequestModal = ({ isOpen, onClose }) => {
                     </Box>
                   </FormControl>
                 </GridItem>
-                {/* // TODO: Add more fields as needed*/}
-                <GridItem colSpan={2}></GridItem>
+                {scheduleDetails && (
+                  <CheckAvailabilityModal
+                    isOpen={isCheckAvailabilityOpen}
+                    onClose={closeCheckAvailability}
+                    onClick={() => {
+                      closeCheckAvailability();
+                      nextStep();
+                    }}
+                    scheduleDetails={scheduleDetails}
+                  />
+                )}
               </Grid>
             </Box>
           )}
@@ -373,9 +500,11 @@ const AddRequestModal = ({ isOpen, onClose }) => {
           {/* Step 2: Request Details */}
           {activeStep === 1 && (
             <Box>
-              <Heading size="md" mb={4}>
-                Request Information
-              </Heading>
+              <Heading size="md">Request Information</Heading>
+              <Text mb={4} fontSize="sm" color="gray.600">
+                <b>Note: </b>Availability is subject to change. Your request
+                will be confirmed at submission.
+              </Text>
               <SimpleGrid columns={2} spacing={4}>
                 {requestFields.map((field) => (
                   <FormControl key={field.name}>
@@ -425,7 +554,7 @@ const AddRequestModal = ({ isOpen, onClose }) => {
                 <Text fontWeight="bold" mt={4} mb={2}>
                   Request Details
                 </Text>
-                <Text>Requestor: {form.username}</Text>
+                <Text>Requestor: {form.name}</Text>
                 <Text>Course & Section: {form.course_section}</Text>
                 <Text>Faculty In-Charge: {form.faculty_in_charge}</Text>
                 <Text>Purpose: {form.purpose}</Text>
@@ -442,12 +571,12 @@ const AddRequestModal = ({ isOpen, onClose }) => {
             </Box>
           )}
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter borderTop="1px solid #e2e8f0" mt={4}>
           {activeStep > 0 && (
             <Button
               mr={3}
               variant="outline"
-              borderRadius="xl"
+              borderRadius="lg"
               onClick={prevStep}
               _hover={{ bg: "#f7eaea" }}
             >
@@ -455,21 +584,36 @@ const AddRequestModal = ({ isOpen, onClose }) => {
             </Button>
           )}
           {activeStep === 0 && (
-            <Button
-              bg="#800000"
-              color="white"
-              borderRadius="xl"
-              _hover={{ bg: "#a12828" }}
-              onClick={nextStep}
-            >
-              Check Availability
-            </Button>
+            <>
+              <Button
+                mr={3}
+                variant="outline"
+                borderRadius="lg"
+                onClick={handleClose}
+                _hover={{ bg: "#f7eaea" }}
+              >
+                Close
+              </Button>
+              <Button
+                bg="#800000"
+                color="white"
+                borderRadius="lg"
+                _hover={{ bg: "#a12828" }}
+                isLoading={isSubmitting}
+                loadingText="Checking..."
+                onClick={() => {
+                  handleCheckAvailability();
+                }}
+              >
+                Check Availability
+              </Button>
+            </>
           )}
           {activeStep === 1 && (
             <Button
               bg="#800000"
               color="white"
-              borderRadius="xl"
+              borderRadius="lg"
               _hover={{ bg: "#a12828" }}
               onClick={nextStep}
             >
@@ -480,7 +624,9 @@ const AddRequestModal = ({ isOpen, onClose }) => {
             <Button
               bg="#800000"
               color="white"
-              borderRadius="xl"
+              isLoading={isSubmitting}
+              loadingText="Submitting..."
+              borderRadius="lg"
               _hover={{ bg: "#a12828" }}
               onClick={handleSubmit}
             >

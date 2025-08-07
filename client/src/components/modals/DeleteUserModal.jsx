@@ -44,7 +44,7 @@ const DeleteUserModal = ({ isOpen, onClose, user }) => {
       }
     } catch (error) {
       toast({
-        title: "An error occurred while adding equipment",
+        title: "An error occurred while adding equipment.",
         status: "error",
         duration: 2000,
         position: "top-right",

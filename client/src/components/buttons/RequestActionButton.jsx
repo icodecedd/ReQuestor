@@ -13,7 +13,7 @@ const RequestActionButton = ({
     const actions = [];
 
     if (
-      ["Pending", "Approved", "Waitlisted", "Completed", "Cancelled"].includes(
+      ["Pending", "Reserved", "Rejected", "Completed", "Cancelled"].includes(
         status
       )
     ) {
@@ -25,7 +25,7 @@ const RequestActionButton = ({
       });
     }
 
-    if (["Pending", "Approved"].includes(status)) {
+    if (["In Use"].includes(status)) {
       actions.push({
         key: "complete",
         icon: <HiCheckCircle color="#16a34a" />,
@@ -34,7 +34,7 @@ const RequestActionButton = ({
       });
     }
 
-    if (["Pending", "Approved", "Waitlisted"].includes(status)) {
+    if (["Pending", "Reserved"].includes(status)) {
       actions.push({
         key: "cancel",
         icon: <RiCloseCircleLine color="#dc2626" />,
