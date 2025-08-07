@@ -15,7 +15,7 @@ export const VERIFICATION_EMAIL_TEMPLATE = `
       <p style="font-size: 16px;">Hello,</p>
       <p style="font-size: 16px;">Thank you for registering with <strong>ReQuestor</strong> — your projector reservation system.</p>
       <p style="font-size: 16px;">To complete your registration and activate your account, please click the button below:</p>
-      
+
       <div style="text-align: center; margin: 30px 0;">
         <a href="{verifyLink}" target="_blank" style="padding: 12px 24px; background-color: #800000; color: white; text-decoration: none; font-weight: bold; border-radius: 5px;">
           Verify My Account
@@ -78,7 +78,7 @@ export const PASSWORD_RESET_EMAIL_TEMPLATE = `
       <p style="font-size: 16px;">Hello,</p>
       <p style="font-size: 16px;">You have requested to reset your password for <strong>ReQuestor</strong> — your projector reservation system.</p>
       <p style="font-size: 16px;">To reset your password, please click the button below:</p>
-      
+
       <div style="text-align: center; margin: 30px 0;">
         <a href="{resetLink}" target="_blank" style="padding: 12px 24px; background-color: #800000; color: white; text-decoration: none; font-weight: bold; border-radius: 5px;">
           Reset My Password
@@ -167,4 +167,3 @@ export const ADMIN_RESET_PASSWORD_EMAIL_TEMPLATE = `
 </body>
 </html>
 `;
-

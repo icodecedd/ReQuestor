@@ -9,7 +9,6 @@ import {
   HStack,
   Table,
   TableContainer,
-  TableCaption,
   Thead,
   Tr,
   Td,

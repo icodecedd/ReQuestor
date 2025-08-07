@@ -183,7 +183,7 @@ const RequestsTable = () => {
           Add Request
         </Button>
       </Flex>
-      <Box mt={2}> 
+      <Box mt={2}>
         <Tabs isFitted variant="unstyle" size="sm">
           <TabList bg="#e9e9e9ff" borderRadius="lg" p={1.5} pr={1.5} pl={1.5}>
             {tabConfigs.map((tab, index) => {
@@ -312,7 +312,7 @@ const RequestsTable = () => {
                               bg="#f7f9fb"
                             >
                               <Td>{formatRequestsId(req.id)}</Td>
-                              <Td>{req.username}</Td>
+                              <Td>{req.name}</Td>
                               <Td>{req.course_section}</Td>
                               <Td>{req.faculty_in_charge}</Td>
                               <Td>

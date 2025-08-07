@@ -21,7 +21,7 @@ const VerificationSuccessPage = () => {
   if (verified !== "true" || !email) {
     return <Navigate to="/login" replace />;
   }
- 
+
   // Modern color palette
   const colors = {
     success: "#38A169",

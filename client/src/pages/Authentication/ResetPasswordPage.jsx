@@ -56,9 +56,9 @@ const ResetPasswordPage = () => {
 
     if (password !== confirmPassword) {
       toast({
-        title: "Please make sure both passwords are identical",
+        title: "Please make sure both passwords are identical.",
         status: "error",
-        duration: 1800,
+        duration: 2000,
         position: "top-right",
         variant: "subtle",
       });
@@ -67,9 +67,9 @@ const ResetPasswordPage = () => {
 
     if (password.length < 6) {
       toast({
-        title: "Password must be at least 6 characters",
+        title: "Password must be at least 6 characters.",
         status: "error",
-        duration: 1800,
+        duration: 2000,
         position: "top-right",
         variant: "subtle",
       });
@@ -80,9 +80,9 @@ const ResetPasswordPage = () => {
     try {
       if (!resetToken) {
         toast({
-          title: "Invalid reset token",
+          title: "Invalid reset token.",
           status: "error",
-          duration: 1800,
+          duration: 2000,
           position: "top-right",
           variant: "subtle",
         });
@@ -92,18 +92,18 @@ const ResetPasswordPage = () => {
       const response = await resetPassword(resetToken, password);
       if (!response.success) {
         toast({
-          title: response.message || "An error occurred. Please try again",
+          title: response.message || "An error occurred. Please try again.",
           status: "error",
-          duration: 1800,
+          duration: 2000,
           position: "top-right",
           variant: "subtle",
         });
       }
 
       toast({
-        title: "Password updated successfully",
+        title: "Password updated successfully.",
         status: "success",
-        duration: 1800,
+        duration: 2000,
         position: "top-right",
         variant: "subtle",
       });
@@ -112,7 +112,7 @@ const ResetPasswordPage = () => {
       navigate("/login");
     } catch (error) {
       toast({
-        title: error.message || "This reset link may have expired",
+        title: error.message || "This reset link may have expired.",
         status: "error",
         duration: 2000,
       });

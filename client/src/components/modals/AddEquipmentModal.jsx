@@ -138,7 +138,7 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
         });
       }
     } catch (error) {
-      showToast("An error occurred while adding equipment.", "error");
+      showToast("An error occurred while adding equipment", "error");
     } finally {
       setIsSubmitting(false);
     }

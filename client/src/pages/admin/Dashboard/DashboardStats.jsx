@@ -8,7 +8,13 @@ const DashboardStats = () => {
   const { stats, loading, fetchStats } = useStatsStore();
 
   const renderCard = (label, value, icon, loading, text) => (
-    <StatCard label={label} value={value} icon={icon} loading={loading} text={text} />
+    <StatCard
+      label={label}
+      value={value}
+      icon={icon}
+      loading={loading}
+      text={text}
+    />
   );
 
   useEffect(() => {

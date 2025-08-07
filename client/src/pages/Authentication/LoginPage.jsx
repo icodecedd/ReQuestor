@@ -61,7 +61,7 @@ export const LoginPage = () => {
     }
   };
 
-  const showToast = (message, status = "error", duration = 1800) => {
+  const showToast = (message, status = "error", duration = 2000) => {
     toast({
       title: message,
       status,
@@ -79,7 +79,7 @@ export const LoginPage = () => {
         email: !formData.email,
         password: !formData.password,
       });
-      showToast("Please fill in all fields", "error");
+      showToast("Please fill in all fields.", "error");
       return;
     }
 
@@ -88,13 +88,13 @@ export const LoginPage = () => {
     try {
       const { success, data } = await login(formData);
       if (success) {
-        showToast("Login successful", "success");
+        showToast("Login successful! Welcome back.", "success");
         navigate(data.role === "Admin" ? "/admin/dashboard" : "/student");
       }
     } catch (err) {
       console.error(err);
       const error = err.response?.data || {
-        message: "Login failed. Please try again",
+        message: "Login failed. Please try again.",
       };
       showToast(error.message, "error");
     } finally {
@@ -164,7 +164,8 @@ export const LoginPage = () => {
                 Streamline your workflow with our powerful platform.
               </Text>
               <Text fontSize="sm" opacity={0.85} mb={2}>
-                Manage projector requests, track usage, and collaborate with your team efficiently.
+                Manage projector requests, track usage, and collaborate with
+                your team efficiently.
               </Text>
               <Text fontSize="sm" opacity={0.8}>
                 Secure, reliable, and designed for your productivity.

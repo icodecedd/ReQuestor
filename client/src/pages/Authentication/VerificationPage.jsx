@@ -35,7 +35,7 @@ const VerificationPage = () => {
       });
 
       toast({
-        title: data?.message || "Verification email resent",
+        title: data?.message || "Verification email resent. Check your inbox.",
         status: "success",
         duration: 1800,
         position: "top-right",
@@ -43,7 +43,9 @@ const VerificationPage = () => {
       });
     } catch (error) {
       toast({
-        title: error.response?.data?.message || "Failed to resend verification",
+        title:
+          error.response?.data?.message ||
+          "Failed to resend verification. Please try again.",
         status: "error",
         duration: 1800,
         position: "top-right",

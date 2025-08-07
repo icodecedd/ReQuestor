@@ -48,7 +48,7 @@ const useEquipmentStore = create((set, get) => ({
     if (!name || !type || !location || !condition || !serial_number) {
       return {
         success: false,
-        message: "All fields are required",
+        message: "All fields are required.",
       };
     }
 
@@ -69,7 +69,7 @@ const useEquipmentStore = create((set, get) => ({
       }));
       return {
         success: true,
-        message: "New equipment added successfully",
+        message: "New equipment added successfully.",
       };
     } catch (error) {
       console.error(
@@ -86,7 +86,7 @@ const useEquipmentStore = create((set, get) => ({
       } else {
         return {
           success: false,
-          message: "Failed to add equipment. Please try again",
+          message: "Failed to add equipment. Please try again.",
         };
       }
     }
@@ -104,7 +104,7 @@ const useEquipmentStore = create((set, get) => ({
     if (!name || !type || !location || !condition || !serial_number) {
       return {
         success: false,
-        message: "All fields are required",
+        message: "All fields are required.",
       };
     }
 
@@ -127,7 +127,7 @@ const useEquipmentStore = create((set, get) => ({
       }));
       return {
         success: true,
-        message: "Equipment updated successfully",
+        message: "Equipment updated successfully.",
       };
     } catch (error) {
       console.error(
@@ -144,7 +144,7 @@ const useEquipmentStore = create((set, get) => ({
       } else {
         return {
           success: false,
-          message: "Failed to update equipment. Please try again",
+          message: "Failed to update equipment. Please try again.",
         };
       }
     }
@@ -160,7 +160,7 @@ const useEquipmentStore = create((set, get) => ({
 
       return {
         success: true,
-        message: "Equipment deleted successfully",
+        message: "Equipment deleted successfully.",
       };
     } catch (error) {
       console.error(
@@ -170,7 +170,7 @@ const useEquipmentStore = create((set, get) => ({
 
       return {
         success: false,
-        message: "Failed to delete equipment. Please try again",
+        message: "Failed to delete equipment. Please try again.",
       };
     }
   },

@@ -15,6 +15,7 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
+import { useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { FiCheckCircle } from "react-icons/fi";
 
@@ -24,24 +25,37 @@ const MarkRequestModal = ({ isOpen, onClose, request }) => {
   );
   const toast = useToast();
 
-  const handleMarkComplete = async () => {
-    const result = await updateRequestStatus(request.id, {
-      status: "Completed",
-    });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const showToast = (message, status) => {
     toast({
-      title: result.success ? "Success" : "Error",
-      description: result.message,
-      status: result.success ? "success" : "error",
-      duration: 3000,
-      isClosable: true,
-      variant: "subtle",
+      title: message,
+      status: status,
+      duration: 2000,
       position: "top-right",
+      variant: "subtle",
     });
+  };
 
-    if (result.success) {
-      onClose();
+  const handleMarkComplete = async () => {
+    setIsSubmitting(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const result = await updateRequestStatus(request.id, {
+        status: "Completed",
+      });
+
+      showToast(result.message, result.success ? "success" : "error");
+
+      if (result.success) {
+        onClose();
+      }
+    } catch (error) {
+      showToast("Failed to mark request as complete. Please try again.", "error");
+    } finally {
+      setIsSubmitting(false);
     }
+
   };
 
   return (
@@ -53,7 +67,7 @@ const MarkRequestModal = ({ isOpen, onClose, request }) => {
       isCentered
     >
       <ModalOverlay />
-      <ModalContent borderRadius="xl" overflow="hidden">
+      <ModalContent borderRadius="2xl" overflow="hidden">
         <ModalHeader>
           <Flex color="gray.900" gap={3} align="center" mb={3}>
             <Box
@@ -113,20 +127,14 @@ const MarkRequestModal = ({ isOpen, onClose, request }) => {
             </Text>
           </Box>
         </ModalBody>
-        <ModalFooter>
-          <Button
-            mr={3}
-            variant="outline"
-            borderRadius="xl"
-            onClick={onClose}
-            _hover={{ bg: "#f0f9f4" }}
-          >
-            Close
-          </Button>
+        <ModalFooter borderTop="1px solid #e2e8f0" mt={4}>
           <Button
             bg="#059669"
             color="white"
-            borderRadius="xl"
+            borderRadius="lg"
+            w="100%"
+            isLoading={isSubmitting}
+            loadingText="Marking as Complete..."
             _hover={{ bg: "#047857" }}
             transition="background-color 0.2s ease-in-out"
             onClick={handleMarkComplete}

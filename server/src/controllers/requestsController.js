@@ -59,9 +59,88 @@ export const getRecentRequests = async (req, res) => {
   }
 };
 
+export const checkAvailability = async (req, res) => {
+  const { equipment_list, date_use, time_from, time_to } = req.body;
+
+  if (
+    !equipment_list ||
+    !Array.isArray(equipment_list) ||
+    equipment_list.length === 0 ||
+    !date_use ||
+    !time_from ||
+    !time_to
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: "All fields are required.",
+    });
+  }
+
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const available = [];
+    const unavailable = [];
+
+    for (const type of equipment_list) {
+      const result = await client.query(
+        `SELECT e.* FROM equipments e
+         WHERE e.type = $1 AND e.status = 'Available'
+         AND NOT EXISTS (
+           SELECT 1 FROM request_items ri
+           JOIN requests r ON ri.request_id = r.id
+           WHERE ri.equipment_id = e.id
+           AND r.date_use = $2
+           AND r.status IN ('Reserved', 'In Use')
+           AND NOT (
+             r.time_to <= $3 OR
+             r.time_from >= $4
+           )
+         )
+         FOR UPDATE SKIP LOCKED
+         LIMIT 1`,
+        [type, date_use, time_from, time_to]
+      );
+
+      if (result.rows.length === 0) {
+        unavailable.push({ type });
+      } else {
+        available.push({ type, equipment: result.rows[0] });
+      }
+    }
+
+    await client.query("ROLLBACK"); // This is just a check — no data is modified
+
+    if (unavailable.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: "Some equipment is unavailable.",
+        available: available,
+        unavailable: unavailable,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "All equipment is available.",
+      available: available,
+    });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("Error in checkAvailability:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  } finally {
+    client.release();
+  }
+};
+
 export const addRequest = async (req, res) => {
   const {
-    username,
+    name,
     course_section,
     faculty_in_charge,
     equipment_list,
@@ -73,7 +152,7 @@ export const addRequest = async (req, res) => {
 
   // Validation
   if (
-    !username ||
+    !name ||
     !course_section ||
     !faculty_in_charge ||
     !equipment_list ||
@@ -107,10 +186,9 @@ export const addRequest = async (req, res) => {
   try {
     await pool.query("BEGIN");
 
-    const userRes = await pool.query(
-      "SELECT id FROM users WHERE username = $1",
-      [username]
-    );
+    const userRes = await pool.query("SELECT id FROM users WHERE name = $1", [
+      name,
+    ]);
 
     if (userRes.rows.length === 0) {
       await pool.query("ROLLBACK");
@@ -120,10 +198,11 @@ export const addRequest = async (req, res) => {
     }
 
     const userId = userRes.rows[0].id;
-    const assignedEquipment = [];
+    const available = [];
+    const unavailable = [];
 
     for (const type of equipment_list) {
-      const result = await pool.query(
+      const result = await client.query(
         `SELECT e.* FROM equipments e
          WHERE e.type = $1 AND e.status = 'Available'
          AND NOT EXISTS (
@@ -143,14 +222,20 @@ export const addRequest = async (req, res) => {
       );
 
       if (result.rows.length === 0) {
-        await pool.query("ROLLBACK");
-        return res.status(409).json({
-          success: false,
-          message: `No available equipment of type "${type}" for the selected date and time.`,
-        });
+        unavailable.push({ type });
+      } else {
+        available.push({ type, equipment: result.rows[0] });
       }
+    }
 
-      assignedEquipment.push({ type, equipment: result.rows[0] });
+    if (unavailable.length > 0) {
+      await pool.query("ROLLBACK");
+      return res.status(409).json({
+        success: false,
+        message: "Some equipment is unavailable.",
+        available: available,
+        unavailable: unavailable,
+      });
     }
 
     const requestRes = await pool.query(
@@ -170,21 +255,16 @@ export const addRequest = async (req, res) => {
 
     const requestId = requestRes.rows[0].id;
 
-    for (const { type, equipment } of assignedEquipment) {
+    for (const { type, equipment } of available) {
       await pool.query(
         `INSERT INTO request_items (request_id, equipment_id, requested_type)
          VALUES ($1, $2, $3)`,
         [requestId, equipment.id, type]
       );
-
-      await pool.query(
-        `UPDATE equipments SET status = 'Reserved' WHERE id = $1`,
-        [equipment.id]
-      );
     }
 
     const result = await pool.query(
-      `SELECT req.*, u.username, u.role,
+      `SELECT req.*, u.name, u.role,
          json_agg(json_build_object(
            'request_item_id', ri.id,
            'equipment_id', eq.id,
@@ -216,12 +296,12 @@ export const updateRequestStatus = async (req, res) => {
   const { status } = req.body;
 
   // Valid status transitions
-  const validStatuses = ["Approved", "Rejected", "Completed"];
+  const validStatuses = ["Reserved", "Rejected", "Completed"];
 
   if (!status || !validStatuses.includes(status)) {
     return res.status(400).json({
       success: false,
-      message: "Valid status required: Approved, Rejected, or Completed",
+      message: "Valid status required: Reserved, Rejected, or Completed.",
     });
   }
 
@@ -252,27 +332,12 @@ export const updateRequestStatus = async (req, res) => {
     const currentRequest = existingRequest.rows[0];
 
     if (status === "Completed") {
-      if (currentRequest.status !== "Approved") {
+      if (currentRequest.status !== "Reserved") {
         await pool.query("ROLLBACK");
         return res.status(400).json({
           success: false,
-          message: "Only approved requests can be completed",
+          message: "Only reserved requests can be completed.",
         });
-      }
-
-      // Release equipment back to available (equipment returned)
-      const assignedEquipment = await pool.query(
-        `SELECT ri.equipment_id
-         FROM request_items ri
-         WHERE ri.request_id = $1`,
-        [id]
-      );
-
-      for (const item of assignedEquipment.rows) {
-        await pool.query(
-          `UPDATE equipments SET status = 'Available' WHERE id = $1`,
-          [item.equipment_id]
-        );
       }
     }
 
@@ -290,7 +355,7 @@ export const updateRequestStatus = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: `Request ${status.toLowerCase()} successfully`,
+      message: `Request ${status.toLowerCase()} successfully.`,
       data: updatedRequest,
     });
   } catch (error) {
@@ -325,7 +390,7 @@ export const cancelRequest = async (req, res) => {
       await pool.query("ROLLBACK");
       return res.status(404).json({
         success: false,
-        message: "Request not found",
+        message: "Request not found.",
       });
     }
 
@@ -337,22 +402,8 @@ export const cancelRequest = async (req, res) => {
       await pool.query("ROLLBACK");
       return res.status(400).json({
         success: false,
-        message: `Cannot cancel request with status: ${currentRequest.status}`,
+        message: `Cannot cancel request with status: ${currentRequest.status}.`,
       });
-    }
-
-    // Step 3: Release assigned equipment back to 'Available'
-    const assignedEquipment = await pool.query(
-      `SELECT ri.equipment_id
-       FROM request_items ri
-       WHERE ri.request_id = $1`,
-      [id]
-    );
-    for (const item of assignedEquipment.rows) {
-      await pool.query(
-        `UPDATE equipments SET status = 'Available' WHERE id = $1`,
-        [item.equipment_id]
-      );
     }
 
     // Step 4: Update request status to 'Cancelled'

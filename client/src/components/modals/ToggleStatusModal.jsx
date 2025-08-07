@@ -50,7 +50,7 @@ const ToggleStatusModal = ({ isOpen, onClose, user }) => {
       }
     } catch (error) {
       toast({
-        title: "Error toggling status. Please try again",
+        title: "Error toggling status. Please try again.",
         status: "error",
         duration: 2000,
         position: "top-right",

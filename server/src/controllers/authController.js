@@ -24,7 +24,7 @@ export const checkAuth = async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found." });
     }
 
     res.status(200).json({ success: true, data: user });
@@ -43,14 +43,14 @@ export const register = async (req, res) => {
   if (!name || !email || !password) {
     return res.status(400).json({
       success: false,
-      message: "Name, email, and password are required",
+      message: "Name, email, and password are required.",
     });
   }
 
   if (email.indexOf("@") === -1) {
     return res.status(400).json({
       success: false,
-      message: "Invalid email format",
+      message: "Invalid email format.",
     });
   }
 
@@ -72,13 +72,13 @@ export const register = async (req, res) => {
         return res.status(400).json({
           success: false,
           message:
-            "Email already registered but not verified. A new verification email has been sent",
+            "Email already registered but not verified. A new verification email has been sent.",
         });
       }
 
       return res.status(409).json({
         success: false,
-        message: "User already in use",
+        message: "User already in use.",
       });
     }
 
@@ -103,7 +103,7 @@ export const register = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "Registration successful",
+      message: "Registration successful.",
       data: newUser,
     });
   } catch (error) {
@@ -127,14 +127,14 @@ export const resendVerification = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "User not found.",
       });
     }
 
     if (user.is_verified) {
       return res.status(400).json({
         success: false,
-        message: "Email already verified",
+        message: "Email already verified.",
       });
     }
 
@@ -145,7 +145,7 @@ export const resendVerification = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Verification email resent successfully",
+      message: "Verification email resent successfully.",
     });
   } catch (error) {
     console.error("Error in resendVerification:", error);
@@ -161,7 +161,7 @@ export const verifyEmail = async (req, res) => {
   if (!token) {
     return res.status(400).json({
       success: false,
-      message: "Token is required",
+      message: "Token is required.",
     });
   }
 
@@ -181,14 +181,14 @@ export const verifyEmail = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "User not found.",
       });
     }
 
     if (user.is_verified) {
       return res.status(400).json({
         success: false,
-        message: "Email already verified",
+        message: "Email already verified.",
       });
     }
 
@@ -205,7 +205,7 @@ export const verifyEmail = async (req, res) => {
     if (error.name === "TokenExpiredError") {
       return res.status(400).json({
         success: false,
-        message: "Verification link expired. Please request a new one",
+        message: "Verification link expired. Please request a new one.",
       });
     }
 
@@ -222,7 +222,7 @@ export const login = async (req, res) => {
   if (!email || !password) {
     return res.status(400).json({
       success: false,
-      message: "Email and password are required",
+      message: "Email and password are required.",
     });
   }
 
@@ -230,14 +230,14 @@ export const login = async (req, res) => {
     // Check if the user exists
     const result = await pool.query(
       `
-            SELECT id, name, password_hash, email, role, status, is_verified, created_at, last_login
-            FROM users WHERE email = $1`,
+        SELECT id, name, password_hash, email, role, status, is_verified, created_at, last_login
+        FROM users WHERE email = $1`,
       [email]
     );
     if (result.rowCount === 0) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "User not found.",
       });
     }
 
@@ -248,7 +248,7 @@ export const login = async (req, res) => {
       return res.status(403).json({
         success: false,
         errorCode: "INACTIVE_USER",
-        message: "User account is inactive. Please contact support",
+        message: "User account is inactive. Please contact support.",
       });
     }
 
@@ -258,7 +258,7 @@ export const login = async (req, res) => {
       return res.status(401).json({
         success: false,
         errorCode: "WRONG_CREDENTIALS",
-        message: "Invalid email or password",
+        message: "Invalid email or password.",
       });
     }
 
@@ -266,7 +266,7 @@ export const login = async (req, res) => {
       return res.status(403).json({
         success: false,
         errorCode: "UNVERIFIED",
-        message: "Please verify your email before logging in",
+        message: "Please verify your email before logging in.",
       });
     }
 
@@ -279,7 +279,7 @@ export const login = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Login successful",
+      message: "Login successful.",
       data: {
         ...user,
         password_hash: undefined,
@@ -291,7 +291,7 @@ export const login = async (req, res) => {
     if (error.name === "TokenExpiredError") {
       return res.status(400).json({
         success: false,
-        message: "Verification link expired. Please request a new one",
+        message: "Verification link expired. Please request a new one.",
       });
     }
 
@@ -308,7 +308,7 @@ export const logout = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Logout successful",
+      message: "Logout successful.",
     });
   } catch (error) {
     console.error("Error in logout:", error);
@@ -324,7 +324,7 @@ export const forgotPassword = async (req, res) => {
   if (!email) {
     return res.status(400).json({
       success: false,
-      message: "Email is required",
+      message: "Email is required.",
     });
   }
 
@@ -339,7 +339,7 @@ export const forgotPassword = async (req, res) => {
     if (result.rowCount === 0) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "User not found.",
       });
     }
 
@@ -352,7 +352,7 @@ export const forgotPassword = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Password reset link sent successfully",
+      message: "Password reset link sent successfully.",
     });
   } catch (error) {
     console.error("Error in forgotPassword:", error);
@@ -373,7 +373,7 @@ export const resetPassword = async (req, res) => {
   if (!cleanToken || !password) {
     return res.status(400).json({
       success: false,
-      message: "Reset token and password are required",
+      message: "Reset token and password are required.",
     });
   }
 
@@ -391,7 +391,7 @@ export const resetPassword = async (req, res) => {
     if (existingUser.rowCount === 0) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "User not found.",
       });
     }
 
@@ -400,8 +400,8 @@ export const resetPassword = async (req, res) => {
 
     const result = await pool.query(
       `UPDATE public.users
-             SET password_hash = $1
-             WHERE id = $2 RETURNING id, name, email, role, status, is_verified;`,
+      SET password_hash = $1
+      WHERE id = $2 RETURNING id, name, email, role, status, is_verified;`,
       [password_hash, userId]
     );
 
@@ -411,7 +411,7 @@ export const resetPassword = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Password reset successfully",
+      message: "Password reset successfully.",
       data: enrichedUser,
     });
   } catch (error) {
@@ -420,7 +420,7 @@ export const resetPassword = async (req, res) => {
     if (error.name === "TokenExpiredError") {
       return res.status(400).json({
         success: false,
-        message: "Verification link expired. Please request a new one",
+        message: "Verification link expired. Please request a new one.",
       });
     }
 

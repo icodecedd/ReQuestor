@@ -10,7 +10,6 @@ import {
   Skeleton,
   Tab,
   Table,
-  TableCaption,
   TableContainer,
   TabList,
   TabPanel,
@@ -173,13 +172,7 @@ const EquipmentTable = () => {
       </Flex>
       <Box mt={2}>
         <Tabs isFitted variant="unstyle" size="sm">
-          <TabList
-            bg="#e9e9e9ff"
-            borderRadius="lg"
-            p={1.5}
-            pr={1.5}
-            pl={1.5}
-          >
+          <TabList bg="#e9e9e9ff" borderRadius="lg" p={1.5} pr={1.5} pl={1.5}>
             {tabConfigs.map((tab, index) => {
               return (
                 <Tab

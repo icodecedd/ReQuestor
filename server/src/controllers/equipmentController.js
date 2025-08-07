@@ -27,7 +27,7 @@ export const addEquipment = async (req, res) => {
   if (!name || !type || !location || !condition) {
     return res.status(400).json({
       success: false,
-      message: "Name, type, location, and condition are required",
+      message: "Name, type, location, and condition are required.",
     });
   }
 

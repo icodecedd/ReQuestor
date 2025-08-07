@@ -2,7 +2,6 @@ import { Box, Text, Flex } from "@chakra-ui/react";
 import overviewBg from "@/assets/overview.webp";
 
 const UsersBanner = () => {
-
   const maroonColors = {
     900: "#3a0000", // Deepest maroon
     700: "#800000", // Classic maroon

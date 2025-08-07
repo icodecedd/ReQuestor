@@ -39,10 +39,18 @@ const EquipmentStats = () => {
         loading,
         "Total number of equipment managed"
       )}
-      {renderCard("Total Available", totalAvailable, FiCheckCircle, loading,
+      {renderCard(
+        "Total Available",
+        totalAvailable,
+        FiCheckCircle,
+        loading,
         "Number of equipment currently available"
       )}
-      {renderCard("Total In Use", totalInUse, FiMonitor, loading,
+      {renderCard(
+        "Total In Use",
+        totalInUse,
+        FiMonitor,
+        loading,
         "Number of equipment currently in use"
       )}
       {renderCard(

@@ -32,16 +32,20 @@ export const getEqConditionColor = (condition) => {
 
 export const getRequestStatusColor = (status) => {
   switch (status) {
-    case "Approved":
-      return "teal";
+    case "Reserved":
+      return "cyan"; // Indicates a scheduled/reserved action
+    case "Pending":
+      return "blue"; // Neutral, commonly used for 'in progress'
+    case "Rejected":
+      return "red"; // Signals failure or denial
     case "Waitlisted":
-      return "yellow";
+      return "orange"; // Indicates attention needed or a queued state
     case "Cancelled":
-      return "red";
+      return "gray"; // Neutral/inactive status
     case "Completed":
-      return "green";
+      return "green"; // Positive, finalized successfully
     default:
-      return "gray";
+      return "gray"; // Fallback for unknown statuses
   }
 };
 

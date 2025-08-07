@@ -25,7 +25,6 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  Show,
 } from "@chakra-ui/react";
 import { FiAlertCircle, FiBox, FiHash, FiMapPin, FiTag } from "react-icons/fi";
 import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
@@ -145,7 +144,7 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
         onClose();
       }
     } catch (error) {
-      showToast("An error occurred while adding equipment", "error");
+      showToast("An error occurred while adding equipment.", "error");
     } finally {
       setIsSubmitting(false);
     }

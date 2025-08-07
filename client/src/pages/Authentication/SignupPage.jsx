@@ -5,7 +5,6 @@ import {
   Text,
   FormControl,
   FormLabel,
-  FormErrorMessage,
   Input,
   InputGroup,
   InputRightElement,
@@ -19,7 +18,6 @@ import {
   useColorModeValue,
   InputLeftElement,
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
@@ -27,7 +25,14 @@ import { useNavigate, Link as RouterLink } from "react-router-dom";
 import logoWhite from "@/assets/requestor-white.svg";
 import logo from "@/assets/requestor.svg";
 import overviewBg from "@/assets/overview.webp";
-import { FiAlertCircle, FiEye, FiEyeOff, FiLock, FiMail, FiUser } from "react-icons/fi";
+import {
+  FiAlertCircle,
+  FiEye,
+  FiEyeOff,
+  FiLock,
+  FiMail,
+  FiUser,
+} from "react-icons/fi";
 
 export const SignupPage = () => {
   const { signup } = useAuth();
@@ -67,7 +72,7 @@ export const SignupPage = () => {
     if (value.trim()) setErrors((prev) => ({ ...prev, [name]: false }));
   };
 
-  const showToast = (message, status = "error", duration = 1800) => {
+  const showToast = (message, status = "error", duration = 2000) => {
     toast({
       title: message,
       status,
@@ -86,13 +91,13 @@ export const SignupPage = () => {
         email: !formData.email,
         password: !formData.password,
       });
-      showToast("Please fill in all fields", "error");
+      showToast("Please fill in all fields.", "error");
       return;
     }
 
     if (formData.password.length < 6) {
       setErrors((prev) => ({ ...prev, password: true }));
-      showToast("Password must be at least 6 characters");
+      showToast("Password must be at least 6 characters.");
       return;
     }
 
@@ -107,7 +112,7 @@ export const SignupPage = () => {
     } catch (err) {
       console.error(err);
       const errorMessage =
-        err?.response?.data?.message || "Sign up failed. Please try again";
+        err?.response?.data?.message || "Sign up failed. Please try again.";
       showToast(errorMessage);
 
       if (errorMessage.includes("not verified")) {
