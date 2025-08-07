@@ -2,7 +2,7 @@ import { Grid, GridItem } from "@chakra-ui/react";
 import Navbar from "@/components/Navbar";
 import DashboardStats from "./DashboardStats";
 import DashboardBanner from "./DashboardBanner";
-import BarGraph from "./BarGraph";
+import BarGraph from "./LineGraph";
 import PieGraph from "./PieGraph";
 import RecentRequests from "./RecentRequests";
 import ActivityLogs from "./ActivityLogs";

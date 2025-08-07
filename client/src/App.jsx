@@ -14,6 +14,7 @@ import { useAxiosInterceptor } from "./hooks/useAxiosInterceptor";
 import ResetPasswordPage from "./pages/Authentication/ResetPasswordPage";
 import VerificationPage from "./pages/Authentication/VerificationPage";
 import ForgotPasswordPage from "./pages/Authentication/ForgotPasswordPage";
+import NotFoundPage from "./pages/Authentication/NotFoundPage";
 
 function App() {
   const { user, loading } = useAuth();
@@ -102,7 +103,7 @@ function App() {
       />
 
       {/* Fallback route */}
-      <Route path="*" element={<UnauthorizedPage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

@@ -12,9 +12,9 @@ const router = express.Router();
 
 router.get("/", getAllRequests);
 router.get("/recent", getRecentRequests);
-router.post("/check-availability", checkAvailability)
+router.post("/check-availability", checkAvailability);
 router.post("/", addRequest);
 router.patch("/:id/cancel", cancelRequest);
-router.patch("/:id/set-status", updateRequestStatus)
+router.patch("/:id/set-status", updateRequestStatus);
 
 export default router;

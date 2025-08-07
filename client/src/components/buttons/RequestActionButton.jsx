@@ -13,9 +13,14 @@ const RequestActionButton = ({
     const actions = [];
 
     if (
-      ["Pending", "Reserved", "Rejected", "Completed", "Cancelled"].includes(
-        status
-      )
+      [
+        "Pending",
+        "Reserved",
+        "Rejected",
+        "In Use",
+        "Completed",
+        "Cancelled",
+      ].includes(status)
     ) {
       actions.push({
         key: "view",

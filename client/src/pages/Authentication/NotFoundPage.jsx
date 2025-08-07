@@ -1,40 +1,26 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Stack,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import { MdOutlineNoAccounts } from "react-icons/md";
+import { Box, Button, Flex, Heading, Stack, Text } from "@chakra-ui/react";
+import { MdOutlineErrorOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
-const UnauthorizedPage = () => {
+const NotFoundPage = () => {
   const navigate = useNavigate();
 
-  // Modern color palette
+  // Color palette
   const colors = {
-    error: "#E53E3E",
-    lightError: "#FEB2B2",
-    paleError: "#FFF5F5",
-    darkError: "#C53030",
+    primary: "#800000",
+    lightPrimary: "#a04040",
+    palePrimary: "#f8e8e8",
+    darkPrimary: "#600000",
     slate: "#2D3748",
   };
-
-  // Modern card shadow
-  const cardShadow = useColorModeValue(
-    "0px 4px 20px rgba(0, 0, 0, 0.08)",
-    "0px 4px 20px rgba(0, 0, 0, 0.2)"
-  );
 
   return (
     <Flex
       minH="100vh"
       align="center"
       justify="center"
-      bg={colors.paleError}
+      bg={colors.palePrimary}
       px={4}
     >
       <motion.div
@@ -47,7 +33,7 @@ const UnauthorizedPage = () => {
           bg="white"
           rounded="2xl"
           p={8}
-          shadow={cardShadow}
+          shadow="0px 4px 20px rgba(0, 0, 0, 0.08)"
           textAlign="center"
           borderWidth={1}
           borderColor="rgba(0, 0, 0, 0.05)"
@@ -58,12 +44,12 @@ const UnauthorizedPage = () => {
             w={20}
             h={20}
             rounded="full"
-            bg={colors.error}
+            bg={colors.primary}
             color="white"
             mx="auto"
             mb={6}
           >
-            <MdOutlineNoAccounts size={32} />
+            <MdOutlineErrorOutline size={32} />
           </Flex>
 
           <Heading
@@ -73,27 +59,37 @@ const UnauthorizedPage = () => {
             color={colors.slate}
             mb={3}
           >
-            Access Denied
+            Page Not Found
           </Heading>
 
           <Text fontSize="md" color="gray.600" lineHeight="tall" mb={2}>
-            You don't have permission to view this page.
+            We couldn't find the page you're looking for.
           </Text>
 
           <Text fontSize="sm" color="gray.500" mb={8}>
-            Please sign in with an authorized account or return to the homepage.
+            The page may have been moved, deleted, or doesn't exist.
           </Text>
 
           <Stack spacing={4}>
             <Button
-              colorScheme="red"
-              bg={colors.error}
-              _hover={{ bg: colors.darkError }}
-              _active={{ bg: colors.darkError }}
+              colorScheme="maroon"
+              bg={colors.primary}
+              _hover={{ bg: colors.darkPrimary }}
+              _active={{ bg: colors.darkPrimary }}
               size="md"
-              onClick={() => navigate("/login")} // NOTE: This should be the landing page
+              onClick={() => navigate("/")} // NOTE: This should be the landing page
             >
               Return Home
+            </Button>
+            <Button
+              variant="outline"
+              color={colors.primary}
+              borderColor={colors.lightPrimary}
+              _hover={{ bg: colors.palePrimary }}
+              size="md"
+              onClick={() => navigate(-1)}
+            >
+              Go Back
             </Button>
           </Stack>
         </Box>
@@ -102,4 +98,4 @@ const UnauthorizedPage = () => {
   );
 };
 
-export default UnauthorizedPage;
+export default NotFoundPage;

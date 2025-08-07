@@ -1,3 +1,4 @@
+import { formatTime } from "@/utils/formatTime";
 import {
   Box,
   Button,
@@ -13,6 +14,7 @@ import {
   ModalOverlay,
   Text,
 } from "@chakra-ui/react";
+import { format } from "date-fns";
 import {
   FiAlertCircle,
   FiCheckCircle,
@@ -109,9 +111,9 @@ const CheckAvailabilityModal = ({
               pl={7}
               fontSize="14px"
             >
-              {scheduleDetails.message} The requested scheduled is on
-              {scheduleDetails.date_use}, from {scheduleDetails.time_from} to{" "}
-              {scheduleDetails.time_to}. Please review the details below before
+              {scheduleDetails.message} The requested scheduled is on{" "}
+              {scheduleDetails.date_use}, from {formatTime(scheduleDetails.time_from)} to{" "}
+              {formatTime(scheduleDetails.time_to)}. Please review the details below before
               proceeding.
             </Text>
 

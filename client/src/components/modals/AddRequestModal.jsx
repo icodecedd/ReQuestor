@@ -252,7 +252,7 @@ const AddRequestModal = ({ isOpen, onClose }) => {
         setActiveStep(0);
       }
     } catch (error) {
-      showToast(error.response.data.message, "error");
+      showToast(error.message, "error");
     } finally {
       setIsSubmitting(false);
     }

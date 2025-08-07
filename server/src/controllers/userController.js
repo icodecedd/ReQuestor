@@ -27,21 +27,21 @@ export const addUser = async (req, res) => {
     if (!name || !email || !password_hash || !role) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "All fields are required.",
       });
     }
 
     if (!email.includes("@")) {
       return res.status(400).json({
         success: false,
-        message: "Invalid email format",
+        message: "Invalid email format.",
       });
     }
 
     if (password_hash.length < 6) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 6 characters",
+        message: "Password must be at least 6 characters.",
       });
     }
 
@@ -63,7 +63,7 @@ export const addUser = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "New user account has been created successfully",
+      message: "New user account has been created successfully.",
       data: createdUser.rows[0],
     });
   } catch (error) {
@@ -76,7 +76,7 @@ export const addUser = async (req, res) => {
         return res.status(409).json({
           success: false,
           errorCode: "EMAIL_EXISTS",
-          message: "Email already exists",
+          message: "Email already exists. Please use a different email.",
         });
       }
     }
@@ -93,7 +93,7 @@ export const updateUser = async (req, res) => {
     if (!id) {
       return res
         .status(400)
-        .json({ success: false, message: "User ID is required" });
+        .json({ success: false, message: "User ID is required." });
     }
 
     // Build dynamic SQL to update only provided fields
@@ -132,12 +132,12 @@ export const updateUser = async (req, res) => {
     if (updatedUser.rowCount === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found." });
     }
 
     res.status(200).json({
       success: true,
-      message: "User details have been updated successfully",
+      message: "User details have been updated successfully.",
       data: updatedUser.rows[0],
     });
   } catch (error) {
@@ -150,7 +150,7 @@ export const updateUser = async (req, res) => {
         return res.status(409).json({
           success: false,
           errorCode: "EMAIL_EXISTS",
-          message: "Email already exists",
+          message: "Email already exists. Please use a different email.",
         });
       }
     }
@@ -166,7 +166,7 @@ export const deleteUser = async (req, res) => {
     if (!id) {
       return res
         .status(400)
-        .json({ success: false, message: "User ID is required" });
+        .json({ success: false, message: "User ID is required." });
     }
 
     const query = `
@@ -179,12 +179,12 @@ export const deleteUser = async (req, res) => {
     if (deletedUser.rowCount === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found." });
     }
 
     return res.status(200).json({
       success: true,
-      message: "Account deleted successfully",
+      message: "Account deleted successfully.",
       data: deletedUser.rows[0],
     });
   } catch (error) {
@@ -207,7 +207,7 @@ export const toggleUserStatus = async (req, res) => {
     if (current.rowCount === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found." });
     }
 
     const currentStatus = current.rows[0].status;
@@ -245,7 +245,7 @@ export const resetUserPassword = async (req, res) => {
     if (!email) {
       return res
         .status(400)
-        .json({ success: false, message: "Email is required" });
+        .json({ success: false, message: "Email is required." });
     }
 
     //Generate random a password
@@ -265,7 +265,7 @@ export const resetUserPassword = async (req, res) => {
     if (result.rowCount === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found." });
     }
 
     const user = result.rows[0];
@@ -275,7 +275,7 @@ export const resetUserPassword = async (req, res) => {
     return res.status(200).json({
       success: true,
       message:
-        "Temporary password sent to user. They must change it on next login",
+        "Temporary password sent to user. They must change it on next login.",
       data: user,
     });
   } catch (error) {

@@ -202,7 +202,7 @@ export const addRequest = async (req, res) => {
     const unavailable = [];
 
     for (const type of equipment_list) {
-      const result = await client.query(
+      const result = await pool.query(
         `SELECT e.* FROM equipments e
          WHERE e.type = $1 AND e.status = 'Available'
          AND NOT EXISTS (
@@ -232,7 +232,8 @@ export const addRequest = async (req, res) => {
       await pool.query("ROLLBACK");
       return res.status(409).json({
         success: false,
-        message: "Some equipment is unavailable.",
+        message:
+          "Some items you selected are no longer available. Please review your request.",
         available: available,
         unavailable: unavailable,
       });
@@ -332,11 +333,11 @@ export const updateRequestStatus = async (req, res) => {
     const currentRequest = existingRequest.rows[0];
 
     if (status === "Completed") {
-      if (currentRequest.status !== "Reserved") {
+      if (currentRequest.status !== "In Use") {
         await pool.query("ROLLBACK");
         return res.status(400).json({
           success: false,
-          message: "Only reserved requests can be completed.",
+          message: "Only in use requests can be completed.",
         });
       }
     }
