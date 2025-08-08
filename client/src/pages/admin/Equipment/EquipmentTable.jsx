@@ -51,12 +51,12 @@ const tabConfigs = [
     filter: (eq) => eq.status === "Available",
   },
   {
-    title: "In Use",
-    filter: (eq) => eq.status === "In Use",
+    title: "Unavailable",
+    filter: (eq) => eq.status === "Unavailable",
   },
   {
-    title: "Reserved",
-    filter: (eq) => eq.status === "Reserved",
+    title: "Maintenance",
+    filter: (eq) => eq.status === "Maintenance",
   },
 ];
 

@@ -10,15 +10,16 @@ export const getDashbordStatistics = async (req, res) => {
     ] = await Promise.all([
       pool.query("SELECT COUNT(*) FROM requests"),
       pool.query("SELECT COUNT(*) FROM equipments WHERE status = 'Available'"),
-      pool.query("SELECT COUNT(*) FROM requests WHERE status = 'Approved'"),
+      pool.query("SELECT COUNT(*) FROM requests WHERE status = 'Reserved'"),
       pool.query("SELECT COUNT(*) FROM requests WHERE status = 'Pending'"),
     ]);
 
-    const barGraphStats = await pool.query(`
+    const lineGraphStats = await pool.query(`
       SELECT
       TO_CHAR(DATE_TRUNC('month', created_at), 'Mon') AS month,
-      COUNT(*) FILTER (WHERE status = 'Approved') AS approved,
-      COUNT(*) FILTER (WHERE status = 'Pending') AS pending
+      COUNT(*) FILTER (WHERE status = 'Reserved') AS approved,
+      COUNT(*) FILTER (WHERE status = 'Rejected') AS rejected,
+      COUNT(*) FILTER (WHERE status = 'Cancelled') AS cancelled
       FROM requests
       WHERE EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM CURRENT_DATE)
       GROUP BY DATE_TRUNC('month', created_at)
@@ -35,10 +36,11 @@ export const getDashbordStatistics = async (req, res) => {
       ORDER BY type;
     `);
 
-    const barGraph = barGraphStats.rows.map((row) => ({
+    const lineGraph = lineGraphStats.rows.map((row) => ({
       month: row.month.trim(),
       approved: parseInt(row.approved),
-      pending: parseInt(row.pending),
+      rejected: parseInt(row.rejected),
+      cancelled: parseInt(row.cancelled),
     }));
 
     const pieGraph = pieGraphStats.rows.map((row) => ({
@@ -52,7 +54,7 @@ export const getDashbordStatistics = async (req, res) => {
       availableEquipment: parseInt(availableEquipment.rows[0].count),
       approvedRequests: parseInt(approvedRequests.rows[0].count),
       pendingApprovals: parseInt(pendingApprovals.rows[0].count),
-      barGraph,
+      lineGraph,
       pieGraph,
     });
   } catch (error) {

@@ -4,6 +4,7 @@ import {
   forgotPassword,
   login,
   logout,
+  refreshToken,
   register,
   resendVerification,
   resetPassword,
@@ -16,6 +17,7 @@ const router = express.Router();
 router.get("/me", verifyToken, checkAuth);
 router.get("/verify-email/:token", verifyEmail);
 router.post("/resend-verification", resendVerification);
+router.post("/refresh-token", refreshToken);
 router.post("/register", register);
 router.post("/login", login);
 router.post("/logout", logout);

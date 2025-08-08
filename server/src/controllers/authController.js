@@ -2,10 +2,11 @@ import pool from "../config/dbConfig.js";
 import jwt from "jsonwebtoken";
 import { comparePassword, hashPassword } from "../helpers/password.js";
 import {
+  generateAccessTokenOnly,
   generateResetToken,
-  generateTokenAndCookie,
+  generateTokensAndCookies,
   generateVerificationToken,
-} from "../helpers/tokenAndCookie.js";
+} from "../helpers/tokensAndCookie.js";
 import {
   sendPasswordResetEmail,
   sendResetSuccessEmail,
@@ -65,7 +66,7 @@ export const register = async (req, res) => {
 
       if (!user.is_verified) {
         // Optionally generate a new token
-        const newToken = generateTokenAndCookie(res, user.id);
+        const newToken = generateVerificationToken(res, user.id);
 
         await sendVerificationEmail(user.email, newToken);
 
@@ -96,7 +97,7 @@ export const register = async (req, res) => {
     const newUser = result.rows[0];
 
     // Generate a JWT token for the new user session
-    const token = generateTokenAndCookie(res, newUser.id);
+    const token = generateVerificationToken(res, newUser.id);
 
     // Send verification email
     await sendVerificationEmail(email, token);
@@ -244,7 +245,7 @@ export const login = async (req, res) => {
     const user = result.rows[0];
 
     // Check if the user is active
-    if(user.status !== "Active") {
+    if (user.status !== "Active") {
       return res.status(403).json({
         success: false,
         errorCode: "INACTIVE_USER",
@@ -271,7 +272,7 @@ export const login = async (req, res) => {
     }
 
     // Generate a JWT token for the user session
-    generateTokenAndCookie(res, user.id);
+    generateTokensAndCookies(res, user.id);
 
     await pool.query("UPDATE users SET last_login = NOW() WHERE id = $1", [
       user.id,
@@ -287,13 +288,6 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in login:", error);
-
-    if (error.name === "TokenExpiredError") {
-      return res.status(400).json({
-        success: false,
-        message: "Verification link expired. Please request a new one.",
-      });
-    }
 
     return res.status(500).json({
       success: false,
@@ -332,8 +326,8 @@ export const forgotPassword = async (req, res) => {
     // Check if the user exists
     const result = await pool.query(
       `
-            SELECT id, name, email, role, status, is_verified, created_at, last_login
-            FROM users WHERE email = $1`,
+        SELECT id, name, email, role, status, is_verified, created_at, last_login
+        FROM users WHERE email = $1`,
       [email]
     );
     if (result.rowCount === 0) {
@@ -420,7 +414,7 @@ export const resetPassword = async (req, res) => {
     if (error.name === "TokenExpiredError") {
       return res.status(400).json({
         success: false,
-        message: "Verification link expired. Please request a new one.",
+        message: "Reset link expired. Please request a new one.",
       });
     }
 
@@ -428,5 +422,36 @@ export const resetPassword = async (req, res) => {
       success: false,
       message: "Internal Server Error",
     });
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Refresh token is required." });
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+    if (!decoded) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid refresh token." });
+    }
+
+    const userId = decoded.userId;
+
+    const accessToken = generateAccessTokenOnly(res, userId);
+
+    return res.status(200).json({ success: true, accessToken });
+  } catch (error) {
+    console.error("Error in refreshToken:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };

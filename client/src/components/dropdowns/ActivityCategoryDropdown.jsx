@@ -11,15 +11,15 @@ import { GoFilter } from "react-icons/go";
 import { FiCheck } from "react-icons/fi";
 import { useState } from "react";
 
-const statuses = ["All Status", "Available", "Unavailable", "Maintenance"];
+const categories = ["All Categories", "Users", "Equipment", "Requests", "System"];
 
-export function EquipmentStatusDropdown({ onChange }) {
-  const [selectedEqStatus, setSelectedEqStatus] = useState("All Status");
+export function ActivityCategoryDropdown({ onChange }) {
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
 
-  const handleSelect = (status) => {
-    setSelectedEqStatus(status);
+  const handleSelect = (category) => {
+    setSelectedCategory(category);
     if (onChange) {
-      onChange(status === "All Status" ? "All Status" : status);
+      onChange(category === "All Categories" ? "All Categories" : category);
     }
   };
 
@@ -35,22 +35,22 @@ export function EquipmentStatusDropdown({ onChange }) {
         fontSize="15px"
         _hover={{ bg: "#f7eaea" }}
         _active={{ bg: "#f7eaea" }}
-        w="150px"
+        w="160px"
         textAlign="left"
       >
-        {selectedEqStatus}
+        {selectedCategory}
       </MenuButton>
-      <MenuList borderRadius="xl" p={1} minW="140px">
-        {statuses.map((status) => {
-          const isSelected = selectedEqStatus === status;
+      <MenuList borderRadius="xl" p={1} minW="150px">
+        {categories.map((category) => {
+          const isSelected = selectedCategory === category;
           return (
             <MenuItem
-              key={status}
-              onClick={() => handleSelect(status)}
+              key={category}
+              onClick={() => handleSelect(category)}
               bg={isSelected ? "#800000" : "transparent"}
               color={isSelected ? "white" : "black"}
               borderRadius="lg"
-              w="140px"
+              w="150px"
               _hover={
                 isSelected
                   ? {
@@ -65,7 +65,7 @@ export function EquipmentStatusDropdown({ onChange }) {
               py={2}
             >
               <Flex align="center" justify="space-between" w="100%">
-                <Text fontSize="14px">{status}</Text>
+                <Text fontSize="14px">{category}</Text>
                 {isSelected && <FiCheck />}
               </Flex>
             </MenuItem>

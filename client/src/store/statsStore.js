@@ -6,7 +6,7 @@ const initialStats = {
   availableEquipment: 0,
   approvedRequests: 0,
   pendingApprovals: 0,
-  barGraph: [],
+  lineGraph: [],
   pieGraph: [],
 };
 
@@ -26,7 +26,7 @@ export const useStatsStore = create((set, get) => ({
           availableEquipment,
           approvedRequests,
           pendingApprovals,
-          barGraph,
+          lineGraph,
           pieGraph,
         } = res.data;
 
@@ -36,13 +36,13 @@ export const useStatsStore = create((set, get) => ({
             availableEquipment,
             approvedRequests,
             pendingApprovals,
-            barGraph,
+            lineGraph,
             pieGraph,
           },
           loading: false,
         });
       } else {
-        set({ error: "Invalid response", loading: false });
+        set({ error: "Invalid response.", loading: false });
       }
     } catch (error) {
       set({ error: error.message, loading: false });

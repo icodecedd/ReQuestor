@@ -17,19 +17,23 @@ import {
 import { FiAlertTriangle, FiTrash } from "react-icons/fi";
 import useUserStore from "@/store/usersStore";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
-const DeleteUserModal = ({ isOpen, onClose, user }) => {
+const DeleteUserModal = ({ isOpen, onClose, users }) => {
   const deleteUser = useUserStore((state) => state.deleteUser);
+  const setUserId = useUserStore((state) => state.setUserId);
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
 
   const handleDelete = async () => {
+    setUserId(user.id);
     setIsSubmitting(true);
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const result = await deleteUser(user.id);
+      const result = await deleteUser(users.id);
 
       toast({
         title: result.message,
@@ -87,7 +91,7 @@ const DeleteUserModal = ({ isOpen, onClose, user }) => {
                 Delete Account
               </Text>
               <Text color="gray.700" fontWeight="normal" fontSize="14px">
-                This will permanently delete <strong>"{user?.email}"</strong>.
+                This will permanently delete <strong>"{users?.email}"</strong>.
               </Text>
             </Box>
           </Flex>

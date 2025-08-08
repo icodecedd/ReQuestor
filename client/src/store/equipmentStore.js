@@ -23,16 +23,19 @@ const useEquipmentStore = create((set, get) => ({
 
     const totalEquipment = eq.length;
     const totalAvailable = eq.filter((e) => e.status === "Available").length;
-    const totalInUse = eq.filter((e) => e.status === "In Use").length;
+    const totalUnavailable = eq.filter(
+      (e) => e.status === "Unavailable"
+    ).length;
 
     const utilizationPercentage = totalEquipment
-      ? ((totalInUse / totalEquipment) * 100).toFixed(1)
+      ? ((totalUnavailable / totalEquipment) * 100).toFixed(1)
       : 0;
+
     return {
       totalEquipment,
       totalAvailable,
-      totalInUse,
-      utilizationPercentage,
+      totalUnavailable,
+      utilizationPercentage, // This now represents % unavailable
     };
   },
 

@@ -22,26 +22,26 @@ export const getAllUsers = async (req, res) => {
 
 export const addUser = async (req, res) => {
   try {
-    const { name, email, password_hash, role, status } = req.body;
+    const { name, email, password_hash, role, status, user_id } = req.body;
 
     if (!name || !email || !password_hash || !role) {
       return res.status(400).json({
         success: false,
-        message: "All fields are required",
+        message: "All fields are required.",
       });
     }
 
     if (!email.includes("@")) {
       return res.status(400).json({
         success: false,
-        message: "Invalid email format",
+        message: "Invalid email format.",
       });
     }
 
     if (password_hash.length < 6) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 6 characters",
+        message: "Password must be at least 6 characters.",
       });
     }
 
@@ -61,9 +61,16 @@ export const addUser = async (req, res) => {
       status,
     ]);
 
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, 'CREATED', $2, 'USERS', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, createdUser.rows[0].id]
+    );
+
     res.status(200).json({
       success: true,
-      message: "New user account has been created successfully",
+      message: "New user account has been created successfully.",
       data: createdUser.rows[0],
     });
   } catch (error) {
@@ -76,7 +83,7 @@ export const addUser = async (req, res) => {
         return res.status(409).json({
           success: false,
           errorCode: "EMAIL_EXISTS",
-          message: "Email already exists",
+          message: "Email already exists. Please use a different email.",
         });
       }
     }
@@ -88,12 +95,12 @@ export const addUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, role, status } = req.body;
+    const { name, email, role, status, user_id } = req.body;
 
     if (!id) {
       return res
         .status(400)
-        .json({ success: false, message: "User ID is required" });
+        .json({ success: false, message: "User ID is required." });
     }
 
     // Build dynamic SQL to update only provided fields
@@ -132,12 +139,19 @@ export const updateUser = async (req, res) => {
     if (updatedUser.rowCount === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found." });
     }
+
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, 'UPDATED', $2, 'USERS', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, id]
+    );
 
     res.status(200).json({
       success: true,
-      message: "User details have been updated successfully",
+      message: "User details have been updated successfully.",
       data: updatedUser.rows[0],
     });
   } catch (error) {
@@ -150,7 +164,7 @@ export const updateUser = async (req, res) => {
         return res.status(409).json({
           success: false,
           errorCode: "EMAIL_EXISTS",
-          message: "Email already exists",
+          message: "Email already exists. Please use a different email.",
         });
       }
     }
@@ -162,11 +176,12 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+    const { user_id } = req.body;
 
     if (!id) {
       return res
         .status(400)
-        .json({ success: false, message: "User ID is required" });
+        .json({ success: false, message: "User ID is required." });
     }
 
     const query = `
@@ -179,12 +194,19 @@ export const deleteUser = async (req, res) => {
     if (deletedUser.rowCount === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found." });
     }
+
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, 'DELETED', $2, 'USERS', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, id]
+    );
 
     return res.status(200).json({
       success: true,
-      message: "Account deleted successfully",
+      message: "Account deleted successfully.",
       data: deletedUser.rows[0],
     });
   } catch (error) {
@@ -198,6 +220,7 @@ export const deleteUser = async (req, res) => {
 export const toggleUserStatus = async (req, res) => {
   try {
     const { id } = req.params;
+    const { user_id } = req.body;
 
     // Get current status
     const current = await pool.query(
@@ -207,7 +230,7 @@ export const toggleUserStatus = async (req, res) => {
     if (current.rowCount === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found." });
     }
 
     const currentStatus = current.rows[0].status;
@@ -219,6 +242,21 @@ export const toggleUserStatus = async (req, res) => {
        WHERE id = $2
        RETURNING id, name, email, role, status, created_at, is_verified, last_login;`,
       [newStatus, id]
+    );
+
+    if (result.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    }
+
+    const finalStatus = newStatus === "Active" ? "REACTIVATED" : "DEACTIVATED";
+
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, $2, $3, 'USERS', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, finalStatus, id]
     );
 
     return res.status(200).json({
@@ -239,13 +277,13 @@ export const toggleUserStatus = async (req, res) => {
 export const resetUserPassword = async (req, res) => {
   try {
     const { id } = req.params;
-    const { email } = req.body;
+    const { email, user_id } = req.body;
 
     // Validate
     if (!email) {
       return res
         .status(400)
-        .json({ success: false, message: "Email is required" });
+        .json({ success: false, message: "Email is required." });
     }
 
     //Generate random a password
@@ -265,17 +303,24 @@ export const resetUserPassword = async (req, res) => {
     if (result.rowCount === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found." });
     }
 
     const user = result.rows[0];
 
     await sendAdminResetPasswordEmail(user.email, password);
 
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, 'PASSWORD_RESET', $2, 'USERS', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, id]
+    );
+
     return res.status(200).json({
       success: true,
       message:
-        "Temporary password sent to user. They must change it on next login",
+        "Temporary password sent to user. They must change it on next login.",
       data: user,
     });
   } catch (error) {

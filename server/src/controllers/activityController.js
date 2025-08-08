@@ -4,7 +4,7 @@ import pool from "../config/dbConfig.js";
 export const getAllActivities = async (req, res) => {
   try {
     const activities = await pool.query(
-      "SELECT * FROM activity_logs ORDER BY timestamp DESC"
+      "SELECT al.*, u.name as user, u.role as role FROM activity_logs al LEFT JOIN users u ON al.user_id = u.id ORDER BY timestamp DESC"
     );
     res.status(200).json({ success: true, data: activities.rows });
   } catch (error) {

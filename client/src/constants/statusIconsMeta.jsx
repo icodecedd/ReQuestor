@@ -15,7 +15,7 @@ export const statusMeta = {
     icon: <FiCheckCircle color="white" />,
     bg: "green.500",
   },
-  denied: {
+  rejected: {
     icon: <FiXCircle color="white" />,
     bg: "red.500",
   },
@@ -40,6 +40,18 @@ export const statusMeta = {
     bg: "red.600",
   },
   status_changed: {
+    icon: <FiRefreshCw color="white" />,
+    bg: "purple.500",
+  },
+  reactivated: {
+    icon: <FiPlusCircle color="white" />,
+    bg: "blue.500",
+  },
+  deactivated: {
+    icon: <FiXCircle color="white" />,
+    bg: "red.500",
+  },
+  password_reset: {
     icon: <FiRefreshCw color="white" />,
     bg: "purple.500",
   },

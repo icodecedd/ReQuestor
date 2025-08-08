@@ -12,8 +12,21 @@ const AuthProvider = ({ children }) => {
         const res = await api.get("/auth/me");
         setUser(res.data.data);
         console.log("Logged in user:", res.data.data);
-      } catch {
-        setUser(null);
+      } catch (err) {
+        // If access token expired, try refreshing
+        if (err.response?.status === 401) {
+          try {
+            await refreshToken(); // refresh cookie
+            const retryRes = await api.get("/auth/me");
+            setUser(retryRes.data.data);
+            console.log("Refreshed and logged in user:", retryRes.data.data);
+          } catch (refreshErr) {
+            console.log("Refresh failed:", refreshErr);
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
       } finally {
         setLoading(false);
       }
@@ -53,6 +66,11 @@ const AuthProvider = ({ children }) => {
     return result.data;
   };
 
+  const refreshToken = async () => {
+    const result = await api.post("/auth/refresh-token", {});
+    return result.data;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -62,6 +80,7 @@ const AuthProvider = ({ children }) => {
         logout,
         forgotPassword,
         resetPassword,
+        refreshToken,
         loading,
       }}
     >

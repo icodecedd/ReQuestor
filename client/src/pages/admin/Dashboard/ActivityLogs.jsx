@@ -14,36 +14,7 @@ import { useRecentActivitiesStore } from "@/store/recentStore";
 import { useEffect } from "react";
 
 const ActivityLogs = () => {
-  const { loading, fetchRecentActivities } = useRecentActivitiesStore();
-
-  // Enhanced mock data with more details
-  const data = [
-    {
-      action: "Approved",
-      target: "Request",
-      timestamp: "2025-07-14 14:42:00",
-    },
-    {
-      action: "Created",
-      target: "Equipment",
-      timestamp: "2025-07-14 14:21:00",
-    },
-    {
-      action: "Status_Changed",
-      target: "Equipment",
-      timestamp: "2025-07-14 16:42:00",
-    },
-    {
-      action: "Updated",
-      target: "Equipment",
-      timestamp: "2025-07-14 14:21:00",
-    },
-    {
-      action: "Denied",
-      target: "Request",
-      timestamp: "2025-07-14 16:42:00",
-    },
-  ];
+  const { recentActivities, loading, fetchRecentActivities } = useRecentActivitiesStore();
 
   useEffect(() => {
     fetchRecentActivities();
@@ -110,8 +81,10 @@ const ActivityLogs = () => {
               mb={1}
             />
           ))
-        ) : data.length > 0 ? (
-          data.map((log, index) => <ActivityLogItem key={index} log={log} />)
+        ) : recentActivities.length > 0 ? (
+          recentActivities.map((log, index) => (
+            <ActivityLogItem key={index} log={log} />
+          ))
         ) : (
           <Center h="300px">
             <VStack spacing={2}>

@@ -18,65 +18,17 @@ import {
 import { NavLink } from "react-router-dom";
 import { useRecentRequestsStore } from "@/store/recentStore";
 import { useEffect } from "react";
+import { getDateOnly } from "@/utils/getDate";
+import { formatTime } from "@/utils/formatTime";
+import { getRequestStatusColor } from "@/utils/getColorScheme";
 
 const RecentRequests = () => {
-  const data = [
-    {
-      id: 11,
-      user: "Cedrick Mariano",
-      equipment: "BenQ MW535",
-      status: "Approved",
-      date: "2025-07-04",
-    },
-    {
-      id: 12,
-      user: "Borgy Palermo",
-      equipment: "Epson EB-X41",
-      status: "Pending",
-      date: "2025-07-07",
-    },
-    {
-      id: 13,
-      user: "Harold dela Pena",
-      equipment: "Motorized Screen 100in",
-      status: "Pending",
-      date: "2025-07-07",
-    },
-    {
-      id: 14,
-      user: "Rj Jack Florida",
-      equipment: "AVR-2",
-      status: "Approved",
-      date: "2025-06-29",
-    },
-    {
-      id: 15,
-      user: "Cydoel Tomas",
-      equipment: "Sony VPL-DX240",
-      status: "Pending",
-      date: "2025-07-03",
-    },
-  ];
-
-  const getColorScheme = (status) => {
-    switch (status) {
-      case "Approved":
-        return "green";
-      case "Pending":
-        return "yellow";
-      case "Denied":
-        return "red";
-      default:
-        return "gray";
-    }
-  };
+  const { recentRequests, loading, fetchRecentRequests } =
+    useRecentRequestsStore();
 
   const formatRequestsId = (id) => {
     return `REQ-${String(id).padStart(3, "0")}`;
   };
-
-  const { /*recentRequests,*/ loading, fetchRecentRequests } =
-    useRecentRequestsStore();
 
   useEffect(() => {
     fetchRecentRequests();
@@ -142,13 +94,13 @@ const RecentRequests = () => {
                 REQUESTER
               </Th>
               <Th fontSize="xs" color="gray.600" fontWeight="semibold">
-                EQUIPMENT
+                DATE
+              </Th>
+              <Th fontSize="xs" color="gray.600" fontWeight="semibold">
+                TIME
               </Th>
               <Th fontSize="xs" color="gray.600" fontWeight="semibold">
                 STATUS
-              </Th>
-              <Th fontSize="xs" color="gray.600" fontWeight="semibold">
-                DATE
               </Th>
             </Tr>
           </Thead>
@@ -164,21 +116,31 @@ const RecentRequests = () => {
                 </Tr>
               ))}
             </Tbody>
-          ) : data.length > 0 ? (
+          ) : recentRequests.length > 0 ? (
             <Tbody>
-              {data.map((req, index) => (
+              {recentRequests.map((req, index) => (
                 <Tr key={index} textColor="blackAlpha.900">
                   <Td textColor="#157fc5ff" fontWeight="medium">
                     {formatRequestsId(req.id)}
                   </Td>
-                  <Td>{req.user}</Td>
-                  <Td>{req.equipment}</Td>
+                  <Td>{req.name}</Td>
                   <Td>
-                    <Badge colorScheme={getColorScheme(req.status)}>
+                    <Text mb={1}>{getDateOnly(req.date_use)}</Text>
+                  </Td>
+                  <Td>{`${formatTime(req.time_from)} - ${formatTime(
+                    req.time_to
+                  )}`}</Td>
+                  <Td>
+                    <Badge
+                      colorScheme={getRequestStatusColor(req.status)}
+                      borderRadius="xl"
+                      pl={2}
+                      pr={2}
+                      pb={0.5}
+                    >
                       {req.status}
                     </Badge>
                   </Td>
-                  <Td>{req.date}</Td>
                 </Tr>
               ))}
             </Tbody>

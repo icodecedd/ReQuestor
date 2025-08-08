@@ -283,22 +283,22 @@ const UsersTable = () => {
       <UpdateUserModal
         isOpen={isEditOpen}
         onClose={onEditClose}
-        user={selectedUser}
+        users={selectedUser}
       />
       <ResetPasswordModal
         isOpen={isResetOpen}
         onClose={onResetClose}
-        user={selectedUser}
+        users={selectedUser}
       />
       <DeleteUserModal
         isOpen={isDeleteOpen}
         onClose={onDeleteClose}
-        user={selectedUser}
+        users={selectedUser}
       />
       <ToggleStatusModal
         isOpen={isStatusOpen}
         onClose={onStatusClose}
-        user={selectedUser}
+        users={selectedUser}
       />
     </Box>
   );

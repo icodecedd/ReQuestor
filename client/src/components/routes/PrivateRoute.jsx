@@ -9,6 +9,10 @@ const PrivateRoute = ({ children, allowedRoles = [] }) => {
 
   const isAuthenticated = user && user.status === "Active" && user.is_verified;
 
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user?.role)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }

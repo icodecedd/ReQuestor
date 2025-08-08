@@ -11,9 +11,10 @@ export const useRecentRequestsStore = create((set, get) => ({
     try {
       const res = await axios.get("/api/requests/recent"); // 5 most recent
       if (res.data?.success && Array.isArray(res.data.data)) {
-        set({ recent: res.data.data, loading: false });
+        set({ recentRequests: res.data.data, loading: false });
+        console.log("Recent requests:", res.data.data);
       } else {
-        set({ error: "Invalid response", loading: false });
+        set({ error: "Invalid response.", loading: false });
       }
     } catch (error) {
       set({ error: error.message, loading: false });
@@ -41,7 +42,7 @@ export const useRecentActivitiesStore = create((set, get) => ({
       if (res.data?.success && Array.isArray(res.data.data)) {
         set({ recentActivities: res.data.data, loading: false });
       } else {
-        set({ error: "Invalid response", loading: false });
+        set({ error: "Invalid response.", loading: false });
       }
     } catch (error) {
       set({ error: error.message, loading: false });

@@ -23,7 +23,6 @@ import {
   Tabs,
   Thead,
   Tbody,
-  TableCaption,
   TableContainer,
   Td,
   Tr,
@@ -234,13 +233,6 @@ const RequestsTable = () => {
                             fontWeight="semibold"
                             py={4}
                           >
-                            Request ID
-                          </Th>
-                          <Th
-                            fontSize="xs"
-                            color="gray.600"
-                            fontWeight="semibold"
-                          >
                             Name
                           </Th>
                           <Th
@@ -311,7 +303,6 @@ const RequestsTable = () => {
                               textColor="blackAlpha.900"
                               bg="#f7f9fb"
                             >
-                              <Td>{formatRequestsId(req.id)}</Td>
                               <Td>{req.name}</Td>
                               <Td>{req.course_section}</Td>
                               <Td>{req.faculty_in_charge}</Td>

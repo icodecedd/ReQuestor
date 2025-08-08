@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toTitleCase } from "@/utils/toTitleCase";
+import { data } from "react-router-dom";
 
 export const useRequestsStore = create((set, get) => ({
   requests: [],
@@ -105,7 +106,7 @@ export const useRequestsStore = create((set, get) => ({
   },
 
   addRequest: async (newRequest) => {
-    const name = newRequest.username?.trim() || "";
+    const name = newRequest.name?.trim() || "";
     const course_section =
       newRequest.course_section?.trim()?.toUpperCase() || "";
     const faculty_in_charge =
@@ -117,7 +118,7 @@ export const useRequestsStore = create((set, get) => ({
     const purpose = newRequest?.purpose || "";
 
     if (
-      !username ||
+      !name ||
       !course_section ||
       !faculty_in_charge ||
       !equipment_list ||
@@ -135,7 +136,7 @@ export const useRequestsStore = create((set, get) => ({
 
     try {
       const requestPayload = {
-        username,
+        name,
         course_section,
         faculty_in_charge,
         equipment_list,
@@ -158,6 +159,13 @@ export const useRequestsStore = create((set, get) => ({
         "Add request error:",
         error.response?.data || error.message
       );
+
+      if (error.response?.data?.message) {
+        return {
+          success: false,
+          message: error.response?.data?.message,
+        };
+      }
 
       return {
         success: false,
