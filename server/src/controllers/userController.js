@@ -22,7 +22,7 @@ export const getAllUsers = async (req, res) => {
 
 export const addUser = async (req, res) => {
   try {
-    const { name, email, password_hash, role, status } = req.body;
+    const { name, email, password_hash, role, status, user_id } = req.body;
 
     if (!name || !email || !password_hash || !role) {
       return res.status(400).json({
@@ -61,6 +61,13 @@ export const addUser = async (req, res) => {
       status,
     ]);
 
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, 'CREATED', $2, 'USERS', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, createdUser.rows[0].id]
+    );
+
     res.status(200).json({
       success: true,
       message: "New user account has been created successfully.",
@@ -88,7 +95,7 @@ export const addUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, role, status } = req.body;
+    const { name, email, role, status, user_id } = req.body;
 
     if (!id) {
       return res
@@ -135,6 +142,13 @@ export const updateUser = async (req, res) => {
         .json({ success: false, message: "User not found." });
     }
 
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, 'UPDATED', $2, 'USERS', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, id]
+    );
+
     res.status(200).json({
       success: true,
       message: "User details have been updated successfully.",
@@ -162,6 +176,7 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+    const { user_id } = req.body;
 
     if (!id) {
       return res
@@ -182,6 +197,13 @@ export const deleteUser = async (req, res) => {
         .json({ success: false, message: "User not found." });
     }
 
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, 'DELETED', $2, 'USERS', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, id]
+    );
+
     return res.status(200).json({
       success: true,
       message: "Account deleted successfully.",
@@ -198,6 +220,7 @@ export const deleteUser = async (req, res) => {
 export const toggleUserStatus = async (req, res) => {
   try {
     const { id } = req.params;
+    const { user_id } = req.body;
 
     // Get current status
     const current = await pool.query(
@@ -221,6 +244,21 @@ export const toggleUserStatus = async (req, res) => {
       [newStatus, id]
     );
 
+    if (result.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    }
+
+    const finalStatus = newStatus === "Active" ? "REACTIVATED" : "DEACTIVATED";
+
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, $2, $3, 'USERS', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, finalStatus, id]
+    );
+
     return res.status(200).json({
       success: true,
       message: `User ${
@@ -239,7 +277,7 @@ export const toggleUserStatus = async (req, res) => {
 export const resetUserPassword = async (req, res) => {
   try {
     const { id } = req.params;
-    const { email } = req.body;
+    const { email, user_id } = req.body;
 
     // Validate
     if (!email) {
@@ -271,6 +309,13 @@ export const resetUserPassword = async (req, res) => {
     const user = result.rows[0];
 
     await sendAdminResetPasswordEmail(user.email, password);
+
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, 'PASSWORD_RESET', $2, 'USERS', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, id]
+    );
 
     return res.status(200).json({
       success: true,

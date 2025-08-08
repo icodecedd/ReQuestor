@@ -22,20 +22,24 @@ import {
 } from "react-icons/fi";
 import useUserStore from "@/store/usersStore";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
-const ToggleStatusModal = ({ isOpen, onClose, user }) => {
+const ToggleStatusModal = ({ isOpen, onClose, users }) => {
   const toggleStatus = useUserStore((state) => state.toggleStatus);
+  const setUserId = useUserStore((state) => state.setUserId);
+  const { user } = useAuth();
   const toast = useToast();
   const isActive = user?.status === "Active";
   const label = isActive ? "Deactivate" : "Activate";
   const [isSubmitting, setSubmitting] = useState(false);
 
   const handleToggleStatus = async () => {
+    setUserId(user.id);
     setSubmitting(true);
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network
-      const result = await toggleStatus(user.id);
+      const result = await toggleStatus(users.id);
 
       toast({
         title: result.message,
@@ -109,7 +113,7 @@ const ToggleStatusModal = ({ isOpen, onClose, user }) => {
                 >
                   {label.toLowerCase()}
                 </Text>{" "}
-                the account of <strong>{user?.email}</strong>?
+                the account of <strong>{users?.email}</strong>?
               </Text>
             </Box>
           </Flex>

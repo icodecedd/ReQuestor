@@ -11,15 +11,15 @@ import { GoFilter } from "react-icons/go";
 import { FiCheck } from "react-icons/fi";
 import { useState } from "react";
 
-const statuses = ["All Status", "Available", "Unavailable", "Maintenance"];
+const timeOptions = ["All Time", "Today", "Last Week", "Last Month"];
 
-export function EquipmentStatusDropdown({ onChange }) {
-  const [selectedEqStatus, setSelectedEqStatus] = useState("All Status");
+export function ActivityTimeDropdown({ onChange }) {
+  const [selectedTime, setSelectedTime] = useState("All Time");
 
-  const handleSelect = (status) => {
-    setSelectedEqStatus(status);
+  const handleSelect = (time) => {
+    setSelectedTime(time);
     if (onChange) {
-      onChange(status === "All Status" ? "All Status" : status);
+      onChange(time === "All Time" ? "All Time" : time);
     }
   };
 
@@ -35,37 +35,31 @@ export function EquipmentStatusDropdown({ onChange }) {
         fontSize="15px"
         _hover={{ bg: "#f7eaea" }}
         _active={{ bg: "#f7eaea" }}
-        w="150px"
+        w="140px"
         textAlign="left"
       >
-        {selectedEqStatus}
+        {selectedTime}
       </MenuButton>
-      <MenuList borderRadius="xl" p={1} minW="140px">
-        {statuses.map((status) => {
-          const isSelected = selectedEqStatus === status;
+      <MenuList borderRadius="xl" p={1} minW="130px">
+        {timeOptions.map((time) => {
+          const isSelected = selectedTime === time;
           return (
             <MenuItem
-              key={status}
-              onClick={() => handleSelect(status)}
+              key={time}
+              onClick={() => handleSelect(time)}
               bg={isSelected ? "#800000" : "transparent"}
               color={isSelected ? "white" : "black"}
               borderRadius="lg"
-              w="140px"
+              w="130px"
               _hover={
                 isSelected
-                  ? {
-                      bg: "#800000",
-                      borderRadius: "lg",
-                    }
-                  : {
-                      bg: "#f7eaea",
-                      borderRadius: "lg",
-                    }
+                  ? { bg: "#800000", borderRadius: "lg" }
+                  : { bg: "#f7eaea", borderRadius: "lg" }
               }
               py={2}
             >
               <Flex align="center" justify="space-between" w="100%">
-                <Text fontSize="14px">{status}</Text>
+                <Text fontSize="14px">{time}</Text>
                 {isSelected && <FiCheck />}
               </Flex>
             </MenuItem>

@@ -31,6 +31,7 @@ import { useState } from "react";
 import useUserStore from "@/store/usersStore";
 import PasswordInput from "../inputs/PasswordInput";
 import { getUserColor } from "@/utils/getColorScheme";
+import { useAuth } from "@/hooks/useAuth";
 
 const userFields = [
   { name: "name", label: "Name", placeholder: "Enter name", icon: <FiUser /> },
@@ -53,6 +54,8 @@ const statusOptions = ["Active", "Inactive", "Suspended"];
 
 const AddUserModal = ({ isOpen, onClose }) => {
   const addUser = useUserStore((state) => state.addUser);
+  const setUserId = useUserStore((state) => state.setUserId);
+  const { user } = useAuth();
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -92,6 +95,7 @@ const AddUserModal = ({ isOpen, onClose }) => {
   };
 
   const handleSubmit = async () => {
+    setUserId(user.id);
     setIsSubmitting(true);
 
     try {

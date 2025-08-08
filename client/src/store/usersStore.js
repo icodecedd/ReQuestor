@@ -2,10 +2,12 @@ import { create } from "zustand";
 import axios from "axios";
 import { toTitleCase } from "@/utils/toTitleCase";
 
-const useUserStore = create((set) => ({
+const useUserStore = create((set, get) => ({
   users: [],
   loading: false,
   error: null,
+  userId: null,
+  setUserId: (id) => set({ userId: id }),
 
   fetchUsers: async () => {
     set({ loading: true, error: null });
@@ -60,6 +62,7 @@ const useUserStore = create((set) => ({
         password_hash: password,
         role,
         status,
+        user_id: get().userId,
       };
 
       const res = await axios.post("/api/users", addedPayload);
@@ -122,6 +125,7 @@ const useUserStore = create((set) => ({
         email,
         role,
         status,
+        user_id: get().userId,
       };
 
       const res = await axios.put(`/api/users/${id}`, updatedPayload);
@@ -157,7 +161,7 @@ const useUserStore = create((set) => ({
 
   deleteUser: async (id) => {
     try {
-      await axios.delete(`/api/users/${id}`);
+      await axios.delete(`/api/users/${id}`, { user_id: get().userId });
 
       set((state) => ({
         users: state.users.filter((user) => user.id !== id),
@@ -188,7 +192,10 @@ const useUserStore = create((set) => ({
       };
     }
     try {
-      await axios.patch(`/api/users/${id}/set-password`, { email });
+      await axios.patch(`/api/users/${id}/set-password`, {
+        email,
+        user_id: get().userId,
+      });
 
       return {
         success: true,
@@ -209,7 +216,9 @@ const useUserStore = create((set) => ({
 
   toggleStatus: async (id) => {
     try {
-      const res = await axios.patch(`/api/users/${id}/set-status`);
+      const res = await axios.patch(`/api/users/${id}/set-status`, {
+        user_id: get().userId,
+      });
 
       set((state) => ({
         users: state.users.map((user) =>

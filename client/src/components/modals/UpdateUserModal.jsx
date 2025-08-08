@@ -25,6 +25,7 @@ import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
 import { useEffect, useState } from "react";
 import useUserStore from "@/store/usersStore";
 import { getUserColor } from "@/utils/getColorScheme.js";
+import { useAuth } from "@/hooks/useAuth";
 
 const fields = [
   { name: "name", label: "Name", placeholder: "Enter name", icon: <FiUser /> },
@@ -39,8 +40,10 @@ const fields = [
 const rolesOptions = ["Admin", "Student"];
 const statusOptions = ["Active", "Inactive", "Suspended"];
 
-const UpdateUserModal = ({ isOpen, onClose, user }) => {
+const UpdateUserModal = ({ isOpen, onClose, users }) => {
   const updateUser = useUserStore((state) => state.updateUser);
+  const setUserId = useUserStore((state) => state.setUserId);
+  const { user } = useAuth();
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -56,15 +59,15 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
   });
 
   useEffect(() => {
-    if (user) {
+    if (users) {
       setForm({
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        status: user.status,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        status: users.status,
       });
     }
-  }, [user]);
+  }, [users]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -86,12 +89,13 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
   };
 
   const handleUpdate = async () => {
+    setUserId(user.id);
     setIsSubmitting(true);
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
 
-      const result = await updateUser(user.id, form); // Direct call to Zustand store
+      const result = await updateUser(users.id, form); // Direct call to Zustand store
 
       if (result.message.includes("All")) {
         setErrors({
@@ -121,10 +125,10 @@ const UpdateUserModal = ({ isOpen, onClose, user }) => {
     });
 
     setForm({
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      status: user.status,
+      name: users.name,
+      email: users.email,
+      role: users.role,
+      status: users.status,
     });
 
     onClose(); // actually close the modal

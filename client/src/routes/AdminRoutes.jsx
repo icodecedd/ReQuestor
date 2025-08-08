@@ -4,7 +4,7 @@ import Dashboard from "@/pages/admin/Dashboard/DashboardPage";
 import ManageUsers from "@/pages/admin/ManageUsers/ManageUsersPage";
 import Requests from "@/pages/admin/Requests/RequestsPage";
 import Equipment from "@/pages/admin/Equipment/EquipmentsPage";
-import Activity from "@/pages/admin/ActivityLogsPage";
+import Activity from "@/pages/admin/Acitvity/ActivityLogsPage";
 import Settings from "@/pages/admin/Settings/AdminSettingsPage";
 
 const AdminRoutes = () => {

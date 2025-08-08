@@ -18,17 +18,21 @@ import { FiAlertTriangle } from "react-icons/fi";
 import { MdOutlineLockReset } from "react-icons/md";
 import useUserStore from "@/store/usersStore";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
-const ResetPasswordModal = ({ isOpen, onClose, user }) => {
+const ResetPasswordModal = ({ isOpen, onClose, users }) => {
   const resetPassword = useUserStore((state) => state.resetPassword);
+  const setUserId = useUserStore((state) => state.setUserId);
+  const { user } = useAuth();
   const toast = useToast();
   const [isSubmitting, setSubmitting] = useState(false);
   const handleResetPassword = async () => {
+    setUserId(user.id);
     setSubmitting(true);
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
-      const result = await resetPassword(user.id, user.email);
+      const result = await resetPassword(users.id, users.email);
 
       toast({
         title: result.message,
@@ -86,7 +90,7 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
                 Reset Password
               </Text>
               <Text color="gray.700" fontWeight="normal" fontSize="14px">
-                Reset password for <strong>{user?.email}</strong>
+                Reset password for <strong>{users?.email}</strong>
               </Text>
             </Box>
           </Flex>
@@ -118,7 +122,7 @@ const ResetPasswordModal = ({ isOpen, onClose, user }) => {
             </HStack>
             <Text color="#92400e" pl={7} fontSize="14px">
               Resetting this password will immediately revoke current access for{" "}
-              <strong>"{user?.email}"</strong>. A temporary password will be
+              <strong>"{users?.email}"</strong>. A temporary password will be
               emailed, and the user will be required to set a new password upon
               next login.
             </Text>

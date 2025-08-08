@@ -63,3 +63,18 @@ export const getUserColor = (status) => {
       return "gray";
   }
 };
+
+export const getActivityColor = (category) => {
+  switch (category) {
+    case "USERS":
+      return "blue";
+    case "REQUESTS":
+      return "orange";
+    case "EQUIPMENT":
+      return "green";
+    case "SYSTEM":
+      return "red";
+    default:
+      return "gray";
+  }
+};
