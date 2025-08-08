@@ -2,12 +2,16 @@ import StatCard from "@/components/cards/StatCard";
 import useEquipmentStore from "@/store/equipmentStore";
 import { SimpleGrid } from "@chakra-ui/react";
 import { useEffect } from "react";
-import { FiBox, FiCheckCircle, FiMonitor, FiPieChart } from "react-icons/fi";
+import { FiBox, FiCheckCircle, FiXCircle, FiPieChart } from "react-icons/fi";
 
 const EquipmentStats = () => {
   const { stats, loading, fetchEquipment } = useEquipmentStore();
-  const { totalEquipment, totalAvailable, totalInUse, utilizationPercentage } =
-    stats();
+  const {
+    totalEquipment,
+    totalAvailable,
+    totalUnavailable,
+    utilizationPercentage,
+  } = stats();
 
   const renderCard = (label, value, icon, loading, text) => (
     <StatCard
@@ -44,21 +48,21 @@ const EquipmentStats = () => {
         totalAvailable,
         FiCheckCircle,
         loading,
-        "Number of equipment currently available"
+        "Total number of equipment available"
       )}
       {renderCard(
-        "Total In Use",
-        totalInUse,
-        FiMonitor,
+        "Total Unavailable",
+        totalUnavailable,
+        FiXCircle,
         loading,
-        "Number of equipment currently in use"
+        "Total number of equipment unavailable"
       )}
       {renderCard(
         "Equipment Usage %",
         utilizationPercentage + "%",
         FiPieChart,
         loading,
-        "Percentage of equipment currently in use"
+        "Percentage of equipment unavailable"
       )}
     </SimpleGrid>
   );
