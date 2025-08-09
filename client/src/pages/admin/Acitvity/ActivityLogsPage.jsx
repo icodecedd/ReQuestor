@@ -9,7 +9,6 @@ const ActivityLogsPage = () => {
       <Navbar pageName={"Activity Logs"} />
       <ActivityBanner />
       <ActivityTable />
-
     </>
   );
 };

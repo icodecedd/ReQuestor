@@ -14,7 +14,8 @@ import { useRecentActivitiesStore } from "@/store/recentStore";
 import { useEffect } from "react";
 
 const ActivityLogs = () => {
-  const { recentActivities, loading, fetchRecentActivities } = useRecentActivitiesStore();
+  const { recentActivities, loading, fetchRecentActivities } =
+    useRecentActivitiesStore();
 
   useEffect(() => {
     fetchRecentActivities();

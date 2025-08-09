@@ -1,20 +1,20 @@
-import { Route, Routes } from 'react-router-dom';
-import AdminRoutes from './routes/AdminRoutes';
-import StudentRoutes from './routes/StudentRoutes';
-import AuthRoutes from './routes/AuthRoutes';
-import '@/assets/global.css';
-import { useAuth } from './hooks/useAuth';
-import VerificationSuccessPage from './pages/Authentication/VerificationSuccessPage';
-import LoginPage from './pages/Authentication/LoginPage';
-import SignupPage from './pages/Authentication/SignupPage';
-import PublicRoute from './components/routes/PublicRoute';
-import PrivateRoute from './components/routes/PrivateRoute';
-import { useAxiosInterceptor } from './hooks/useAxiosInterceptor';
-import ResetPasswordPage from './pages/Authentication/ResetPasswordPage';
-import VerificationPage from './pages/Authentication/VerificationPage';
-import ForgotPasswordPage from './pages/Authentication/ForgotPasswordPage';
-import NotFoundPage from './pages/Authentication/NotFoundPage';
-import { ToastContainer, Bounce } from 'react-toastify';
+import { Route, Routes } from "react-router-dom";
+import AdminRoutes from "./routes/AdminRoutes";
+import StudentRoutes from "./routes/StudentRoutes";
+import AuthRoutes from "./routes/AuthRoutes";
+import "@/assets/global.css";
+import { useAuth } from "./hooks/useAuth";
+import VerificationSuccessPage from "./pages/Authentication/VerificationSuccessPage";
+import LoginPage from "./pages/Authentication/LoginPage";
+import SignupPage from "./pages/Authentication/SignupPage";
+import PublicRoute from "./components/routes/PublicRoute";
+import PrivateRoute from "./components/routes/PrivateRoute";
+import { useAxiosInterceptor } from "./hooks/useAxiosInterceptor";
+import ResetPasswordPage from "./pages/Authentication/ResetPasswordPage";
+import VerificationPage from "./pages/Authentication/VerificationPage";
+import ForgotPasswordPage from "./pages/Authentication/ForgotPasswordPage";
+import NotFoundPage from "./pages/Authentication/NotFoundPage";
+import { ToastContainer, Bounce } from "react-toastify";
 
 function App() {
   const { user, loading } = useAuth();
@@ -94,7 +94,7 @@ function App() {
         <Route
           path="/admin/*"
           element={
-            <PrivateRoute allowedRoles={['Admin']}>
+            <PrivateRoute allowedRoles={["Admin"]}>
               <AdminRoutes />
             </PrivateRoute>
           }
@@ -103,7 +103,7 @@ function App() {
         <Route
           path="/student/*"
           element={
-            <PrivateRoute allowedRoles={['Student']}>
+            <PrivateRoute allowedRoles={["Student"]}>
               <StudentRoutes />
             </PrivateRoute>
           }

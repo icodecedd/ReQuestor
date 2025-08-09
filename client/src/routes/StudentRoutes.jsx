@@ -18,7 +18,14 @@ const StudentRoutes = () => {
       </Text>
       {/* Placeholder for future student routes */}
       {/* You can add more components or routes here as needed */}
-      <Button variant="primary" bg="maroon" color="white" onClick={() => logout()}>Logout</Button>
+      <Button
+        variant="primary"
+        bg="maroon"
+        color="white"
+        onClick={() => logout()}
+      >
+        Logout
+      </Button>
     </div>
   );
 };
