@@ -23,7 +23,7 @@ export const statusMeta = {
     icon: <FiPlusCircle color="white" />,
     bg: "blue.500",
   },
-  returned: {
+  completed: {
     icon: <FiCornerDownLeft color="white" />,
     bg: "teal.500",
   },

@@ -1,3 +1,4 @@
+import { useAuth } from "@/hooks/useAuth";
 import { useRequestsStore } from "@/store/requestsStore";
 import {
   Box,
@@ -23,6 +24,8 @@ const MarkRequestModal = ({ isOpen, onClose, request }) => {
   const updateRequestStatus = useRequestsStore(
     (state) => state.updateRequestStatus
   );
+    const setUserId = useRequestsStore((state) => state.setUserId);
+    const { user } = useAuth();
   const toast = useToast();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,6 +41,7 @@ const MarkRequestModal = ({ isOpen, onClose, request }) => {
   };
 
   const handleMarkComplete = async () => {
+    setUserId(user.id);
     setIsSubmitting(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));

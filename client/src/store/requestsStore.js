@@ -1,12 +1,17 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toTitleCase } from "@/utils/toTitleCase";
-import { data } from "react-router-dom";
+import {
+  useRecentRequestsStore,
+  useRecentActivitiesStore,
+} from "./recentStore";
 
 export const useRequestsStore = create((set, get) => ({
   requests: [],
   loading: false,
   error: null,
+  userId: null,
+  setUserId: (id) => set({ userId: id }),
 
   fetchRequests: async () => {
     set({ loading: true, error: null });
@@ -14,7 +19,6 @@ export const useRequestsStore = create((set, get) => ({
     try {
       const res = await axios.get("/api/requests");
       set({ requests: res.data.data, loading: false });
-      console.log(res.data.data);
     } catch (error) {
       set({ error: error.message, loading: false });
     }
@@ -57,6 +61,16 @@ export const useRequestsStore = create((set, get) => ({
       };
     }
 
+    const timeFromHours = parseInt(time_from.split(":")[0]);
+    const timeToHours = parseInt(time_to.split(":")[0]);
+    if (timeToHours < timeFromHours) {
+      return {
+        success: false,
+        message: "Invalid time range. Time range cannot span across two days.",
+        target: "time",
+      };
+    }
+
     // Apply the requirement for request of at least 3 days in advance
     const dateNow = new Date();
     const dateUse = new Date(date_use);
@@ -70,8 +84,8 @@ export const useRequestsStore = create((set, get) => ({
       return {
         success: false,
         message:
-          "You must request equipment at least 3 days before the intended use.",
-        target: "date_use",
+          "Invalid date. Date must be at least 3 days in advance.",
+        target: "date",
       };
     }
 
@@ -91,7 +105,7 @@ export const useRequestsStore = create((set, get) => ({
       return {
         success: res.data.success,
         message: res.data.message,
-        available: res.data.available,
+        data: res.data.data,
       };
     } catch (error) {
       return {
@@ -99,8 +113,6 @@ export const useRequestsStore = create((set, get) => ({
         message:
           error.response?.data?.message ||
           "Failed to check availability. Please try again.",
-        available: error.response?.data?.available || [],
-        unavailable: error.response?.data?.unavailable || [],
       };
     }
   },
@@ -144,12 +156,15 @@ export const useRequestsStore = create((set, get) => ({
         time_from,
         time_to,
         purpose,
+        user_id: get().userId,
       };
 
       const res = await axios.post("/api/requests", requestPayload);
       set((state) => ({
         requests: [res.data.data, ...state.requests],
       }));
+      useRecentRequestsStore.getState().addRecentRequest(res.data.data);
+      useRecentActivitiesStore.getState().addActivityLog(res.data.activity);
       return {
         success: true,
         message: "New request added successfully.",
@@ -176,7 +191,9 @@ export const useRequestsStore = create((set, get) => ({
 
   cancelRequest: async (id) => {
     try {
-      const res = await axios.patch(`/api/requests/${id}/cancel`);
+      const res = await axios.patch(`/api/requests/${id}/cancel`, {
+        user_id: get().userId,
+      });
 
       set((state) => ({
         requests: state.requests.map((req) =>
@@ -212,7 +229,10 @@ export const useRequestsStore = create((set, get) => ({
 
   updateRequestStatus: async (id, status) => {
     try {
-      const res = await axios.patch(`/api/requests/${id}/set-status`, status);
+      const res = await axios.patch(`/api/requests/${id}/set-status`, {
+        status,
+        user_id: get().userId,
+      });
 
       set((state) => ({
         requests: state.requests.map((req) =>

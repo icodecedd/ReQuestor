@@ -17,13 +17,17 @@ import {
 import { FiAlertTriangle, FiTrash } from "react-icons/fi";
 import useEquipmentStore from "@/store/equipmentStore";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
   const deleteEquipment = useEquipmentStore((state) => state.deleteEquipment);
+  const setUserId = useEquipmentStore((state) => state.setUserId);
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
 
   const handleDelete = async () => {
+    setUserId(user.id);
     setIsSubmitting(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));

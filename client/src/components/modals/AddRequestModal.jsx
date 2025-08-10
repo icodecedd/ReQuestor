@@ -2,9 +2,6 @@ import { useRequestsStore } from "@/store/requestsStore";
 import {
   Box,
   Button,
-  Checkbox,
-  CheckboxGroup,
-  Divider,
   Flex,
   FormControl,
   FormLabel,
@@ -21,7 +18,6 @@ import {
   SimpleGrid,
   Text,
   Textarea,
-  useToast,
   Step,
   StepDescription,
   StepIcon,
@@ -34,30 +30,50 @@ import {
   useSteps,
   Grid,
   GridItem,
-  useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsProjector } from "react-icons/bs";
 import { FaChalkboardTeacher } from "react-icons/fa";
-import { FiFilePlus } from "react-icons/fi";
+import {
+  FiBookOpen,
+  FiCalendar,
+  FiCheck,
+  FiClock,
+  FiCpu,
+  FiFilePlus,
+  FiTarget,
+  FiUser,
+  FiUserCheck,
+} from "react-icons/fi";
 import { PiProjectorScreenChart } from "react-icons/pi";
-import CheckAvailabilityModal from "./CheckAvailabilityModal";
+import { useAuth } from "@/hooks/useAuth";
+import { showToast } from "@/utils/toast";
+import { formatTime } from "@/utils/formatTime";
+
+const MAROON = "#800000";
+const MAROON_HOVER = "#A52A2A";
+const MAROON_LIGHT_ACCENT = "#D46A6A";
+const DARK_GRAY = "#616161";
 
 const requestFields = [
   {
     name: "name",
     label: "Requestor Name",
     placeholder: "Enter requestor name",
+    errorMessage: "Please enter a requestor name",
   },
   {
     name: "course_section",
     label: "Course & Section",
     placeholder: "Enter course and section",
+    errorMessage: "Please enter a course and section",
   },
   {
     name: "faculty_in_charge",
     label: "Faculty In-Charge",
     placeholder: "Enter faculty in-charge",
+    errorMessage: "Please enter a faculty in-charge",
   },
 ];
 
@@ -67,12 +83,14 @@ const scheduleFields = [
     label: "Time From",
     placeholder: "Select start time",
     type: "time",
+    errorMessage: "Please select a start time",
   },
   {
     name: "time_to",
     label: "Time To",
     placeholder: "Select end time",
     type: "time",
+    errorMessage: "Please select an end time",
   },
 ];
 
@@ -80,38 +98,28 @@ const equipmentFields = [
   {
     name: "projector",
     label: "Projector",
-    icon: <BsProjector color="white" />,
+    icon: <BsProjector size={22} />,
   },
   {
     name: "white_screen",
     label: "White Screen",
-    icon: <PiProjectorScreenChart color="white" />,
+    icon: <PiProjectorScreenChart size={22} />,
   },
-  {
-    name: "avr",
-    label: "AVR",
-    icon: <FaChalkboardTeacher color="white" />,
-  },
+  { name: "avr", label: "AVR", icon: <FaChalkboardTeacher size={22} /> },
 ];
 
-const AddRequestModal = ({ isOpen, onClose }) => {
+const AddRequestModal = ({
+  isOpen,
+  onClose,
+  dateUse = "",
+  timeFrom = "",
+  timeTo = "",
+}) => {
   const addRequest = useRequestsStore((state) => state.addRequest);
-  const checkAvailability = useRequestsStore(
-    (state) => state.checkAvailability
-  );
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState({
-    name: false,
-    course_section: false,
-    faculty_in_charge: false,
-    equipment_list: false,
-    date_use: false,
-    time_from: false,
-    time_to: false,
-    purpose: false,
-  });
-  const toast = useToast();
+  const setUserId = useRequestsStore((state) => state.setUserId);
+  const { user } = useAuth();
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     name: "",
     course_section: "",
@@ -123,14 +131,15 @@ const AddRequestModal = ({ isOpen, onClose }) => {
     purpose: "",
   });
 
-  const [scheduleDetails, setScheduleDetails] = useState({
-    date_use: form.date_use || "",
-    time_from: form.time_from || "",
-    time_to: form.time_to || "",
-    success: false,
-    message: "",
-    available: null,
-    unavailable: null,
+  const [errors, setErrors] = useState({
+    name: false,
+    course_section: false,
+    faculty_in_charge: false,
+    equipment_list: false,
+    date_use: false,
+    time_from: false,
+    time_to: false,
+    purpose: false,
   });
 
   const steps = [
@@ -144,118 +153,83 @@ const AddRequestModal = ({ isOpen, onClose }) => {
     count: steps.length,
   });
 
+  const validateDateDetails = (num) => {
+    if (
+      !form.date_use ||
+      !form.time_from ||
+      !form.time_to ||
+      !form.equipment_list
+    ) {
+      setErrors((prev) => ({
+        ...prev,
+        date_use: !form.date_use,
+        time_from: !form.time_from,
+        time_to: !form.time_to,
+        equipment_list: !form.equipment_list,
+      }));
+      showToast("Please fill in all required fields", "error");
+      return;
+    }
+
+    const timeFromHours = parseInt(form.time_from.split(":")[0]);
+    const timeToHours = parseInt(form.time_to.split(":")[0]);
+    if (timeToHours < timeFromHours) {
+      showToast(
+        "Invalid time range. Time range cannot span across two days.",
+        "error",
+        5000
+      );
+      return;
+    }
+
+    // Apply the requirement for request of at least 3 days in advance
+    const dateNow = new Date();
+    const dateUse = new Date(form.date_use);
+
+    dateNow.setHours(0, 0, 0, 0);
+    dateUse.setHours(0, 0, 0, 0);
+
+    const dayDiff = (dateUse - dateNow) / (1000 * 60 * 60 * 24);
+
+    if (dayDiff < 3) {
+      showToast(
+        "Invalid date. Date must be at least 3 days in advance.",
+        "error",
+        5000
+      );
+      return;
+    }
+
+    if (
+      (!form.name || !form.course_section || !form.faculty_in_charge) &&
+      num === 2
+    ) {
+      setErrors((prev) => ({
+        ...prev,
+        name: !form.name,
+        course_section: !form.course_section,
+        faculty_in_charge: !form.faculty_in_charge,
+      }));
+      showToast("Please fill in all required fields", "error");
+      return;
+    }
+
+    return setActiveStep(num);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-
-    // Reset errors for the field being changed
-    if (value.trim()) {
-      setErrors((prev) => ({ ...prev, [name]: false }));
-    }
+    if (value.trim()) setErrors((prev) => ({ ...prev, [name]: false }));
   };
 
-  const nextStep = () => {
-    if (activeStep < steps.length - 1) {
-      setActiveStep(activeStep + 1);
-    }
-  };
-
-  const prevStep = () => {
-    if (activeStep > 0) {
-      setActiveStep(activeStep - 1);
-    }
-  };
-
-  const {
-    isOpen: isCheckAvailabilityOpen,
-    onOpen: openCheckAvailability,
-    onClose: closeCheckAvailability,
-  } = useDisclosure();
-
-  const showToast = (message, status) => {
-    toast({
-      title: message,
-      status: status,
-      duration: 2000,
-      position: "top-right",
-      variant: "subtle",
-    });
-  };
-
-  const handleCheckAvailability = async () => {
-    setIsSubmitting(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
-
-      const dateDetails = {
-        equipment_list: form.equipment_list,
-        date_use: form.date_use,
-        time_from: form.time_from,
-        time_to: form.time_to,
-      };
-
-      const result = await checkAvailability(dateDetails);
-      if (result.target === "all") {
-        setErrors({
-          date_use: !form.date_use.trim(),
-          time_from: !form.time_from.trim(),
-          time_to: !form.time_to.trim(),
-        });
-        showToast(result.message, "error");
-        return;
-      } else if (result.target === "date_use") {
-        setErrors({
-          date_use: !form.date_use.trim(),
-        });
-        showToast(result.message, "error");
-        return;
-      }
-      setScheduleDetails({
-        success: result.success,
-        message: result.message,
-        available: result.available,
-        unavailable: result.unavailable,
-        date_use: form.date_use,
-        time_from: form.time_from,
-        time_to: form.time_to,
-      });
-
-      openCheckAvailability();
-    } catch (error) {
-      showToast(error.response.data.message, "error");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const result = await addRequest(form);
-
-      showToast(result.message, result.success ? "success" : "error");
-
-      if (result.success) {
-        onClose();
-        setForm({
-          name: "",
-          course_section: "",
-          faculty_in_charge: "",
-          equipment_list: [],
-          date_use: "",
-          time_from: "",
-          time_to: "",
-          purpose: "",
-        });
-        setActiveStep(0);
-      }
-    } catch (error) {
-      showToast(error.message, "error");
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleEquipmentToggle = (field) => () => {
+    setForm((prev) => ({
+      ...prev,
+      equipment_list: prev.equipment_list.includes(field.label)
+        ? prev.equipment_list.filter((item) => item !== field.label)
+        : [...prev.equipment_list, field.label],
+    }));
   };
 
   const handleClose = () => {
@@ -269,19 +243,56 @@ const AddRequestModal = ({ isOpen, onClose }) => {
       time_to: "",
       purpose: "",
     });
+    setActiveStep(0);
+    onClose();
+  };
 
-    setErrors({
-      name: false,
-      course_section: false,
-      faculty_in_charge: false,
-      equipment_list: false,
-      date_use: false,
-      time_from: false,
-      time_to: false,
-      purpose: false,
-    });
+  useEffect(() => {
+    setForm((prev) => ({
+      ...prev,
+      date_use: dateUse || "",
+      time_from: timeFrom || "",
+      time_to: timeTo || "",
+    }));
+  }, [dateUse, timeFrom, timeTo]);
 
-    onClose(); // actually close the modal
+  const handleSubmit = async () => {
+    setUserId(user.id);
+    setIsSubmitting(true);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const result = await addRequest(form);
+      showToast(result.message, result.success ? "success" : "error");
+
+      if (result.success) handleClose();
+    } catch (error) {
+      showToast(error.message, "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const renderEquipmentBox = (index, equipment, icon) => {
+    return (
+      <Flex gap={3} key={index} mr={3} alignItems={"center"}>
+        <Box
+          bg="white"
+          borderRadius="md"
+          border="1px solid #e2e8f0"
+          p={1}
+          px={5}
+          transition="all 0.3s ease"
+        >
+          <Flex gap={1} alignItems={"center"}>
+            {icon}
+            <Text fontSize="sm" color={DARK_GRAY}>
+              {equipment}
+            </Text>
+          </Flex>
+        </Box>
+      </Flex>
+    );
   };
 
   return (
@@ -291,46 +302,38 @@ const AddRequestModal = ({ isOpen, onClose }) => {
       size="4xl"
       motionPreset="slideInBottom"
     >
-      <ModalOverlay />
-      <ModalContent borderRadius="xl" overflow="hidden">
-        <ModalHeader>
-          <Flex color="gray.900" gap={3} align="center" mb={3}>
-            <Box
-              bg="white"
-              color="#f0f0f0ff"
-              borderRadius="md"
-              boxShadow="0 2px 8px rgba(0,0,0,0.12)"
-              border="1px solid #e2e8f0"
-              p={2}
-              transition="all 0.3s ease"
-              _hover={{
-                transform: "scale(1.02)",
-                boxShadow: "lg",
-              }}
-            >
-              <FiFilePlus color="#800000" />
+      <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
+      <ModalContent borderRadius="xl" overflow="hidden" boxShadow="xl">
+        {/* HEADER */}
+        <ModalHeader
+          bgGradient="linear(to-br, #800000, #A52A2A)"
+          color="white"
+          py={5}
+          px={6}
+        >
+          <Flex align="center" gap={3}>
+            <Box bg="whiteAlpha.200" p={3} borderRadius="full">
+              <FiFilePlus size={24} />
             </Box>
             <Box>
-              <Text fontSize="lg" mt={0.5}>
+              <Heading size="md" fontWeight="bold">
                 Add Equipment Request
-              </Text>
-              <Text color="gray.700" fontWeight="normal" fontSize="14px">
-                Submit a new request for processing.
+              </Heading>
+              <Text fontSize="sm" opacity={0.85}>
+                Submit a new request for processing
               </Text>
             </Box>
           </Flex>
-          <Divider w="110%" ml={-6} />
         </ModalHeader>
         <ModalCloseButton
-          size="md"
-          _hover={{ bg: "#f7eaea" }}
-          borderRadius="lg"
-          onClick={() => {
-            onClose();
-            setActiveStep(0);
-          }}
+          color="white"
+          _hover={{ bg: "whiteAlpha.300" }}
+          borderRadius="full"
         />
-        <ModalBody>
+
+        {/* BODY */}
+        <ModalBody py={6} px={6} bg="white">
+          {/* STEPPER */}
           <Stepper index={activeStep} colorScheme="red" mb={6}>
             {steps.map((step, index) => (
               <Step key={index}>
@@ -341,7 +344,7 @@ const AddRequestModal = ({ isOpen, onClose }) => {
                     active={<StepNumber />}
                   />
                 </StepIndicator>
-                <Box flexShrink="0">
+                <Box>
                   <StepTitle>{step.title}</StepTitle>
                   <StepDescription>{step.description}</StepDescription>
                 </Box>
@@ -350,284 +353,358 @@ const AddRequestModal = ({ isOpen, onClose }) => {
             ))}
           </Stepper>
 
-          {/* Step 1: Schedule */}
+          {/* STEP 1 */}
           {activeStep === 0 && (
             <Box>
-              <Heading size="md">Schedule Details</Heading>
-              <Text mb={4} fontSize="sm" color="gray.600">
-                <b>Note: </b>Availability is subject to change. Your request
-                will be confirmed at submission.
+              <Heading size="md" mb={2}>
+                Schedule Details
+              </Heading>
+              <Text fontSize="sm" color="gray.600" mb={4}>
+                <b>Note:</b> Availability is subject to change. Your request
+                will be confirmed upon submission.
               </Text>
-              <Grid templateColumns="repeat(2, 1fr)" gap={3}>
+
+              <Grid templateColumns="repeat(2, 1fr)" gap={5}>
                 <GridItem colSpan={2}>
                   <FormControl isInvalid={errors.date_use}>
-                    <FormLabel fontSize={14}>Date of Use</FormLabel>
+                    <FormLabel fontWeight="semibold">Date of Use</FormLabel>
                     <Input
                       type="date"
                       name="date_use"
                       value={form.date_use}
                       onChange={handleChange}
-                      focusBorderColor="maroon"
-                      borderRadius="lg"
-                      borderColor="gray.400"
+                      borderColor={MAROON_HOVER}
+                      focusBorderColor={MAROON}
                     />
+                    {errors.date_use && (
+                      <Text color="#B03060" fontSize="xs">
+                        Please select a date of use
+                      </Text>
+                    )}
                   </FormControl>
                 </GridItem>
+
                 {scheduleFields.map((field) => (
-                  <GridItem key={field.name} colSpan={1}>
+                  <GridItem key={field.name}>
                     <FormControl isInvalid={errors[field.name]}>
-                      <FormLabel fontSize={14}>{field.label}</FormLabel>
+                      <FormLabel fontWeight="semibold">{field.label}</FormLabel>
                       <Input
                         type={field.type}
                         name={field.name}
                         value={form[field.name]}
                         onChange={handleChange}
-                        focusBorderColor="maroon"
-                        borderRadius="lg"
-                        borderColor="gray.400"
                         placeholder={field.placeholder}
+                        focusBorderColor={MAROON}
+                        borderColor={MAROON_HOVER}
                       />
                     </FormControl>
+                    {errors[field.name] && (
+                      <Text color="#B03060" fontSize="xs">
+                        {field.errorMessage}
+                      </Text>
+                    )}
                   </GridItem>
                 ))}
-                <GridItem colSpan={2}>
-                  <FormControl>
-                    <FormLabel fontSize={14}>
-                      Equipment (Check all that apply)
-                    </FormLabel>
-                    <Box>
-                      <CheckboxGroup
-                        onChange={(newValues) =>
-                          setForm((prevForm) => ({
-                            ...prevForm,
-                            equipment_list: newValues,
-                          }))
+              </Grid>
+
+              {/* Equipment */}
+              <Box mt={5}>
+                <FormLabel fontWeight="semibold">Select Equipment</FormLabel>
+                <SimpleGrid columns={[1, 3]} spacing={4}>
+                  {equipmentFields.map((field, index) => {
+                    const isChecked = form.equipment_list.includes(field.label);
+                    return (
+                      <Box
+                        w="100%"
+                        key={index}
+                        onClick={handleEquipmentToggle(field)}
+                        cursor="pointer"
+                        borderRadius="lg"
+                        p={4}
+                        border="2px solid"
+                        borderColor={isChecked ? MAROON : "gray.200"}
+                        bgGradient={
+                          isChecked
+                            ? "linear(to-br, #800000, #A52A2A)"
+                            : "white"
                         }
+                        color={isChecked ? "white" : MAROON}
+                        boxShadow={isChecked ? "md" : "sm"}
+                        transition="all 0.25s"
+                        _hover={{
+                          transform: "translateY(-3px)",
+                          boxShadow: "lg",
+                        }}
                       >
-                        <SimpleGrid columns={3} spacing="10px" gap={7}>
-                          {equipmentFields.map((field, index) => {
-                            const isChecked = form.equipment_list.includes(
-                              field.label
-                            );
+                        <Flex align="center" gap={3}>
+                          <Box>{field.icon}</Box>
+                          <Text fontWeight="medium">{field.label}</Text>
+                          {isChecked && (
+                            <Box ml="auto">
+                              <FiCheck />
+                            </Box>
+                          )}
+                        </Flex>
+                      </Box>
+                    );
+                  })}
+                </SimpleGrid>
+              </Box>
+            </Box>
+          )}
 
-                            const handleCheckboxChange = (e) => {
-                              const { checked } = e.target;
+          {/* STEP 2 */}
+          {activeStep === 1 && (
+            <Box>
+              <Heading size="md" mb={2}>
+                Request Information
+              </Heading>
+              <Text fontSize="sm" color="gray.600" mb={4}>
+                <b>Note:</b> Availability is subject to change. Your request
+                will be confirmed upon submission.
+              </Text>
 
-                              setForm((prev) => ({
-                                ...prev,
-                                equipment_list: checked
-                                  ? [...prev.equipment_list, field.label]
-                                  : prev.equipment_list.filter(
-                                      (item) => item !== field.label
-                                    ),
-                              }));
-                            };
-                            return (
-                              <Checkbox
-                                key={index}
-                                colorScheme="red"
-                                fontWeight="medium"
-                                name={field.name}
-                                isChecked={isChecked}
-                                onChange={handleCheckboxChange}
-                                sx={{
-                                  "& span.chakra-checkbox__control": {
-                                    borderRadius: "full",
-                                    borderColor: "#800000",
-                                    _checked: {
-                                      bg: "#800000",
-                                      borderColor: "#800000",
-                                    },
-                                  },
-                                }}
-                              >
-                                <Box
-                                  border="1px"
-                                  borderRadius="lg"
-                                  borderColor="#800000"
-                                  w={{
-                                    base: "150px",
-                                    md: "150px",
-                                    lg: "240px",
-                                  }}
-                                  p={1}
-                                  transition="all 0.3s ease"
-                                  _hover={{
-                                    transform: "scale(1.02)",
-                                    boxShadow: "lg",
-                                  }}
-                                  transform={isChecked ? "scale(1.02)" : "none"}
-                                  boxShadow={isChecked ? "lg" : "none"}
-                                >
-                                  <HStack>
-                                    <Box
-                                      borderRadius="md"
-                                      bgGradient="linear(to-br, maroon, #c75d5dff)"
-                                      boxShadow="0 2px 8px rgba(0,0,0,0.12)"
-                                      p={2}
-                                      mr={2}
-                                    >
-                                      {field.icon}
-                                    </Box>
-                                    <Heading fontSize="13px" fontWeight="bold">
-                                      {field.label}
-                                    </Heading>
-                                  </HStack>
-                                </Box>
-                              </Checkbox>
-                            );
-                          })}
-                        </SimpleGrid>
-                      </CheckboxGroup>
-                    </Box>
+              {/* Request Details */}
+              <Grid templateColumns="repeat(2, 1fr)" gap={5}>
+                <GridItem colSpan={2}>
+                  <FormControl isInvalid={errors.name}>
+                    <FormLabel fontWeight="semibold">
+                      {requestFields[0].label}
+                    </FormLabel>
+                    <Input
+                      name={requestFields[0].name}
+                      value={form.name}
+                      onChange={handleChange}
+                      placeholder={requestFields[0].placeholder}
+                      borderColor={MAROON_HOVER}
+                      focusBorderColor={MAROON}
+                    />
+                    {errors.name && (
+                      <Text color="#B03060" fontSize="xs">
+                        {requestFields[0].errorMessage}
+                      </Text>
+                    )}
                   </FormControl>
                 </GridItem>
-                {scheduleDetails && (
-                  <CheckAvailabilityModal
-                    isOpen={isCheckAvailabilityOpen}
-                    onClose={closeCheckAvailability}
-                    onClick={() => {
-                      closeCheckAvailability();
-                      nextStep();
-                    }}
-                    scheduleDetails={scheduleDetails}
-                  />
-                )}
+
+                {requestFields.slice(1).map((field) => (
+                  <GridItem key={field.name}>
+                    <FormControl isInvalid={errors[field.name]}>
+                      <FormLabel fontWeight="semibold">{field.label}</FormLabel>
+                      <Input
+                        name={field.name}
+                        value={form[field.name]}
+                        onChange={handleChange}
+                        placeholder={field.placeholder}
+                        focusBorderColor={MAROON}
+                        borderColor={MAROON_HOVER}
+                      />
+                    </FormControl>
+                    {errors[field.name] && (
+                      <Text color="#B03060" fontSize="xs">
+                        {field.errorMessage}
+                      </Text>
+                    )}
+                  </GridItem>
+                ))}
+
+                <GridItem colSpan={2}>
+                  <FormControl>
+                    <FormLabel fontWeight="semibold">
+                      Purpose (Optional)
+                    </FormLabel>
+                    <Textarea
+                      name="purpose"
+                      value={form.purpose}
+                      onChange={handleChange}
+                      placeholder="Enter purpose or additional details..."
+                      focusBorderColor={MAROON}
+                      borderColor={MAROON_HOVER}
+                    />
+                  </FormControl>
+                </GridItem>
               </Grid>
             </Box>
           )}
 
-          {/* Step 2: Request Details */}
-          {activeStep === 1 && (
-            <Box>
-              <Heading size="md">Request Information</Heading>
-              <Text mb={4} fontSize="sm" color="gray.600">
-                <b>Note: </b>Availability is subject to change. Your request
-                will be confirmed at submission.
-              </Text>
-              <SimpleGrid columns={2} spacing={4}>
-                {requestFields.map((field) => (
-                  <FormControl key={field.name}>
-                    <FormLabel fontSize={14}>{field.label}</FormLabel>
-                    <Input
-                      name={field.name}
-                      value={form[field.name]}
-                      onChange={handleChange}
-                      focusBorderColor="maroon"
-                      borderRadius="lg"
-                      borderColor="gray.400"
-                      placeholder={field.placeholder}
-                    />
-                  </FormControl>
-                ))}
-                <FormControl gridColumn="1 / -1">
-                  <FormLabel fontSize={14}>Purpose (Optional)</FormLabel>
-                  <Textarea
-                    name="purpose"
-                    value={form.purpose}
-                    onChange={handleChange}
-                    focusBorderColor="maroon"
-                    borderRadius="lg"
-                    borderColor="gray.400"
-                    placeholder="Enter purpose or any additional details..."
-                  />
-                </FormControl>
-              </SimpleGrid>
-            </Box>
-          )}
-
-          {/* Step 3: Review */}
+          {/* STEP 3 */}
           {activeStep === 2 && (
             <Box>
               <Heading size="md" mb={4}>
                 Review Your Request
               </Heading>
-              <Box bg="gray.50" p={4} borderRadius="md">
-                <Text fontWeight="bold" mb={2}>
-                  Schedule
-                </Text>
-                <Text>
-                  Date: {form.date_use} | Time: {form.time_from} -{" "}
-                  {form.time_to}
-                </Text>
 
-                <Text fontWeight="bold" mt={4} mb={2}>
-                  Request Details
-                </Text>
-                <Text>Requestor: {form.name}</Text>
-                <Text>Course & Section: {form.course_section}</Text>
-                <Text>Faculty In-Charge: {form.faculty_in_charge}</Text>
-                <Text>Purpose: {form.purpose}</Text>
+              {/* Schedule Card */}
+              <Box
+                bg="white"
+                border="1px solid"
+                borderColor="gray.100"
+                borderRadius="lg"
+                p={4}
+                mb={4}
+                boxShadow="sm"
+              >
+                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                  <GridItem>
+                    <Flex align="center" gap={2}>
+                      <FiCalendar color={MAROON} />
+                      <Text fontSize="sm" color={DARK_GRAY}>
+                        <strong>Date:</strong> {form.date_use}
+                      </Text>
+                    </Flex>
+                  </GridItem>
+                  <GridItem>
+                    <Flex align="center" gap={2}>
+                      <FiClock color={MAROON} />
+                      <Text fontSize="sm" color={DARK_GRAY}>
+                        <strong>Time:</strong> {formatTime(form.time_from)} -{" "}
+                        {formatTime(form.time_to)}
+                      </Text>
+                    </Flex>
+                  </GridItem>
+                </Grid>
+              </Box>
 
-                <Text fontWeight="bold" mt={4} mb={2}>
-                  Equipment
-                </Text>
-                {form.equipment_list.length > 0 ? (
-                  <Text>{form.equipment_list.join(", ")}</Text>
-                ) : (
-                  <Text>No equipment selected</Text>
-                )}
+              {/* Request Details Card */}
+              <Box
+                bg="white"
+                border="1px solid"
+                borderColor="gray.100"
+                borderRadius="lg"
+                p={4}
+                mb={4}
+                boxShadow="sm"
+              >
+                <VStack align="start" spacing={2}>
+                  <Flex align="center" gap={2}>
+                    <FiUser color={MAROON} />
+                    <Text fontSize="sm" color={DARK_GRAY}>
+                      <strong>Requestor:</strong> {form.name}
+                    </Text>
+                  </Flex>
+                  <Flex align="center" gap={2}>
+                    <FiBookOpen color={MAROON} />
+                    <Text fontSize="sm" color={DARK_GRAY}>
+                      <strong>Course & Section:</strong> {form.course_section}
+                    </Text>
+                  </Flex>
+                  <Flex align="center" gap={2}>
+                    <FiUserCheck color={MAROON} />
+                    <Text fontSize="sm" color={DARK_GRAY}>
+                      <strong>Faculty In-Charge:</strong>{" "}
+                      {form.faculty_in_charge}
+                    </Text>
+                  </Flex>
+                  <Flex align="center" gap={2}>
+                    <FiTarget color={MAROON} />
+                    <Text fontSize="sm" color={DARK_GRAY}>
+                      <strong>Purpose:</strong> {form.purpose || "N/A"}
+                    </Text>
+                  </Flex>
+                </VStack>
+              </Box>
+
+              {/* Equipment Card */}
+              <Box
+                bg="white"
+                border="1px solid"
+                borderColor="gray.100"
+                borderRadius="lg"
+                p={4}
+                boxShadow="sm"
+              >
+                <Flex align="center" gap={2} mb={2}>
+                  <FiCpu color={MAROON} />
+                  <Text fontSize="sm" color={DARK_GRAY} fontWeight="bold">
+                    Equipment
+                  </Text>
+                </Flex>
+                <Flex color={DARK_GRAY}>
+                  {form.equipment_list.length
+                    ? form.equipment_list.map((equipment, index) => {
+                        if (equipment === "Projector") {
+                          return renderEquipmentBox(
+                            index,
+                            equipment,
+                            <BsProjector color={MAROON} />
+                          );
+                        } else if (equipment === "White Screen") {
+                          return renderEquipmentBox(
+                            index,
+                            equipment,
+                            <PiProjectorScreenChart color={MAROON} />
+                          );
+                        } else {
+                          return renderEquipmentBox(
+                            index,
+                            equipment,
+                            <FaChalkboardTeacher color={MAROON} />
+                          );
+                        }
+                      })
+                    : "No equipment selected"}
+                </Flex>
               </Box>
             </Box>
           )}
         </ModalBody>
-        <ModalFooter borderTop="1px solid #e2e8f0" mt={4}>
+
+        {/* FOOTER */}
+        <ModalFooter borderTop="1px solid" borderColor="gray.200" gap={3}>
           {activeStep > 0 && (
             <Button
-              mr={3}
+              flex={1}
               variant="outline"
-              borderRadius="lg"
-              onClick={prevStep}
-              _hover={{ bg: "#f7eaea" }}
+              borderColor={MAROON_HOVER}
+              color={MAROON}
+              _hover={{ bg: MAROON_LIGHT_ACCENT, color: "white" }}
+              onClick={() => setActiveStep(activeStep - 1)}
             >
               Back
             </Button>
           )}
           {activeStep === 0 && (
-            <>
+            <Flex w="full" gap={3}>
               <Button
-                mr={3}
+                flex={1}
                 variant="outline"
-                borderRadius="lg"
+                borderColor={MAROON_HOVER}
+                color={MAROON}
+                _hover={{ bg: MAROON_LIGHT_ACCENT, color: "white" }}
                 onClick={handleClose}
-                _hover={{ bg: "#f7eaea" }}
               >
-                Close
+                Cancel
               </Button>
               <Button
-                bg="#800000"
+                flex={1}
+                bg={MAROON}
                 color="white"
-                borderRadius="lg"
-                _hover={{ bg: "#a12828" }}
-                isLoading={isSubmitting}
-                loadingText="Checking..."
-                onClick={() => {
-                  handleCheckAvailability();
-                }}
+                _hover={{ bg: MAROON_HOVER }}
+                onClick={() => validateDateDetails(1)}
               >
-                Check Availability
+                Proceed to Details
               </Button>
-            </>
+            </Flex>
           )}
           {activeStep === 1 && (
             <Button
-              bg="#800000"
+              flex={1}
+              bg={MAROON}
               color="white"
-              borderRadius="lg"
-              _hover={{ bg: "#a12828" }}
-              onClick={nextStep}
+              _hover={{ bg: MAROON_HOVER }}
+              onClick={() => validateDateDetails(2)}
             >
               Proceed to Review
             </Button>
           )}
           {activeStep === 2 && (
             <Button
-              bg="#800000"
+              flex={1}
+              bg={MAROON}
               color="white"
               isLoading={isSubmitting}
               loadingText="Submitting..."
-              borderRadius="lg"
-              _hover={{ bg: "#a12828" }}
+              _hover={{ bg: MAROON_HOVER }}
               onClick={handleSubmit}
             >
               Submit Request

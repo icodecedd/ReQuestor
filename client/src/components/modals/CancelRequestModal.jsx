@@ -18,9 +18,12 @@ import { FiAlertTriangle } from "react-icons/fi";
 import { useRequestsStore } from "@/store/requestsStore";
 import { TbCancel } from "react-icons/tb";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 const CancelRequestModal = ({ isOpen, onClose, request }) => {
   const cancelRequest = useRequestsStore((state) => state.cancelRequest);
+  const setUserId = useRequestsStore((state) => state.setUserId);
+  const { user } = useAuth();
   const toast = useToast();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,6 +39,7 @@ const CancelRequestModal = ({ isOpen, onClose, request }) => {
   };
 
   const handleCancel = async () => {
+    setUserId(user.id);
     setIsSubmitting(true);
 
     try {

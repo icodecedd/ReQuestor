@@ -1,11 +1,14 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toTitleCase } from "@/utils/toTitleCase";
+import { useRecentActivitiesStore } from "./recentStore";
 
 const useEquipmentStore = create((set, get) => ({
   equipment: [],
   loading: false,
   error: null,
+  userId: null,
+  setUserId: (userId) => set({ userId }),
 
   fetchEquipment: async () => {
     set({ loading: true, error: null });
@@ -64,12 +67,14 @@ const useEquipmentStore = create((set, get) => ({
         serial_number,
         condition,
         description,
+        user_id: get().userId,
       };
 
       const res = await axios.post("/api/equipment", payload);
       set((state) => ({
         equipment: [res.data.data, ...state.equipment], // prepend new equipment
       }));
+      useRecentActivitiesStore.getState().addActivityLog(res.data.activity);
       return {
         success: true,
         message: "New equipment added successfully.",
@@ -120,6 +125,7 @@ const useEquipmentStore = create((set, get) => ({
         serial_number,
         condition,
         description,
+        user_id: get().userId,
       };
 
       const res = await axios.put(`/api/equipment/${id}`, updatedPayload);
@@ -155,7 +161,9 @@ const useEquipmentStore = create((set, get) => ({
 
   deleteEquipment: async (id) => {
     try {
-      await axios.delete(`/api/equipment/${id}`);
+      await axios.delete(`/api/equipment/${id}`, {
+        data: { user_id: get().userId },
+      });
 
       set((state) => ({
         equipment: state.equipment.filter((eq) => eq.id !== id),
