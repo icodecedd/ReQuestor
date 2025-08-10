@@ -161,7 +161,9 @@ const useUserStore = create((set, get) => ({
 
   deleteUser: async (id) => {
     try {
-      await axios.delete(`/api/users/${id}`, { user_id: get().userId });
+      await axios.delete(`/api/users/${id}`, {
+        data: { user_id: get().userId },
+      });
 
       set((state) => ({
         users: state.users.filter((user) => user.id !== id),

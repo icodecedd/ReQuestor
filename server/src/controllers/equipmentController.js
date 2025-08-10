@@ -22,6 +22,7 @@ export const addEquipment = async (req, res) => {
     serial_number,
     condition,
     description,
+    user_id,
   } = req.body;
 
   if (!name || !type || !location || !condition) {
@@ -50,7 +51,25 @@ export const addEquipment = async (req, res) => {
 
     const createdEquipment = result.rows[0];
 
-    res.status(200).json({ sucess: true, data: createdEquipment });
+    const activityLog = await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, 'CREATED', $2, 'EQUIPMENT', NOW())
+       RETURNING
+       id,
+       user_id,
+       action,
+       target_id,
+       category,
+       timestamp
+       `,
+      [user_id, createdEquipment.id]
+    );
+
+    res.status(200).json({
+      sucess: true,
+      data: createdEquipment,
+      activity: activityLog.rows[0],
+    });
   } catch (error) {
     console.error("Error in createEquipment Function", error);
 
@@ -78,6 +97,7 @@ export const updateEquipment = async (req, res) => {
     serial_number,
     condition,
     description,
+    user_id,
   } = req.body;
 
   if (!id) {
@@ -151,6 +171,13 @@ export const updateEquipment = async (req, res) => {
         .json({ success: false, message: "Equipment not found." });
     }
 
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, 'UPDATED', $2, 'EQUIPMENT', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, id]
+    );
+
     return res.status(200).json({
       success: true,
       data: result.rows[0],
@@ -174,6 +201,7 @@ export const updateEquipment = async (req, res) => {
 
 export const deleteEquipment = async (req, res) => {
   const { id } = req.params;
+  const user_id = req.body.user_id;
 
   if (!id) {
     return res
@@ -198,6 +226,13 @@ export const deleteEquipment = async (req, res) => {
     }
 
     const deletedEquipment = rows[0];
+
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, 'DELETED', $2, 'EQUIPMENT', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, id]
+    );
 
     res.status(200).json({ success: true, message: deletedEquipment });
   } catch (error) {

@@ -1,3 +1,5 @@
+import AddEquipmentModal from "@/components/modals/AddEquipmentModal";
+import AddRequestModal from "@/components/modals/AddRequestModal";
 import {
   Box,
   Heading,
@@ -6,6 +8,7 @@ import {
   Text,
   Icon,
   useBreakpointValue,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { FiPlus, FiMonitor, FiUsers, FiClock, FiBox } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -14,20 +17,32 @@ const QuickActions = () => {
   const columns = useBreakpointValue({ base: 2, md: 3, lg: 5 });
   const navigate = useNavigate();
 
+  const {
+    isOpen: isAddRequestOpen,
+    onOpen: onAddRequestOpen,
+    onClose: onAddRequestClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isAddEquipmentOpen,
+    onOpen: onAddEquipmentOpen,
+    onClose: onAddEquipmentClose,
+  } = useDisclosure();
+
   const actions = [
     {
       label: "Create Request",
       icon: FiPlus,
       color: "#5a0000", // Dark maroon
       hoverBg: "#f7eaea",
-      onClick: () => navigate("/dashboard/requests/new"),
+      onClick: () => onAddRequestOpen(),
     },
     {
       label: "Add Equipment",
       icon: FiMonitor,
       color: "#800000", // Classic maroon
       hoverBg: "#f7eaea",
-      onClick: () => navigate("/dashboard/equipment/new"),
+      onClick: () => onAddEquipmentOpen(),
     },
     {
       label: "Manage Users",
@@ -100,6 +115,15 @@ const QuickActions = () => {
           </Box>
         ))}
       </SimpleGrid>
+
+      {/* Add Request Modal */}
+      <AddRequestModal isOpen={isAddRequestOpen} onClose={onAddRequestClose} />
+
+      {/* Add Equipment Modal */}
+      <AddEquipmentModal
+        isOpen={isAddEquipmentOpen}
+        onClose={onAddEquipmentClose}
+      />
     </Box>
   );
 };

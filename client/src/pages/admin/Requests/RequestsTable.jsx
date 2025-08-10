@@ -3,7 +3,9 @@ import { CategoryDropdown } from "@/components/dropdowns/CategoryDropdown";
 import { RequestsStatusDropdown } from "@/components/dropdowns/RequestsStatusDropdown";
 import AddRequestModal from "@/components/modals/AddRequestModal";
 import CancelRequestModal from "@/components/modals/CancelRequestModal";
+import CheckAvailabilityModal from "@/components/modals/CheckAvailabilityModal";
 import MarkRequestModal from "@/components/modals/MarkRequestModal";
+import ScheduleDetailsModal from "@/components/modals/ScheduleDetailsModal";
 import ViewRequestModal from "@/components/modals/ViewRequestModal";
 import { useRequestsStore } from "@/store/requestsStore";
 import { formatTime } from "@/utils/formatTime";
@@ -32,15 +34,13 @@ import {
   Button,
   Text,
   useDisclosure,
-  Tooltip,
   VStack,
-  HStack,
-  IconButton,
   Heading,
 } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
+import { MdOutlineEventAvailable } from "react-icons/md";
 
 const formatRequestsId = (id) => {
   return `REQ-${String(id).padStart(3, "0")}`;
@@ -75,6 +75,32 @@ const RequestsTable = () => {
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
   const [searchFilter, setSearchFilter] = useState("");
   const [selectedRequest, setSelectedRequest] = useState("");
+  const [isCheckAvailOpen, setCheckAvailOpen] = useState(false);
+  const [isScheduleOpen, setScheduleOpen] = useState(false);
+  const [isAddRequestOpen, setAddRequestOpen] = useState(false);
+
+  const [scheduleDetails, setScheduleDetails] = useState({
+    date_use: "",
+    time_from: "",
+    time_to: "",
+    success: false,
+    message: "",
+    data: null,
+  });
+
+  const handleCheckAvailability = (sched) => {
+    setScheduleDetails(sched);
+  };
+
+  const openSchedule = () => {
+    setCheckAvailOpen(false);
+    setScheduleOpen(true);
+  };
+
+  const openAddRequest = () => {
+    setScheduleOpen(false);
+    setAddRequestOpen(true);
+  };
 
   const filteredRequests = useMemo(() => {
     return requests.filter((req) => {
@@ -103,12 +129,6 @@ const RequestsTable = () => {
   useEffect(() => {
     fetchRequests();
   }, []);
-
-  const {
-    isOpen: isAddOpen,
-    onOpen: onAddOpen,
-    onClose: onAddClose,
-  } = useDisclosure();
 
   const {
     isOpen: isViewOpen,
@@ -176,10 +196,26 @@ const RequestsTable = () => {
           p={3}
           fontSize="95%"
           w="160px"
-          onClick={() => onAddOpen()}
+          onClick={() => setAddRequestOpen(true)}
         >
           <IoAdd size="25px" />
           Add Request
+        </Button>
+        <Button
+          variant="primary"
+          bg="#800000"
+          color="white"
+          borderRadius="lg"
+          _hover={{ bg: "#a12828" }}
+          transition="background-color 0.2s ease-in-out"
+          gap={1}
+          p={3}
+          fontSize="95%"
+          w="180px"
+          onClick={() => setCheckAvailOpen(true)}
+        >
+          <MdOutlineEventAvailable size="20px" />
+          Check Availability
         </Button>
       </Flex>
       <Box mt={2}>
@@ -382,7 +418,13 @@ const RequestsTable = () => {
           </TabPanels>
         </Tabs>
       </Box>
-      <AddRequestModal isOpen={isAddOpen} onClose={onAddClose} />
+      <AddRequestModal
+        isOpen={isAddRequestOpen}
+        onClose={() => setAddRequestOpen(false)}
+        dateUse={scheduleDetails.date_use ? scheduleDetails.date_use : ""}
+        timeFrom={scheduleDetails.time_from ? scheduleDetails.time_from : ""}
+        timeTo={scheduleDetails.time_to ? scheduleDetails.time_to : ""}
+      />
       <ViewRequestModal
         isOpen={isViewOpen}
         onClose={onViewClose}
@@ -397,6 +439,25 @@ const RequestsTable = () => {
         isOpen={isMarkCompleteOpen}
         onClose={onMarkCompleteClose}
         request={selectedRequest}
+      />
+      <CheckAvailabilityModal
+        isOpen={isCheckAvailOpen}
+        onClose={() => setCheckAvailOpen(false)}
+        setScheduleDetails={(sched) => handleCheckAvailability(sched)}
+        onOpenSchedule={() => openSchedule()}
+      />
+      <ScheduleDetailsModal
+        isOpen={isScheduleOpen}
+        onClose={() => {
+          setScheduleDetails({
+            date_use: "",
+            time_from: "",
+            time_to: "",
+          });
+          setScheduleOpen(false);
+        }}
+        scheduleDetails={scheduleDetails}
+        onOpenAddRequest={() => openAddRequest()}
       />
     </Box>
   );

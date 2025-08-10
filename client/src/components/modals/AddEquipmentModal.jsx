@@ -31,6 +31,7 @@ import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
 import { useState } from "react";
 import useEquipmentStore from "@/store/equipmentStore";
 import { getEqConditionColor, getEqStatusColor } from "@/utils/getColorScheme";
+import { useAuth } from "@/hooks/useAuth";
 
 const equipmentFields = [
   {
@@ -64,6 +65,8 @@ const conditionOptions = ["Excellent", "Good", "Fair", "Poor", "Broken"];
 
 const AddEquipmentModal = ({ isOpen, onClose }) => {
   const addEquipment = useEquipmentStore((state) => state.addEquipment);
+  const setUserId = useEquipmentStore((state) => state.setUserId);
+  const { user } = useAuth();
   const toast = useToast();
 
   const [form, setForm] = useState({
@@ -105,6 +108,7 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
   };
 
   const handleSubmit = async () => {
+    setUserId(user.id);
     setIsSubmitting(true);
 
     try {
