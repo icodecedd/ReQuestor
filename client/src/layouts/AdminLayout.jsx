@@ -6,7 +6,7 @@ import {
   FiMonitor,
   FiSettings,
   FiUsers,
-  FiActivity
+  FiActivity,
 } from "react-icons/fi";
 import { LuLayoutDashboard } from "react-icons/lu";
 

@@ -83,8 +83,7 @@ export const useRequestsStore = create((set, get) => ({
     if (dayDiff < 3) {
       return {
         success: false,
-        message:
-          "Invalid date. Date must be at least 3 days in advance.",
+        message: "Invalid date. Date must be at least 3 days in advance.",
         target: "date",
       };
     }
