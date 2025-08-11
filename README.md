@@ -20,7 +20,7 @@ ReQuest streamlines how academic institutions (e.g., PUP San Juan) manage equipm
 
 ## 🛠 **Tech Stack (Planned)**  
 - **Frontend:** React + Chakra UI + Vite
-- **Backend:** Node.js / Expressa
+- **Backend:** Node.js / Express
 - **Database:** Supabase (PostgreSQL)
 - **Auth:** JWT
 - **Repo & CI:** GitHub Actions
@@ -28,7 +28,7 @@ ReQuest streamlines how academic institutions (e.g., PUP San Juan) manage equipm
 ---
 
 ## 🚀 **Planned Features**  
-- [ ] **User Accounts** (Admin, Student)  
+- [x] **User Accounts** (Admin, Student)  
 - [ ] **Online Reservation Form** (no more paper)  
 - [ ] **Queue Management** (pending → approved → in use)  
 - [ ] **Admin Panel** (review & action)  
