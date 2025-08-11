@@ -2,9 +2,11 @@ import RequestActionButton from "@/components/buttons/RequestActionButton";
 import { CategoryDropdown } from "@/components/dropdowns/CategoryDropdown";
 import { RequestsStatusDropdown } from "@/components/dropdowns/RequestsStatusDropdown";
 import AddRequestModal from "@/components/modals/AddRequestModal";
+import ApproveRequestModal from "@/components/modals/ApproveRequestModal";
 import CancelRequestModal from "@/components/modals/CancelRequestModal";
 import CheckAvailabilityModal from "@/components/modals/CheckAvailabilityModal";
 import MarkRequestModal from "@/components/modals/MarkRequestModal";
+import RejectRequestModal from "@/components/modals/RejectRequestModal";
 import ScheduleDetailsModal from "@/components/modals/ScheduleDetailsModal";
 import ViewRequestModal from "@/components/modals/ViewRequestModal";
 import { useRequestsStore } from "@/store/requestsStore";
@@ -52,8 +54,12 @@ const tabConfigs = [
     filter: () => true,
   },
   {
-    title: "Approved",
-    filter: (req) => req.status === "Approved",
+    title: "Reserved",
+    filter: (req) => req.status === "Reserved",
+  },
+  {
+    title: "Pending",
+    filter: (req) => req.status === "Pending",
   },
   {
     title: "Rejected",
@@ -148,6 +154,18 @@ const RequestsTable = () => {
     onClose: onMarkCompleteClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isApproveOpen,
+    onOpen: onApproveOpen,
+    onClose: onApproveClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isRejectOpen,
+    onOpen: onRejectOpen,
+    onClose: onRejectClose,
+  } = useDisclosure();
+
   const handleViewDetails = (req) => {
     setSelectedRequest(req);
     onViewOpen();
@@ -161,6 +179,16 @@ const RequestsTable = () => {
   const handleMarkComplete = (req) => {
     setSelectedRequest(req);
     onMarkCompleteOpen();
+  };
+
+  const handleApprove = (req) => {
+    setSelectedRequest(req);
+    onApproveOpen();
+  };
+
+  const handleReject = (req) => {
+    setSelectedRequest(req);
+    onRejectOpen();
   };
 
   return (
@@ -186,6 +214,7 @@ const RequestsTable = () => {
 
         {/*Add Request Button*/}
         <Button
+          ml="auto"
           variant="primary"
           bg="#800000"
           color="white"
@@ -195,7 +224,7 @@ const RequestsTable = () => {
           gap={1}
           p={3}
           fontSize="95%"
-          w="160px"
+          w="150px"
           onClick={() => setAddRequestOpen(true)}
         >
           <IoAdd size="25px" />
@@ -387,6 +416,8 @@ const RequestsTable = () => {
                                   onViewDetails={() => handleViewDetails(req)}
                                   onCancel={() => handleCancel(req)}
                                   onMarkComplete={() => handleMarkComplete(req)}
+                                  onApprove={() => handleApprove(req)}
+                                  onReject={() => handleReject(req)}
                                 />
                               </Td>
                             </Tr>
@@ -428,6 +459,16 @@ const RequestsTable = () => {
       <ViewRequestModal
         isOpen={isViewOpen}
         onClose={onViewClose}
+        request={selectedRequest}
+      />
+      <ApproveRequestModal
+        isOpen={isApproveOpen}
+        onClose={onApproveClose}
+        request={selectedRequest}
+      />
+      <RejectRequestModal
+        isOpen={isRejectOpen}
+        onClose={onRejectClose}
         request={selectedRequest}
       />
       <CancelRequestModal

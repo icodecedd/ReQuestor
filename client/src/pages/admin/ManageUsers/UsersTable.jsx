@@ -119,11 +119,11 @@ const UsersTable = () => {
       <Flex justify="space-between" align="center" pb={0.5}>
         {/* Left: Header */}
         <HStack ml={3}>
-          <Heading size="md">All users ({users.length})</Heading>
+          <Heading size="md" w="100%">All users ({users.length})</Heading>
         </HStack>
 
         {/* Right: Search, Filter, Add User */}
-        <Flex align="center" gap={3} w="auto">
+        <Flex align="flex-end" justify="flex-end" gap={3} w="90%">
           <InputGroup w="400px">
             <InputLeftElement color="gray.500">
               <FiSearch />
@@ -144,6 +144,7 @@ const UsersTable = () => {
 
           {/*Add User Button*/}
           <Button
+            ml="auto"
             variant="primary"
             bg="#800000"
             color="white"

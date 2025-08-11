@@ -1,91 +1,172 @@
-import { IconButton, Tooltip, Flex } from "@chakra-ui/react";
-import { FiEye } from "react-icons/fi";
-import { HiCheckCircle } from "react-icons/hi";
-import { RiCloseCircleLine } from "react-icons/ri";
+import {
+  IconButton,
+  Flex,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Icon,
+  Text,
+} from "@chakra-ui/react";
+import { FaEye } from "react-icons/fa";
+import { FiEye, FiMoreHorizontal, FiXCircle } from "react-icons/fi";
+import { MdCheckCircleOutline } from "react-icons/md";
+import { TbCancel, TbChecklist } from "react-icons/tb";
+
+// Color constants
+const MAROON = "#800000";
+const MAROON_XLIGHT = "#f5e8e8";
+const SUCCESS_GREEN = "#38A169";
+const ERROR_RED = "#E53E3E";
+const RADIUS = "8px";
+const ICON_SIZE = "18px";
 
 const RequestActionButton = ({
   status,
   onMarkComplete,
   onViewDetails,
   onCancel,
+  onApprove,
+  onReject,
 }) => {
+  const menuBg = "white";
+  const menuBorder = "gray.200";
+  const hoverBg = MAROON_XLIGHT;
+
   const getAvailableActions = (status) => {
     const actions = [];
 
-    if (
-      [
-        "Pending",
-        "Reserved",
-        "Rejected",
-        "In Use",
-        "Completed",
-        "Cancelled",
-      ].includes(status)
-    ) {
+    // Always include view details as first action
+    actions.push({
+      key: "view",
+      icon: <Icon as={FiEye} color={MAROON} boxSize={ICON_SIZE} />,
+      label: "View Details",
+      onClick: onViewDetails,
+      color: "gray.700",
+    });
+
+    if (["Pending"].includes(status)) {
       actions.push({
-        key: "view",
-        icon: <FiEye />,
-        label: "View Details",
-        onClick: onViewDetails,
+        key: "approve",
+        icon: (
+          <Icon
+            as={MdCheckCircleOutline}
+            color={SUCCESS_GREEN}
+            boxSize={ICON_SIZE}
+          />
+        ),
+        label: "Approve Request",
+        onClick: onApprove,
+        color: SUCCESS_GREEN,
+      });
+      actions.push({
+        key: "reject",
+        icon: <Icon as={FiXCircle} color={ERROR_RED} fontSize={17} />,
+        label: "Reject Request",
+        onClick: onReject,
+        color: ERROR_RED,
       });
     }
 
     if (["In Use"].includes(status)) {
       actions.push({
         key: "complete",
-        icon: <HiCheckCircle color="#16a34a" />,
+        icon: (
+          <Icon as={TbChecklist} color={SUCCESS_GREEN} boxSize={ICON_SIZE} />
+        ),
         label: "Mark Complete",
         onClick: onMarkComplete,
+        color: SUCCESS_GREEN,
       });
     }
 
     if (["Pending", "Reserved"].includes(status)) {
       actions.push({
         key: "cancel",
-        icon: <RiCloseCircleLine color="#dc2626" />,
-        label: "Cancel",
+        icon: <Icon as={TbCancel} color={ERROR_RED} boxSize={ICON_SIZE} />,
+        label: "Cancel Request",
         onClick: onCancel,
+        color: ERROR_RED,
       });
     }
 
     return actions;
   };
 
+  const actions = getAvailableActions(status);
+
   return (
-    <Flex gap={2} w="full" justify="center">
-      {getAvailableActions(status).map(({ key, label, icon, onClick }) => (
-        <Tooltip
-          key={key}
-          label={label}
-          placement="bottom"
-          borderRadius="lg"
-          px={3}
-          py={2}
-          bg="#800000"
-          color="white"
-          fontSize="sm"
-          fontWeight="medium"
-          boxShadow="lg"
-          openDelay={200}
-        >
-          <IconButton
-            icon={icon}
-            aria-label={label}
-            onClick={onClick}
+    <Flex gap={2} justify="flex-start" pl={5}>
+      {/* Always visible view button */}
+      <IconButton
+        icon={<Icon as={FaEye} boxSize={4} />}
+        aria-label="View details"
+        onClick={onViewDetails}
+        size="sm"
+        variant="ghost"
+        borderRadius={RADIUS}
+        color={MAROON}
+        _hover={{
+          bg: MAROON_XLIGHT,
+          transform: "translateY(-1px)",
+        }}
+        _active={{
+          bg: MAROON_XLIGHT,
+        }}
+        transition="all 0.2s ease"
+      />
+
+      {/* Dropdown menu for other actions */}
+      {actions.length > 1 && (
+        <Menu autoSelect={false} placement="bottom-end">
+          <MenuButton
+            as={IconButton}
+            icon={<Icon as={FiMoreHorizontal} boxSize={5} />}
+            aria-label="More actions"
             size="sm"
-            rounded="lg"
-            variant="outline"
-            colorScheme={
-              key === "complete" ? "green" : key === "cancel" ? "red" : "gray"
-            }
+            variant="ghost"
+            borderRadius={RADIUS}
+            color={MAROON}
             _hover={{
-              boxShadow: "md",
-              transform: "translateY(-2px)",
+              bg: MAROON_XLIGHT,
+              transform: "translateY(-1px)",
             }}
-            transition="all 0.2s ease"
+            _active={{
+              bg: MAROON_XLIGHT,
+            }}
           />
-        </Tooltip>
-      ))}
+
+          <MenuList
+            minW="180px"
+            p={2}
+            bg={menuBg}
+            borderColor={menuBorder}
+            boxShadow="md"
+            borderRadius={RADIUS}
+          >
+            {actions.slice(1).map(({ key, icon, label, onClick, color }) => (
+              <MenuItem
+                key={key}
+                onClick={onClick}
+                icon={icon}
+                py={2}
+                px={3}
+                borderRadius={RADIUS}
+                _hover={{
+                  bg: hoverBg,
+                }}
+                _focus={{
+                  bg: hoverBg,
+                }}
+              >
+                <Text fontSize="sm" fontWeight="medium" color={color}>
+                  {label}
+                </Text>
+              </MenuItem>
+            ))}
+          </MenuList>
+        </Menu>
+      )}
     </Flex>
   );
 };

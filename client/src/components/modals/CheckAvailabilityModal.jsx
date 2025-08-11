@@ -159,7 +159,7 @@ const CheckAvailabilityModal = ({
       motionPreset="slideInBottom"
     >
       <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
-      <ModalContent borderRadius="2xl" overflow="hidden" boxShadow="xl">
+      <ModalContent borderRadius="2xl" overflow="hidden" boxShadow="2xl">
         {/* HEADER */}
         <ModalHeader
           bgGradient="linear(to-br, #800000, #A52A2A)"
@@ -225,7 +225,7 @@ const CheckAvailabilityModal = ({
                   />
                   {errors[field.name] && (
                     <Text color="#B03060" fontSize="xs">
-                      {errors[field.errorMessage]}
+                      {field.errorMessage}
                     </Text>
                   )}
                 </FormControl>
@@ -281,9 +281,9 @@ const CheckAvailabilityModal = ({
             <Button
               flex={1}
               variant="outline"
-              borderColor={MAROON_HOVER}
               color={MAROON}
-              _hover={{ bg: MAROON_LIGHT_ACCENT, color: "white" }}
+              borderColor={MAROON}
+              _hover={{ bg: `${MAROON}10` }}
               onClick={handleClose}
             >
               Cancel

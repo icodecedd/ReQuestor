@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   Flex,
   HStack,
   Modal,
@@ -12,31 +11,25 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useToast,
 } from "@chakra-ui/react";
-import { FiAlertTriangle } from "react-icons/fi";
+import { FiAlertOctagon } from "react-icons/fi";
 import { useRequestsStore } from "@/store/requestsStore";
 import { TbCancel } from "react-icons/tb";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { showToast } from "@/utils/toast";
+
+const WARNING_RED = "#E53E3E";
+const WARNING_RED_DARK = "#C53030";
+const WARNING_RED_HOVER = "#F56565";
+const DARK_GRAY = "#616161";
 
 const CancelRequestModal = ({ isOpen, onClose, request }) => {
   const cancelRequest = useRequestsStore((state) => state.cancelRequest);
   const setUserId = useRequestsStore((state) => state.setUserId);
   const { user } = useAuth();
-  const toast = useToast();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const showToast = (message, status) => {
-    toast({
-      title: message,
-      status: status,
-      duration: 2000,
-      position: "top-right",
-      variant: "subtle",
-    });
-  };
 
   const handleCancel = async () => {
     setUserId(user.id);
@@ -66,77 +59,83 @@ const CancelRequestModal = ({ isOpen, onClose, request }) => {
       motionPreset="slideInBottom"
       isCentered
     >
-      <ModalOverlay />
-      <ModalContent borderRadius="2xl" overflow="hidden">
-        <ModalHeader>
-          <Flex color="gray.900" gap={3} align="center" mb={3}>
+      <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
+      <ModalContent borderRadius="2xl" overflow="hidden" boxShadow="2xl">
+        {/* HEADER */}
+        <ModalHeader
+          px={6}
+          pt={5}
+          pb={3}
+          borderBottom="1px solid"
+          borderColor="gray.100"
+        >
+          <Flex gap={3} align="center">
             <Box
-              bg="white"
-              color="#f0f0f0ff"
-              borderRadius="md"
-              boxShadow="0 2px 8px rgba(0,0,0,0.12)"
-              border="1px solid #e2e8f0"
-              p={2}
-              transition="all 0.3s ease"
-              _hover={{
-                transform: "scale(1.02)",
-                boxShadow: "lg",
-              }}
+              bg={`${WARNING_RED}15`}
+              color={WARNING_RED}
+              borderRadius="full"
+              p={3}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
             >
-              <TbCancel color="#800000" />
+              <TbCancel size={24} />
             </Box>
             <Box>
-              <Text fontSize="lg" mt={0.5}>
+              <Text fontSize="lg" fontWeight="bold" color={WARNING_RED_DARK}>
                 Cancel Request
               </Text>
-              <Text color="gray.700" fontWeight="normal" fontSize="14px">
-                This will cancel the request. The equipment will be made
-                available again for others to reserve.
+              <Text color="gray.600" fontSize="sm">
+                This action will cancel the request
               </Text>
             </Box>
           </Flex>
-          <Divider w="110%" ml={-6} />
         </ModalHeader>
+
         <ModalCloseButton
           size="md"
-          _hover={{ bg: "#f7eaea" }}
-          borderRadius="lg"
+          _hover={{ bg: `${WARNING_RED}15` }}
+          color={DARK_GRAY}
+          borderRadius="full"
+          mt={2}
         />
-        <ModalBody>
+
+        <ModalBody px={6} py={4} bg="gray.50">
           <Box
-            bg="#fefce8"
-            color="#facc15"
-            border="1px"
+            bg="red.50"
+            color="red.800"
+            border="1px solid"
+            borderColor="red.100"
             borderRadius="xl"
-            p="2.5"
-            transition="all 0.3s ease"
-            _hover={{
-              transform: "scale(1.02)",
-              boxShadow: "lg",
-            }}
+            p={4}
           >
-            <HStack>
-              <FiAlertTriangle color="#92400e" fontSize="20px" />
-              <Text color="#92400e">
-                <strong>Notice:</strong>
+            <HStack spacing={3}>
+              <FiAlertOctagon color={WARNING_RED} fontSize="20px" />
+              <Text fontWeight="medium">
+                <strong>Important:</strong>
               </Text>
             </HStack>
-            <Text color="#ca8a04" pl={7} fontSize="14px">
+            <Text pl={8} fontSize="14px" mt={1}>
               Canceling this request will stop its processing. This action is
               final and cannot be reversed.
             </Text>
           </Box>
         </ModalBody>
-        <ModalFooter borderTop="1px solid #e2e8f0" mt={4}>
+        <ModalFooter
+          borderTop="1px solid"
+          borderTopColor="gray.100"
+          px={6}
+          py={4}
+          bg="white"
+        >
           <Button
-            bg="#800000"
+            flex={1}
+            bg={WARNING_RED}
             color="white"
-            borderRadius="lg"
-            w="100%"
+            _hover={{ bg: WARNING_RED_HOVER }}
+            _active={{ bg: WARNING_RED_DARK }}
             isLoading={isSubmitting}
             loadingText="Cancelling..."
-            _hover={{ bg: "#a12828" }}
-            transition="background-color 0.2s ease-in-out"
             onClick={handleCancel}
           >
             Cancel Request

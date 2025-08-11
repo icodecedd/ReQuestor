@@ -1,61 +1,123 @@
-import { IconButton, Flex, Tooltip } from "@chakra-ui/react";
-import { FiEdit, FiEye, FiTrash } from "react-icons/fi";
+import {
+  IconButton,
+  Flex,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Icon,
+  Box,
+  Text,
+} from "@chakra-ui/react";
+import { FaEye } from "react-icons/fa";
+import { FiEdit, FiTrash, FiMoreVertical, FiEye } from "react-icons/fi";
+
+// Color constants
+const MAROON = "#800000";
+const MAROON_XLIGHT = "#f5e8e8";
+const ERROR_RED = "#E53E3E";
+const RADIUS = "8px";
+const ICON_SIZE = "18px";
 
 const EquipmentActionButton = ({ onEdit, onViewDetails, onDelete }) => {
-  const actions = [
-    {
-      key: "edit",
-      icon: <FiEdit />,
-      label: "Edit",
-      onClick: onEdit,
-    },
-    {
-      key: "view",
-      icon: <FiEye />,
+  const menuBg = "white";
+  const menuBorder = "gray.200";
+  const hoverBg = MAROON_XLIGHT;
+
+  // Action definitions with consistent icon styling
+  const actionDefinitions = {
+    view: {
+      icon: <Icon as={FiEye} boxSize={ICON_SIZE} />,
       label: "View Details",
       onClick: onViewDetails,
+      color: "gray.700",
     },
-    {
-      key: "delete",
-      icon: <FiTrash />,
-      label: "Delete",
+    edit: {
+      icon: <Icon as={FiEdit} boxSize={"17px"} />,
+      label: "Edit Equipment",
+      onClick: onEdit,
+      color: "gray.700",
+    },
+    delete: {
+      icon: <Icon as={FiTrash} boxSize={ICON_SIZE} color={ERROR_RED} />,
+      label: "Delete Equipment",
       onClick: onDelete,
+      color: ERROR_RED,
     },
-  ];
+  };
+
+  const actions = [actionDefinitions.edit, actionDefinitions.delete];
 
   return (
-    <Flex gap={2} w="full" justify="center">
-      {actions.map(({ key, label, icon, onClick }) => (
-        <Tooltip
-          key={key}
-          label={label}
-          placement="bottom"
-          borderRadius="lg"
-          px={3}
-          py={2}
-          bg="#800000"
-          color="white"
-          fontSize="sm"
-          fontWeight="medium"
-          boxShadow="lg"
-          openDelay={200}
+    <Flex gap={2} justify="center">
+      {/* Always visible view button */}
+      <IconButton
+        icon={<Icon as={FaEye} boxSize={4} />}
+        aria-label="View details"
+        onClick={onViewDetails}
+        size="sm"
+        variant="ghost"
+        borderRadius={RADIUS}
+        color={MAROON}
+        _hover={{
+          bg: MAROON_XLIGHT,
+          transform: "translateY(-1px)",
+        }}
+        _active={{
+          bg: MAROON_XLIGHT,
+        }}
+        transition="all 0.2s ease"
+      />
+
+      <Menu autoSelect={false} placement="bottom-end">
+        <MenuButton
+          as={IconButton}
+          icon={<Icon as={FiMoreVertical} boxSize={5} />}
+          aria-label="User actions"
+          size="sm"
+          variant="ghost"
+          borderRadius={RADIUS}
+          color={MAROON}
+          _hover={{
+            bg: MAROON_XLIGHT,
+            transform: "translateY(-1px)",
+          }}
+          _active={{
+            bg: MAROON_XLIGHT,
+          }}
+        />
+
+        <MenuList
+          minW="180px"
+          p={2}
+          bg={menuBg}
+          borderColor={menuBorder}
+          boxShadow="md"
+          borderRadius={RADIUS}
+          zIndex="dropdown"
         >
-          <IconButton
-            icon={icon}
-            aria-label={label}
-            onClick={onClick}
-            size="sm"
-            rounded="lg"
-            variant="outline"
-            colorScheme={key === "delete" ? "red" : "gray"}
-            _hover={{
-              boxShadow: "md",
-              transform: "translateY(-2px)",
-            }}
-            transition="all 0.2s ease"
-          />
-        </Tooltip>
-      ))}
+          {actions.map((action) => (
+            <MenuItem
+              key={action.label}
+              onClick={action.onClick}
+              icon={<Box boxSize={5}>{action.icon}</Box>}
+              py={2}
+              px={3}
+              borderRadius={RADIUS}
+              _hover={{
+                bg: hoverBg,
+              }}
+              _focus={{
+                bg: hoverBg,
+              }}
+            >
+              <Text fontSize="sm" fontWeight="medium" color={action.color}>
+                {action.label}
+              </Text>
+            </MenuItem>
+          ))}
+        </MenuList>
+      </Menu>
     </Flex>
   );
 };

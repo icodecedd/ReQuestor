@@ -154,6 +154,7 @@ const EquipmentTable = () => {
 
         {/*Add Equipment Button*/}
         <Button
+          ml="auto"
           variant="primary"
           bg="#800000"
           color="white"

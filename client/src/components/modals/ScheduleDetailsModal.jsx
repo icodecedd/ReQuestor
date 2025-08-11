@@ -20,6 +20,7 @@ import { FiInfo, FiClock, FiCalendar } from "react-icons/fi";
 const MAROON = "#800000";
 const MAROON_DARK = "#6A0D0D";
 const DARK_GRAY = "#616161";
+const MAROON_HOVER = "#A52A2A";
 
 const ScheduleDetailsModal = ({
   isOpen,
@@ -36,7 +37,7 @@ const ScheduleDetailsModal = ({
       size="lg"
       motionPreset="slideInBottom"
     >
-      <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(4px)" />
+      <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
       <ModalContent
         borderRadius="2xl"
         overflow="hidden"
@@ -187,6 +188,7 @@ const ScheduleDetailsModal = ({
           bg="white"
         >
           <Button
+            flex={1}
             variant="outline"
             mr={3}
             onClick={onClose}
@@ -197,9 +199,10 @@ const ScheduleDetailsModal = ({
             Cancel
           </Button>
           <Button
+            flex={1}
             bg={MAROON}
             color="white"
-            _hover={{ bg: MAROON_DARK }}
+            _hover={{ bg: MAROON_HOVER }}
             onClick={() => onOpenAddRequest()}
             isDisabled={items?.some((item) => item.available_count <= 0)}
           >

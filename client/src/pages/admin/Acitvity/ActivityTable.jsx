@@ -1,6 +1,7 @@
 import {
   Badge,
   Box,
+  Button,
   Flex,
   Heading,
   Input,
@@ -26,6 +27,7 @@ import { getTimeLabel } from "@/utils/formatTime";
 import { useActivityStore } from "@/store/activityStore";
 import { activityMeta } from "@/constants/activityLogsMeta";
 import { toTitleCase } from "@/utils/toTitleCase";
+import { BiExport } from "react-icons/bi";
 
 const ActivityTable = () => {
   const { logs, loading, fetchLogs } = useActivityStore();
@@ -81,6 +83,25 @@ const ActivityTable = () => {
         {/*Filter Button*/}
         <ActivityCategoryDropdown onChange={setCategoryFilter} />
         <ActivityTimeDropdown onChange={setTimeFilter} />
+
+        {/*Export Logs Button*/}
+        <Button
+          ml="auto"
+          variant="primary"
+          bg="#800000"
+          color="white"
+          borderRadius="lg"
+          _hover={{ bg: "#a12828" }}
+          transition="background-color 0.2s ease-in-out"
+          gap={1}
+          p={3}
+          fontSize="95%"
+          w="120px"
+          //onClick={() => onAddOpen()}
+        >
+          <BiExport size="20px" />
+          Export
+        </Button>
       </Flex>
 
       {/* Table */}

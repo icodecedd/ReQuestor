@@ -1,12 +1,18 @@
 import { formatDistanceToNow } from "date-fns";
 
 export function timeAgo(timestamp) {
-  // Replace space with "T" if needed
+  // Ensure we have a valid ISO format
   const safeTimestamp = timestamp.includes("T")
     ? timestamp
     : timestamp.replace(" ", "T");
 
-  return formatDistanceToNow(new Date(safeTimestamp), { addSuffix: true });
+  // Parse the UTC date
+  const utcDate = new Date(safeTimestamp);
+
+  // Convert to UTC+8 (Philippines)
+  const localDate = new Date(utcDate.getTime() + 8 * 60 * 60 * 1000);
+
+  return formatDistanceToNow(localDate, { addSuffix: true });
 }
 
 export function formatTime(timeString) {

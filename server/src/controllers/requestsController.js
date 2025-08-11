@@ -352,32 +352,20 @@ export const addRequest = async (req, res) => {
   }
 };
 
-export const updateRequestStatus = async (req, res) => {
+export const approveRequest = async (req, res) => {
   const { id } = req.params;
-  const { status, user_id } = req.body;
-
-  // Valid status transitions
-  const validStatuses = ["In Use", "Reserved", "Rejected", "Completed"];
-
-  if (!status || !validStatuses.includes(status.status)) {
-    return res.status(400).json({
-      success: false,
-      message:
-        "Valid status required: In Use, Reserved, Rejected, or Completed.",
-    });
-  }
+  const { user_id } = req.body;
 
   if (!id) {
-    return res.status(400).json({
-      success: false,
-      message: "Request ID is required.",
-    });
+    return res
+      .status(400)
+      .json({ success: false, message: "Request ID is required." });
   }
 
   try {
     await pool.query("BEGIN");
 
-    // Check if request exists
+    // Step 1: Check if request exists and get current status
     const existingRequest = await pool.query(
       "SELECT * FROM requests WHERE id = $1",
       [id]
@@ -393,23 +381,29 @@ export const updateRequestStatus = async (req, res) => {
 
     const currentRequest = existingRequest.rows[0];
 
-    if (status.status === "Completed") {
-      if (currentRequest.status !== "In Use") {
-        await pool.query("ROLLBACK");
-        return res.status(400).json({
-          success: false,
-          message: "Only in use requests can be completed.",
-        });
-      }
+    // Step 2: Check if request can be approved
+    const nonApprovableStatuses = [
+      "Cancelled",
+      "Completed",
+      "Rejected",
+      "Reserved",
+      "In Use",
+    ];
+    if (nonApprovableStatuses.includes(currentRequest.status)) {
+      await pool.query("ROLLBACK");
+      return res.status(400).json({
+        success: false,
+        message: `Cannot approve request with status: ${currentRequest.status}.`,
+      });
     }
 
-    // Update the request status
+    // Step 3: Update the request status to "Reserved"
     const result = await pool.query(
       `UPDATE requests
-       SET status = $1
-       WHERE id = $2
+       SET status = 'Reserved'
+       WHERE id = $1
        RETURNING *`,
-      [status.status, id]
+      [id]
     );
 
     await pool.query("COMMIT");
@@ -417,23 +411,87 @@ export const updateRequestStatus = async (req, res) => {
 
     await pool.query(
       `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
-       VALUES ($1, $2, $3, 'REQUESTS', NOW())
+       VALUES ($1, 'APPROVED', $2, 'REQUESTS', NOW())
        RETURNING id, user_id, action, target_id, category, timestamp;`,
-      [user_id, status.status?.toUpperCase(), id]
+      [user_id, id]
     );
 
-    res.status(200).json({
-      success: true,
-      message: `Request ${status.status?.toLowerCase()} successfully.`,
-      data: updatedRequest,
-    });
+    res.status(200).json({ success: true, data: updatedRequest });
   } catch (error) {
-    console.error("Error in updateRequestStatus Function", error);
+    console.error("Error in approveRequest Function", error);
     await pool.query("ROLLBACK");
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const rejectRequest = async (req, res) => {
+  const { id } = req.params;
+  const { user_id, rejectionReason: admin_notes } = req.body;
+
+  if (!id) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Request ID is required." });
+  }
+
+  try {
+    await pool.query("BEGIN");
+
+    // Step 1: Check if request exists and get current status
+    const existingRequest = await pool.query(
+      "SELECT * FROM requests WHERE id = $1",
+      [id]
+    );
+
+    if (existingRequest.rows.length === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({
+        success: false,
+        message: "Request not found.",
+      });
+    }
+
+    const currentRequest = existingRequest.rows[0];
+
+    // Step 2: Check if request can be rejected
+    const nonRejectableStatuses = [
+      "Cancelled",
+      "Completed",
+      "In Use",
+      "Rejected",
+    ];
+    if (nonRejectableStatuses.includes(currentRequest.status)) {
+      await pool.query("ROLLBACK");
+      return res.status(400).json({
+        success: false,
+        message: `Cannot reject request with status: ${currentRequest.status}.`,
+      });
+    }
+
+    // Step 3: Update the request status to "Rejected"
+    const result = await pool.query(
+      `UPDATE requests
+       SET status = 'Rejected', admin_notes = $1
+       WHERE id = $2
+       RETURNING *`,
+      [admin_notes, id]
+    );
+
+    await pool.query("COMMIT");
+    const updatedRequest = result.rows[0];
+
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, 'REJECTED', $2, 'REQUESTS', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, id]
+    );
+
+    res.status(200).json({ success: true, data: updatedRequest });
+  } catch (error) {
+    console.error("Error in rejectRequest Function", error);
+    await pool.query("ROLLBACK");
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -467,7 +525,7 @@ export const cancelRequest = async (req, res) => {
     const currentRequest = existingRequest.rows[0];
 
     // Step 2: Check if request can be cancelled
-    const nonCancellableStatuses = ["Completed", "Cancelled"];
+    const nonCancellableStatuses = ["Completed", "Cancelled", "Rejected"];
     if (nonCancellableStatuses.includes(currentRequest.status)) {
       await pool.query("ROLLBACK");
       return res.status(400).json({
@@ -476,7 +534,7 @@ export const cancelRequest = async (req, res) => {
       });
     }
 
-    // Step 4: Update request status to 'Cancelled'
+    // Step 4: Update request status to "Cancelled"
     const result = await pool.query(
       `UPDATE requests
        SET status = 'Cancelled'
@@ -498,6 +556,72 @@ export const cancelRequest = async (req, res) => {
     res.status(200).json({ success: true, data: updatedRequest });
   } catch (error) {
     console.error("Error in cancelRequest Function", error);
+    await pool.query("ROLLBACK");
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const markCompleteRequest = async (req, res) => {
+  const { id } = req.params;
+  const { user_id } = req.body;
+
+  if (!id) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Request ID is required." });
+  }
+
+  try {
+    await pool.query("BEGIN");
+
+    // Step 1: Check if request exists and get current status
+    const existingRequest = await pool.query(
+      "SELECT * FROM requests WHERE id = $1",
+      [id]
+    );
+
+    if (existingRequest.rows.length === 0) {
+      await pool.query("ROLLBACK");
+      return res.status(404).json({
+        success: false,
+        message: "Request not found.",
+      });
+    }
+
+    const currentRequest = existingRequest.rows[0];
+
+    // Step 2: Check if request can be marked as complete
+    const nonMarkStatuses = ["Completed", "Cancelled", "Rejected", "Reserved"];
+    if (nonMarkStatuses.includes(currentRequest.status)) {
+      await pool.query("ROLLBACK");
+      return res.status(400).json({
+        success: false,
+        message: `Cannot mark complete request with status: ${currentRequest.status}.`,
+      });
+    }
+
+    // Step 4: Update request status to "Completed"
+    const result = await pool.query(
+      `UPDATE requests
+       SET status = 'Completed'
+       WHERE id = $1
+       RETURNING *`,
+      [id]
+    );
+
+    await pool.query("COMMIT");
+    const updatedRequest = result.rows[0];
+
+    await pool.query(
+      `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
+       VALUES ($1, 'COMPLETED', $2, 'REQUESTS', NOW())
+       RETURNING id, user_id, action, target_id, category, timestamp;`,
+      [user_id, id]
+    );
+
+    res.status(200).json({ success: true, data: updatedRequest });
+  } catch (error) {
+    console.error("Error in markCompleteRequest Function", error);
     await pool.query("ROLLBACK");
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
