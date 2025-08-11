@@ -188,6 +188,83 @@ export const useRequestsStore = create((set, get) => ({
     }
   },
 
+  approveRequest: async (id) => {
+    try {
+      const res = await axios.patch(`/api/requests/${id}/approve`, {
+        user_id: get().userId,
+      });
+
+      set((state) => ({
+        requests: state.requests.map((req) =>
+          req.id === id ? { ...req, status: res.data.data.status } : req
+        ),
+      }));
+
+      const result = res?.data;
+
+      if (result.success) {
+        return {
+          success: result.success,
+          message: "Request approved successfully.",
+        };
+      } else {
+        return {
+          success: result.success,
+          message: "Something went wrong.",
+        };
+      }
+    } catch (error) {
+      console.error(
+        "Approve request error:",
+        error.response?.data || error.message
+      );
+
+      return {
+        success: false,
+        message: "Failed to approve request. Please try again.",
+      };
+    }
+  },
+
+  rejectRequest: async (id, rejectionReason) => {
+    try {
+      const res = await axios.patch(`/api/requests/${id}/reject`, {
+        user_id: get().userId,
+        rejectionReason,
+      });
+
+      set((state) => ({
+        requests: state.requests.map((req) =>
+          req.id === id ? { ...req, status: res.data.data.status } : req
+        ),
+      }));
+
+      const result = res?.data;
+
+      if (result.success) {
+        return {
+          success: result.success,
+          message: "Request rejected successfully.",
+        };
+      } else {
+        return {
+          success: result.success,
+          message: "Something went wrong.",
+        };
+      }
+    } catch (error) {
+      console.error(
+        "Reject request error:",
+        error.response?.data || error.message
+      );
+
+      return {
+        success: false,
+        message: "Failed to reject request. Please try again.",
+      };
+    }
+  },
+
   cancelRequest: async (id) => {
     try {
       const res = await axios.patch(`/api/requests/${id}/cancel`, {
@@ -226,10 +303,9 @@ export const useRequestsStore = create((set, get) => ({
     }
   },
 
-  updateRequestStatus: async (id, status) => {
+  markCompleteRequest: async (id) => {
     try {
-      const res = await axios.patch(`/api/requests/${id}/set-status`, {
-        status,
+      const res = await axios.patch(`/api/requests/${id}/complete`, {
         user_id: get().userId,
       });
 
@@ -244,7 +320,7 @@ export const useRequestsStore = create((set, get) => ({
       if (result.success) {
         return {
           success: result.success,
-          message: result.message,
+          message: "Request marked as complete successfully.",
         };
       } else {
         return {
@@ -254,13 +330,13 @@ export const useRequestsStore = create((set, get) => ({
       }
     } catch (error) {
       console.error(
-        "Update request's status error:",
+        "Mark complete request error:",
         error.response?.data || error.message
       );
 
       return {
         success: false,
-        message: "Failed to update request's status. Please try again.",
+        message: "Failed to mark request. Please try again.",
       };
     }
   },

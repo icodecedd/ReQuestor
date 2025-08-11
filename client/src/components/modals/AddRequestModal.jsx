@@ -37,10 +37,8 @@ import { FaChalkboardTeacher } from "react-icons/fa";
 import {
   FiBookOpen,
   FiBox,
-  FiCalendar,
   FiCheck,
   FiClock,
-  FiCpu,
   FiFilePlus,
   FiTarget,
   FiUser,
@@ -141,6 +139,15 @@ const AddRequestModal = ({
     time_to: false,
     purpose: false,
   });
+
+  useEffect(() => {
+    setForm((prev) => ({
+      ...prev,
+      date_use: dateUse || "",
+      time_from: timeFrom || "",
+      time_to: timeTo || "",
+    }));
+  }, [dateUse, timeFrom, timeTo]);
 
   const steps = [
     { title: "Schedule", description: "Select date and time" },
@@ -256,15 +263,6 @@ const AddRequestModal = ({
     setActiveStep(0);
     onClose();
   };
-
-  useEffect(() => {
-    setForm((prev) => ({
-      ...prev,
-      date_use: dateUse || "",
-      time_from: timeFrom || "",
-      time_to: timeTo || "",
-    }));
-  }, [dateUse, timeFrom, timeTo]);
 
   const handleSubmit = async () => {
     setUserId(user.id);

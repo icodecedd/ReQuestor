@@ -14,33 +14,32 @@ import {
 } from "@chakra-ui/react";
 import { FiCheckCircle } from "react-icons/fi";
 import { useRequestsStore } from "@/store/requestsStore";
-import { TbChecklist } from "react-icons/tb";
+import { TbCheck } from "react-icons/tb";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { showToast } from "@/utils/toast";
 
+const MAROON = "#800000";
 const DARK_GRAY = "#616161";
 const SUCCESS_GREEN = "#38A169";
 const SUCCESS_GREEN_DARK = "#2F855A";
 const SUCCESS_GREEN_HOVER = "#48BB78";
 const SUCCESS_LIGHT = "#F0F9F4";
 
-const MarkRequestModal = ({ isOpen, onClose, request }) => {
-  const markCompleteRequest = useRequestsStore(
-    (state) => state.markCompleteRequest
-  );
+const ApproveRequestModal = ({ isOpen, onClose, request }) => {
+  const approveRequest = useRequestsStore((state) => state.approveRequest);
   const setUserId = useRequestsStore((state) => state.setUserId);
   const { user } = useAuth();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleMarkComplete = async () => {
+  const handleApprove = async () => {
     setUserId(user.id);
     setIsSubmitting(true);
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
-      const result = await markCompleteRequest(request.id);
+      const result = await approveRequest(request.id);
 
       showToast(result.message, result.success ? "success" : "error");
 
@@ -48,10 +47,7 @@ const MarkRequestModal = ({ isOpen, onClose, request }) => {
         onClose();
       }
     } catch (error) {
-      showToast(
-        "Failed to mark request as complete. Please try again.",
-        "error"
-      );
+      showToast("Failed to approve request. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -85,14 +81,14 @@ const MarkRequestModal = ({ isOpen, onClose, request }) => {
               alignItems="center"
               justifyContent="center"
             >
-              <TbChecklist size={24} />
+              <TbCheck size={24} />
             </Box>
             <Box>
               <Text fontSize="lg" fontWeight="bold" color={SUCCESS_GREEN_DARK}>
-                Mark as Complete
+                Approve Request
               </Text>
               <Text color="gray.600" fontSize="sm">
-                This will mark the request as completed
+                Confirm approval of this equipment request
               </Text>
             </Box>
           </Flex>
@@ -127,8 +123,8 @@ const MarkRequestModal = ({ isOpen, onClose, request }) => {
               </Text>
             </HStack>
             <Text pl={8} fontSize="14px" mt={1}>
-              Marking this request as complete will finish the process and
-              update the equipment status. This action is final.
+              Approving this request will confirm the reservation and notify the
+              requestor. Please verify all details before approving.
             </Text>
           </Box>
         </ModalBody>
@@ -139,22 +135,34 @@ const MarkRequestModal = ({ isOpen, onClose, request }) => {
           py={4}
           bg="white"
         >
-          <Button
-            flex={1}
-            bg={SUCCESS_GREEN}
-            color="white"
-            _hover={{ bg: SUCCESS_GREEN_HOVER }}
-            _active={{ bg: SUCCESS_GREEN_DARK }}
-            isLoading={isSubmitting}
-            loadingText="Marking as Complete..."
-            onClick={handleMarkComplete}
-          >
-            Approve Request
-          </Button>
+          <HStack spacing={4} w="full">
+            <Button
+              flex={1}
+              variant="outline"
+              color={MAROON}
+              borderColor={MAROON}
+              _hover={{ bg: `${MAROON}10` }}
+              onClick={onClose}
+            >
+              Review Again
+            </Button>
+            <Button
+              flex={1}
+              bg={SUCCESS_GREEN}
+              color="white"
+              _hover={{ bg: SUCCESS_GREEN_HOVER }}
+              _active={{ bg: SUCCESS_GREEN_DARK }}
+              isLoading={isSubmitting}
+              loadingText="Approving..."
+              onClick={handleApprove}
+            >
+              Approve Request
+            </Button>
+          </HStack>
         </ModalFooter>
       </ModalContent>
     </Modal>
   );
 };
 
-export default MarkRequestModal;
+export default ApproveRequestModal;
