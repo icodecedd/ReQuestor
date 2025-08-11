@@ -35,7 +35,7 @@ export const getRequestStatusColor = (status) => {
     case "Reserved":
       return "cyan"; // Indicates a scheduled/reserved action
     case "Pending":
-      return "blue"; // Neutral, commonly used for 'in progress'
+      return "orange"; // Neutral, commonly used for 'in progress'
     case "Rejected":
       return "red"; // Signals failure or denial
     case "Waitlisted":

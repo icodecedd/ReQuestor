@@ -52,8 +52,12 @@ const tabConfigs = [
     filter: () => true,
   },
   {
-    title: "Approved",
-    filter: (req) => req.status === "Approved",
+    title: "Reserved",
+    filter: (req) => req.status === "Reserved",
+  },
+  {
+    title: "Pending",
+    filter: (req) => req.status === "Pending",
   },
   {
     title: "Rejected",

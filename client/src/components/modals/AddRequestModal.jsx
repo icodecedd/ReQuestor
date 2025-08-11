@@ -6,7 +6,6 @@ import {
   FormControl,
   FormLabel,
   Heading,
-  HStack,
   Input,
   Modal,
   ModalBody,
@@ -37,6 +36,7 @@ import { BsProjector } from "react-icons/bs";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import {
   FiBookOpen,
+  FiBox,
   FiCalendar,
   FiCheck,
   FiClock,
@@ -46,6 +46,7 @@ import {
   FiUser,
   FiUserCheck,
 } from "react-icons/fi";
+import { BsCalendarDate } from "react-icons/bs";
 import { PiProjectorScreenChart } from "react-icons/pi";
 import { useAuth } from "@/hooks/useAuth";
 import { showToast } from "@/utils/toast";
@@ -53,7 +54,6 @@ import { formatTime } from "@/utils/formatTime";
 
 const MAROON = "#800000";
 const MAROON_HOVER = "#A52A2A";
-const MAROON_LIGHT_ACCENT = "#D46A6A";
 const DARK_GRAY = "#616161";
 
 const requestFields = [
@@ -243,6 +243,16 @@ const AddRequestModal = ({
       time_to: "",
       purpose: "",
     });
+    setErrors({
+      name: false,
+      course_section: false,
+      faculty_in_charge: false,
+      equipment_list: false,
+      date_use: false,
+      time_from: false,
+      time_to: false,
+      purpose: false,
+    });
     setActiveStep(0);
     onClose();
   };
@@ -303,7 +313,7 @@ const AddRequestModal = ({
       motionPreset="slideInBottom"
     >
       <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
-      <ModalContent borderRadius="xl" overflow="hidden" boxShadow="xl">
+      <ModalContent borderRadius="2xl" overflow="hidden" boxShadow="2xl">
         {/* HEADER */}
         <ModalHeader
           bgGradient="linear(to-br, #800000, #A52A2A)"
@@ -547,7 +557,7 @@ const AddRequestModal = ({
                 <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                   <GridItem>
                     <Flex align="center" gap={2}>
-                      <FiCalendar color={MAROON} />
+                      <BsCalendarDate color={MAROON} />
                       <Text fontSize="sm" color={DARK_GRAY}>
                         <strong>Date:</strong> {form.date_use}
                       </Text>
@@ -614,7 +624,7 @@ const AddRequestModal = ({
                 boxShadow="sm"
               >
                 <Flex align="center" gap={2} mb={2}>
-                  <FiCpu color={MAROON} />
+                  <FiBox color={MAROON} />
                   <Text fontSize="sm" color={DARK_GRAY} fontWeight="bold">
                     Equipment
                   </Text>
@@ -655,9 +665,9 @@ const AddRequestModal = ({
             <Button
               flex={1}
               variant="outline"
-              borderColor={MAROON_HOVER}
               color={MAROON}
-              _hover={{ bg: MAROON_LIGHT_ACCENT, color: "white" }}
+              borderColor={MAROON}
+              _hover={{ bg: `${MAROON}10` }}
               onClick={() => setActiveStep(activeStep - 1)}
             >
               Back
@@ -668,9 +678,9 @@ const AddRequestModal = ({
               <Button
                 flex={1}
                 variant="outline"
-                borderColor={MAROON_HOVER}
                 color={MAROON}
-                _hover={{ bg: MAROON_LIGHT_ACCENT, color: "white" }}
+                borderColor={MAROON}
+                _hover={{ bg: `${MAROON}10` }}
                 onClick={handleClose}
               >
                 Cancel
