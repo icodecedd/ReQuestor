@@ -1,62 +1,87 @@
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
+  Box,
   Button,
   Flex,
-  Text,
   FormControl,
   FormLabel,
+  Heading,
   Input,
-  Tabs,
-  Tab,
-  TabList,
-  TabPanels,
-  TabPanel,
-  useToast,
-  Box,
-  Divider,
-  Badge,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
   Textarea,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
+  Step,
+  StepDescription,
+  StepIcon,
+  StepIndicator,
+  StepNumber,
+  StepSeparator,
+  StepStatus,
+  StepTitle,
+  Stepper,
+  useSteps,
+  Grid,
+  GridItem,
+  VStack,
+  Badge,
+  SimpleGrid,
 } from "@chakra-ui/react";
-import { FiAlertCircle, FiBox, FiHash, FiMapPin, FiTag } from "react-icons/fi";
-import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
 import { useEffect, useState } from "react";
-import useEquipmentStore from "@/store/equipmentStore";
-import { getEqConditionColor, getEqStatusColor } from "@/utils/getColorScheme";
+import {
+  FiHash,
+  FiBox,
+  FiMapPin,
+  FiTag,
+  FiFilePlus,
+  FiTool,
+  FiLayers,
+  FiActivity,
+  FiInfo,
+  FiAlignLeft,
+} from "react-icons/fi";
 import { useAuth } from "@/hooks/useAuth";
+import { showToast } from "@/utils/toast";
+import { getEqConditionColor, getEqStatusColor } from "@/utils/getColorScheme";
+import { ModalDropdown } from "../dropdowns/ModalDropdown";
+import useEquipmentStore from "@/store/equipmentStore";
+
+const MAROON = "#800000";
+const MAROON_HOVER = "#A52A2A";
+const DARK_GRAY = "#616161";
 
 const equipmentFields = [
   {
     name: "name",
-    label: "Name",
+    label: "Equipment Name",
     placeholder: "Enter equipment name",
     icon: <FiBox />,
+    errorMessage: "Please enter an equipment name",
   },
   {
     name: "serial_number",
     label: "Serial Number",
     placeholder: "Enter serial number",
     icon: <FiHash />,
+    errorMessage: "Please enter a serial number",
   },
   {
     name: "type",
     label: "Type",
     placeholder: "Enter equipment type",
     icon: <FiTag />,
+    errorMessage: "Please enter an equipment type",
   },
   {
     name: "location",
     label: "Location",
     placeholder: "Enter equipment location",
     icon: <FiMapPin />,
+    errorMessage: "Please enter an equipment location",
   },
 ];
 
@@ -67,8 +92,8 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
   const updateEquipment = useEquipmentStore((state) => state.updateEquipment);
   const setUserId = useEquipmentStore((state) => state.setUserId);
   const { user } = useAuth();
-  const toast = useToast();
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     name: "",
     type: "",
@@ -78,15 +103,13 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
     condition: "",
     description: "",
   });
+
   const [errors, setErrors] = useState({
     name: false,
     type: false,
     location: false,
     serial_number: false,
-    condition: false,
   });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (equipment) {
@@ -102,24 +125,74 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
     }
   }, [equipment]);
 
+  const steps = [
+    {
+      title: "General Information",
+      description: "Fill in general information",
+    },
+    {
+      title: "Additional Information",
+      description: "Fill in additional information",
+    },
+    {
+      title: "Equipment Summary",
+      description: "Summary of the equipment",
+    },
+  ];
+
+  const { activeStep, setActiveStep } = useSteps({
+    index: 0,
+    count: steps.length,
+  });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-
-    // Clear the error as soon as the field gets a value
-    if (value.trim()) {
-      setErrors((prev) => ({ ...prev, [name]: false }));
-    }
+    if (value.trim()) setErrors((prev) => ({ ...prev, [name]: false }));
   };
 
-  const showToast = (message, status) => {
-    toast({
-      title: message,
-      status: status,
-      duration: 2000,
-      position: "top-right",
-      variant: "subtle",
+  const handleClose = () => {
+    setForm({
+      name: equipment.name || "",
+      type: equipment.type || "",
+      status: equipment.status || "Available",
+      location: equipment.location || "",
+      serial_number: equipment.serial_number || "",
+      condition: equipment.condition || "",
+      description: equipment.description || "",
     });
+
+    setErrors({
+      name: false,
+      type: false,
+      location: false,
+      serial_number: false,
+      condition: false,
+    });
+
+    setActiveStep(0);
+    onClose();
+  };
+
+  const validateDateDetails = (num) => {
+    if (!form.name || !form.serial_number || !form.type || !form.location) {
+      setErrors((prev) => ({
+        ...prev,
+        name: !form.name,
+        serial_number: !form.serial_number,
+        type: !form.type,
+        location: !form.location,
+      }));
+      showToast("Please fill in all required fields", "error");
+      return;
+    }
+
+    if (!form.condition && num === 2) {
+      showToast("Please select a condition", "error");
+      return;
+    }
+
+    return setActiveStep(num);
   };
 
   const handleSubmit = async () => {
@@ -146,142 +219,183 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
       showToast(result.message, result.success ? "success" : "error");
       if (result.success) {
         onClose();
+        setActiveStep(0);
       }
     } catch (error) {
-      showToast("An error occurred while adding equipment.", "error");
+      showToast("An error occurred while updating equipment.", "error");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleClose = () => {
-    setErrors({
-      name: false,
-      type: false,
-      location: false,
-      serial_number: false,
-      condition: false,
-    });
+  const DetailItem = ({ icon, label, value, valueStyle = {} }) => (
+    <Flex align="flex-start" gap={3}>
+      <Box color={MAROON} mt={0.5}>
+        {icon}
+      </Box>
+      <Box>
+        <Text fontSize="sm" fontWeight="medium" color={DARK_GRAY} mb={0.5}>
+          {label}
+        </Text>
+        {["condition", "status", "equipment type"].includes(
+          label.toLowerCase()
+        ) ? (
+          makeBadge(label, value)
+        ) : (
+          <Text fontSize="md" {...valueStyle}>
+            {value}
+          </Text>
+        )}
+      </Box>
+    </Flex>
+  );
 
-    setForm({
-      name: equipment.name || "",
-      type: equipment.type || "",
-      status: equipment.status || "Available",
-      location: equipment.location || "",
-      serial_number: equipment.serial_number || "",
-      condition: equipment.condition || "",
-      description: equipment.description || "",
-    });
+  const makeBadge = (field, value) => {
+    let fieldUsed = ""; // use let so we can reassign
 
-    onClose(); // actually close the modal
+    switch (field) {
+      case "Condition":
+        fieldUsed = getEqConditionColor(value);
+        break;
+      case "Status":
+        fieldUsed = getEqStatusColor(value);
+        break;
+      default:
+        return (
+          <Badge
+            color="black"
+            border="1px"
+            borderColor="gray.300"
+            borderRadius="xl"
+            pl={2}
+            pr={2}
+            pb={0.5}
+          >
+            {value}
+          </Badge>
+        );
+    }
+
+    return (
+      <Badge colorScheme={fieldUsed} borderRadius="xl" pl={2} pr={2} pb={0.5}>
+        {value}
+      </Badge>
+    );
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      size="2xl"
+      size="4xl"
       motionPreset="slideInBottom"
     >
-      <ModalOverlay />
-      <ModalContent borderRadius="2xl" overflow="hidden">
-        <ModalHeader>
-          <Flex color="gray.900" gap={3} align="center" mb={3}>
-            <Box
-              bg="white"
-              color="#f0f0f0ff"
-              borderRadius="md"
-              boxShadow="0 2px 8px rgba(0,0,0,0.12)"
-              border="1px solid #e2e8f0"
-              p={2}
-              transition="all 0.3s ease"
-              _hover={{
-                transform: "scale(1.02)",
-                boxShadow: "lg",
-              }}
-            >
-              <FiBox color="#800000" />
+      <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
+      <ModalContent borderRadius="2xl" overflow="hidden" boxShadow="2xl">
+        {/* HEADER */}
+        <ModalHeader
+          bgGradient="linear(to-br, #800000, #A52A2A)"
+          color="white"
+          py={5}
+          px={6}
+        >
+          <Flex align="center" gap={3}>
+            <Box bg="whiteAlpha.200" p={3} borderRadius="full">
+              <FiFilePlus size={24} />
             </Box>
             <Box>
-              <Text fontSize="lg" mt={0.5}>
-                Update Equipment
-              </Text>
-              <Text color="gray.700" fontWeight="normal" fontSize="14px">
-                Modify details or status of this equipment.
+              <Heading size="md" fontWeight="bold">
+                Add New Equipment
+              </Heading>
+              <Text fontSize="sm" opacity={0.85}>
+                Add new equipment to the inventory
               </Text>
             </Box>
           </Flex>
-          <Divider w="110%" ml={-6} />
         </ModalHeader>
         <ModalCloseButton
-          size="md"
-          _hover={{ bg: "#f7eaea" }}
-          borderRadius="lg"
+          color="white"
+          _hover={{ bg: "whiteAlpha.300" }}
+          borderRadius="full"
         />
-        <ModalBody>
-          <Tabs isFitted variant="unstyle" size="sm">
-            <TabList bg="#e9e9e9ff" borderRadius="lg" p={1.5} pr={1.5} pl={1.5}>
-              <Tab
-                _selected={{
-                  bg: "white",
-                  color: "black",
-                  borderRadius: "md",
-                  boxShadow: "0 0.5px 1px rgba(0, 0, 0, 0.15)",
-                }}
-                borderRadius="md"
-                color="#71717e"
-                fontWeight="bold"
-              >
-                General Info
-              </Tab>
-              <Tab
-                _selected={{
-                  bg: "white",
-                  color: "black",
-                  borderRadius: "md",
-                  boxShadow: "0 0.5px 1px rgba(0, 0, 0, 0.15)",
-                }}
-                borderRadius="md"
-                color="#71717e"
-                fontWeight="bold"
-              >
-                Additional Details
-              </Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                {equipmentFields.map((field, index) => (
-                  <FormControl
-                    mb={4}
-                    key={index}
-                    isInvalid={errors[field.name]}
-                  >
-                    <FormLabel fontSize={14}>{field.label}</FormLabel>
-                    <InputGroup>
-                      <InputLeftElement pointerEvents="none" color="gray.400">
-                        {field.icon}
-                      </InputLeftElement>
-                      <Input
-                        name={field.name}
-                        value={form[`${field.name}`]}
-                        placeholder={field.placeholder}
-                        focusBorderColor="maroon"
-                        borderRadius="lg"
-                        borderColor="gray.400"
-                        onChange={handleChange}
-                      />
+
+        {/* BODY */}
+        <ModalBody py={6} px={6} bg="white">
+          {/* STEPPER */}
+          <Stepper index={activeStep} colorScheme="red" mb={6}>
+            {steps.map((step, index) => (
+              <Step key={index}>
+                <StepIndicator>
+                  <StepStatus
+                    complete={<StepIcon />}
+                    incomplete={<StepNumber />}
+                    active={<StepNumber />}
+                  />
+                </StepIndicator>
+                <Box>
+                  <StepTitle>{step.title}</StepTitle>
+                  <StepDescription>{step.description}</StepDescription>
+                </Box>
+                <StepSeparator />
+              </Step>
+            ))}
+          </Stepper>
+          {/* STEP 1 */}
+          {activeStep === 0 && (
+            <Box>
+              <Heading size="md" mb={2}>
+                General Details
+              </Heading>
+              <Text fontSize="sm" color="gray.600" mb={4}>
+                <b>Note:</b> All fields in this step are required to add a new
+                equipment to the inventory.
+              </Text>
+
+              <Grid templateColumns="repeat(2, 1fr)" gap={5}>
+                {equipmentFields.map((field) => {
+                  const columnSpan = !["type", "location"].includes(field.name)
+                    ? 2
+                    : 1;
+                  return (
+                    <GridItem key={field.name} colSpan={columnSpan}>
+                      <FormControl isInvalid={errors[field.name]}>
+                        <FormLabel fontWeight="semibold">
+                          {field.label}
+                        </FormLabel>
+                        <Input
+                          name={field.name}
+                          value={form[field.name]}
+                          onChange={handleChange}
+                          placeholder={field.placeholder}
+                          focusBorderColor={MAROON}
+                          borderColor={MAROON_HOVER}
+                        />
+                      </FormControl>
                       {errors[field.name] && (
-                        <InputRightElement>
-                          <FiAlertCircle color="maroon" />
-                        </InputRightElement>
+                        <Text color="#B03060" fontSize="xs">
+                          {field.errorMessage}
+                        </Text>
                       )}
-                    </InputGroup>
-                  </FormControl>
-                ))}
-              </TabPanel>
-              <TabPanel>
-                {/* Condition Field */}
-                <Flex gap={5}>
+                    </GridItem>
+                  );
+                })}
+              </Grid>
+            </Box>
+          )}
+          {/* STEP 2 */}
+          {activeStep === 1 && (
+            <Box>
+              <Heading size="md" mb={2}>
+                Additional Equipment Details
+              </Heading>
+              <Text fontSize="sm" color="gray.600" mb={4}>
+                <b>Note:</b> All fields in this step are optional. You can skip
+                this step if you don&apos;t want to add any additional details.
+              </Text>
+
+              {/* Condition Field */}
+              <Grid templateColumns="repeat(2, 1fr)" gap={5}>
+                <GridItem>
                   <ModalDropdown
                     value={form.condition}
                     onChange={(newCondition) =>
@@ -289,18 +403,27 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
                     }
                     roles={conditionOptions}
                     w={"100%"}
+                    menuItemWidth="185%"
                     label="Condition"
                     placeholder="Select condition"
                     isRequired={false}
                     isInvalid={errors.condition}
                   />
+                </GridItem>
+
+                <GridItem>
                   <FormControl>
-                    <FormLabel fontSize={14}>Selected Condition</FormLabel>
+                    <FormLabel fontWeight="semibold">
+                      Selected Condition
+                    </FormLabel>
                     <Box
                       border="1px"
-                      borderRadius="lg"
+                      borderColor={MAROON_HOVER}
+                      focusBorderColor={MAROON}
+                      _hover={{ borderColor: "gray.300" }}
+                      transition={"all 0.2s"}
+                      borderRadius={"md"}
                       h="38px"
-                      borderColor="gray.400"
                     >
                       <Badge
                         colorScheme={getEqConditionColor(form.condition)}
@@ -315,10 +438,10 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
                       </Badge>
                     </Box>
                   </FormControl>
-                </Flex>
+                </GridItem>
 
                 {/* Status Field */}
-                <Flex gap={5} mt={4}>
+                <GridItem>
                   <ModalDropdown
                     value={form.status}
                     onChange={(newStatus) =>
@@ -326,17 +449,24 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
                     }
                     roles={statusOptions}
                     w={"100%"}
+                    menuItemWidth="185%"
                     label="Status (Optional)"
                     placeholder="Select status"
                     isRequired={false}
                   />
+                </GridItem>
+
+                <GridItem>
                   <FormControl>
-                    <FormLabel fontSize={14}>Selected Status</FormLabel>
+                    <FormLabel fontWeight="semibold">Selected Status</FormLabel>
                     <Box
                       border="1px"
-                      borderRadius="lg"
+                      borderColor={MAROON_HOVER}
+                      focusBorderColor={MAROON}
+                      _hover={{ borderColor: "gray.300" }}
+                      transition={"all 0.2s"}
+                      borderRadius={"md"}
                       h="38px"
-                      borderColor="gray.400"
                     >
                       <Badge
                         colorScheme={getEqStatusColor(form.status)}
@@ -351,49 +481,165 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
                       </Badge>
                     </Box>
                   </FormControl>
-                </Flex>
-                <FormControl mt={4}>
-                  <FormLabel fontSize={14}>
-                    Description & Specifications (Optional)
-                  </FormLabel>
-                  <Textarea
-                    name="description"
-                    value={form.description}
-                    focusBorderColor="maroon"
-                    borderRadius="lg"
-                    h="140px"
-                    borderColor="gray.400"
-                    placeholder="Equipment description, specifications, and additional details..."
-                    onChange={handleChange}
+                </GridItem>
+
+                <GridItem colSpan={2}>
+                  <FormControl>
+                    <FormLabel fontWeight="semibold">
+                      Description & Specifications (Optional)
+                    </FormLabel>
+                    <Textarea
+                      name="description"
+                      value={form.description}
+                      onChange={handleChange}
+                      placeholder="Equipment description, specifications, and additional details..."
+                      focusBorderColor={MAROON}
+                      borderColor={MAROON_HOVER}
+                    />
+                  </FormControl>
+                </GridItem>
+              </Grid>
+            </Box>
+          )}
+          {/* STEP 3 */}
+          {activeStep === 2 && (
+            <Box>
+              <Heading size="md" mb={2}>
+                Confirm Equipment Details
+              </Heading>
+
+              {/* Request Details Card */}
+              <Box
+                bg="white"
+                border="1px solid"
+                borderColor="gray.100"
+                borderRadius="xl"
+                p={6}
+                mb={6}
+                boxShadow="md"
+              >
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                  {/* Column 1 */}
+                  <VStack align="start" spacing={4}>
+                    <DetailItem
+                      icon={<FiTool />}
+                      label="Equipment Name"
+                      value={form.name}
+                    />
+                    <DetailItem
+                      icon={<FiHash />}
+                      label="Serial Number"
+                      value={form.serial_number}
+                    />
+                    <DetailItem
+                      icon={<FiLayers />}
+                      label="Equipment Type"
+                      value={form.type}
+                    />
+                  </VStack>
+
+                  {/* Column 2 */}
+                  <VStack align="start" spacing={4}>
+                    <DetailItem
+                      icon={<FiMapPin />}
+                      label="Location"
+                      value={form.location}
+                    />
+                    <DetailItem
+                      icon={<FiActivity />}
+                      label="Condition"
+                      value={form.condition || "N/A"}
+                    />
+                    <DetailItem
+                      icon={<FiInfo />}
+                      label="Status"
+                      value={form.status || "N/A"}
+                    />
+                  </VStack>
+                </SimpleGrid>
+
+                {/* Description (full width) */}
+                <Box
+                  mt={6}
+                  pt={4}
+                  borderTopWidth="1px"
+                  borderTopColor="gray.100"
+                >
+                  <DetailItem
+                    icon={<FiAlignLeft />}
+                    label="Description"
+                    value={form.description || "No description provided"}
+                    valueStyle={{
+                      color: !form.description ? "gray.400" : "inherit",
+                    }}
                   />
-                </FormControl>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+                </Box>
+              </Box>
+            </Box>
+          )}
         </ModalBody>
 
-        <ModalFooter borderTop="1px solid #e2e8f0">
-          <Button
-            mr={3}
-            variant="outline"
-            borderRadius="lg"
-            onClick={handleClose}
-            _hover={{ bg: "#f7eaea" }}
-          >
-            Close
-          </Button>
-          <Button
-            isLoading={isSubmitting}
-            loadingText="Updating..."
-            bg="#800000"
-            color="white"
-            borderRadius="lg"
-            _hover={{ bg: "#a12828" }}
-            transition="background-color 0.2s ease-in-out"
-            onClick={handleSubmit}
-          >
-            Update Equipment
-          </Button>
+        {/* FOOTER */}
+        <ModalFooter borderTop="1px solid" borderColor="gray.200" gap={3}>
+          {activeStep > 0 && (
+            <Button
+              flex={1}
+              variant="outline"
+              color={MAROON}
+              borderColor={MAROON}
+              _hover={{ bg: `${MAROON}10` }}
+              onClick={() => setActiveStep(activeStep - 1)}
+            >
+              Back
+            </Button>
+          )}
+          {activeStep === 0 && (
+            <Flex w="full" gap={3}>
+              <Button
+                flex={1}
+                variant="outline"
+                color={MAROON}
+                borderColor={MAROON}
+                _hover={{ bg: `${MAROON}10` }}
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+              <Button
+                flex={1}
+                bg={MAROON}
+                color="white"
+                _hover={{ bg: MAROON_HOVER }}
+                onClick={() => validateDateDetails(1)}
+              >
+                Proceed to Additional Information
+              </Button>
+            </Flex>
+          )}
+          {activeStep === 1 && (
+            <Button
+              flex={1}
+              bg={MAROON}
+              color="white"
+              _hover={{ bg: MAROON_HOVER }}
+              onClick={() => setActiveStep(2)}
+            >
+              Proceed to Review
+            </Button>
+          )}
+          {activeStep === 2 && (
+            <Button
+              flex={1}
+              bg={MAROON}
+              color="white"
+              isLoading={isSubmitting}
+              loadingText="Submitting..."
+              _hover={{ bg: MAROON_HOVER }}
+              onClick={handleSubmit}
+            >
+              Add Equipment
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>

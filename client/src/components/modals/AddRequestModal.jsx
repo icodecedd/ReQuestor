@@ -35,12 +35,12 @@ import { useEffect, useState } from "react";
 import { BsProjector } from "react-icons/bs";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import {
+  FiAlignLeft,
   FiBookOpen,
   FiBox,
   FiCheck,
   FiClock,
   FiFilePlus,
-  FiTarget,
   FiUser,
   FiUserCheck,
 } from "react-icons/fi";
@@ -128,7 +128,6 @@ const AddRequestModal = ({
     time_to: "",
     purpose: "",
   });
-
   const [errors, setErrors] = useState({
     name: false,
     course_section: false,
@@ -294,7 +293,7 @@ const AddRequestModal = ({
         >
           <Flex gap={1} alignItems={"center"}>
             {icon}
-            <Text fontSize="sm" color={DARK_GRAY}>
+            <Text fontSize="sm" fontWeight="medium" color={DARK_GRAY} mb={0.5}>
               {equipment}
             </Text>
           </Flex>
@@ -302,6 +301,22 @@ const AddRequestModal = ({
       </Flex>
     );
   };
+
+  const DetailItem = ({ icon, label, value, valueStyle = {} }) => (
+    <Flex align="flex-start" gap={3}>
+      <Box color={MAROON} mt={0.5}>
+        {icon}
+      </Box>
+      <Box>
+        <Text fontSize="sm" fontWeight="medium" color={DARK_GRAY} mb={0.5}>
+          {label}
+        </Text>
+        <Text fontSize="md" {...valueStyle}>
+          {value}
+        </Text>
+      </Box>
+    </Flex>
+  );
 
   return (
     <Modal
@@ -538,120 +553,118 @@ const AddRequestModal = ({
           {/* STEP 3 */}
           {activeStep === 2 && (
             <Box>
-              <Heading size="md" mb={4}>
+              <Heading size="md" mb={2}>
                 Review Your Request
               </Heading>
-
-              {/* Schedule Card */}
-              <Box
-                bg="white"
-                border="1px solid"
-                borderColor="gray.100"
-                borderRadius="lg"
-                p={4}
-                mb={4}
-                boxShadow="sm"
-              >
-                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                  <GridItem>
-                    <Flex align="center" gap={2}>
-                      <BsCalendarDate color={MAROON} />
-                      <Text fontSize="sm" color={DARK_GRAY}>
-                        <strong>Date:</strong> {form.date_use}
-                      </Text>
-                    </Flex>
-                  </GridItem>
-                  <GridItem>
-                    <Flex align="center" gap={2}>
-                      <FiClock color={MAROON} />
-                      <Text fontSize="sm" color={DARK_GRAY}>
-                        <strong>Time:</strong> {formatTime(form.time_from)} -{" "}
-                        {formatTime(form.time_to)}
-                      </Text>
-                    </Flex>
-                  </GridItem>
-                </Grid>
-              </Box>
 
               {/* Request Details Card */}
               <Box
                 bg="white"
                 border="1px solid"
                 borderColor="gray.100"
-                borderRadius="lg"
-                p={4}
-                mb={4}
-                boxShadow="sm"
+                borderRadius="xl"
+                p={6}
+                mb={6}
+                boxShadow="md"
               >
-                <VStack align="start" spacing={2}>
-                  <Flex align="center" gap={2}>
-                    <FiUser color={MAROON} />
-                    <Text fontSize="sm" color={DARK_GRAY}>
-                      <strong>Requestor:</strong> {form.name}
-                    </Text>
-                  </Flex>
-                  <Flex align="center" gap={2}>
-                    <FiBookOpen color={MAROON} />
-                    <Text fontSize="sm" color={DARK_GRAY}>
-                      <strong>Course & Section:</strong> {form.course_section}
-                    </Text>
-                  </Flex>
-                  <Flex align="center" gap={2}>
-                    <FiUserCheck color={MAROON} />
-                    <Text fontSize="sm" color={DARK_GRAY}>
-                      <strong>Faculty In-Charge:</strong>{" "}
-                      {form.faculty_in_charge}
-                    </Text>
-                  </Flex>
-                  <Flex align="center" gap={2}>
-                    <FiTarget color={MAROON} />
-                    <Text fontSize="sm" color={DARK_GRAY}>
-                      <strong>Purpose:</strong> {form.purpose || "N/A"}
-                    </Text>
-                  </Flex>
-                </VStack>
-              </Box>
+                <Box
+                  mb={6}
+                  pb={4}
+                  borderBottomWidth="1px"
+                  borderBottomColor="gray.100"
+                >
+                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                    <DetailItem
+                      icon={<BsCalendarDate />}
+                      label="Date Requested"
+                      value={form.date_use || "Not specified"}
+                    />
+                    <DetailItem
+                      icon={<FiClock />}
+                      label="Time Requested"
+                      value={`${formatTime(form.time_from)} - ${formatTime(
+                        form.time_to
+                      )}` || "Not specified"}
+                    />
+                  </SimpleGrid>
+                </Box>
 
-              {/* Equipment Card */}
-              <Box
-                bg="white"
-                border="1px solid"
-                borderColor="gray.100"
-                borderRadius="lg"
-                p={4}
-                boxShadow="sm"
-              >
-                <Flex align="center" gap={2} mb={2}>
-                  <FiBox color={MAROON} />
-                  <Text fontSize="sm" color={DARK_GRAY} fontWeight="bold">
-                    Equipment
-                  </Text>
-                </Flex>
-                <Flex color={DARK_GRAY}>
-                  {form.equipment_list.length
-                    ? form.equipment_list.map((equipment, index) => {
-                        if (equipment === "Projector") {
-                          return renderEquipmentBox(
-                            index,
-                            equipment,
-                            <BsProjector color={MAROON} />
-                          );
-                        } else if (equipment === "White Screen") {
-                          return renderEquipmentBox(
-                            index,
-                            equipment,
-                            <PiProjectorScreenChart color={MAROON} />
-                          );
-                        } else {
-                          return renderEquipmentBox(
-                            index,
-                            equipment,
-                            <FaChalkboardTeacher color={MAROON} />
-                          );
-                        }
-                      })
-                    : "No equipment selected"}
-                </Flex>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                  {/* Column 1 */}
+                  <VStack align="start" spacing={4}>
+                    <DetailItem
+                      icon={<FiUser />}
+                      label="Requestor"
+                      value={form.name}
+                    />
+                    <DetailItem
+                      icon={<FiUserCheck />}
+                      label="Faculty In-Charge"
+                      value={form.faculty_in_charge}
+                    />
+                  </VStack>
+
+                  {/* Column 2 */}
+                  <VStack align="start" spacing={4}>
+                    <DetailItem
+                      icon={<FiBookOpen />}
+                      label="Course & Section"
+                      value={form.course_section}
+                    />
+                    <Flex align="center" gap={2}>
+                      <FiBox color={MAROON} />
+                      <Text
+                        fontSize="sm"
+                        fontWeight="medium"
+                        color={DARK_GRAY}
+                        mb={0.5}
+                      >
+                        Equipment
+                      </Text>
+                    </Flex>
+                    <Flex color={DARK_GRAY}>
+                      {form.equipment_list.length
+                        ? form.equipment_list.map((equipment, index) => {
+                            if (equipment === "Projector") {
+                              return renderEquipmentBox(
+                                index,
+                                equipment,
+                                <BsProjector color={MAROON} />
+                              );
+                            } else if (equipment === "White Screen") {
+                              return renderEquipmentBox(
+                                index,
+                                equipment,
+                                <PiProjectorScreenChart color={MAROON} />
+                              );
+                            } else {
+                              return renderEquipmentBox(
+                                index,
+                                equipment,
+                                <FaChalkboardTeacher color={MAROON} />
+                              );
+                            }
+                          })
+                        : "No equipment selected"}
+                    </Flex>
+                  </VStack>
+                </SimpleGrid>
+
+                <Box
+                  mt={6}
+                  pt={4}
+                  borderTopWidth="1px"
+                  borderTopColor="gray.100"
+                >
+                  <DetailItem
+                    icon={<FiAlignLeft />}
+                    label="Purpose"
+                    value={form.purpose || "No purpose provided"}
+                    valueStyle={{
+                      color: !form.purpose ? "gray.400" : "inherit",
+                    }}
+                  />
+                </Box>
               </Box>
             </Box>
           )}
