@@ -13,11 +13,15 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { FiCheck } from "react-icons/fi";
 import { useState, useEffect } from "react";
 
+const MAROON = "#800000";
+const MAROON_HOVER = "#A52A2A";
+
 export function ModalDropdown({
   value = "",
   onChange,
   roles,
   w = "100%",
+  menuItemWidth = "185%",
   label,
   placeholder,
   isRequired = true,
@@ -39,26 +43,28 @@ export function ModalDropdown({
 
   return (
     <FormControl isRequired={isRequired}>
-      <FormLabel fontSize={14}>{label}</FormLabel>
+      <FormLabel fontWeight="semibold">{label}</FormLabel>
       <Menu>
         <MenuButton
           aria-label="Select role"
           as={Button}
           rightIcon={<RiArrowDropDownLine size={20} />}
-          borderRadius="lg"
-          borderColor="gray.400"
+          borderRadius="md"
+          borderColor={MAROON_HOVER}
+          focusBorderColor={MAROON}
           variant="outline"
           color="black"
           fontSize="15px"
-          _hover={{ bg: "#f7eaea" }}
-          _active={{ bg: "#f7eaea" }}
+          _hover={{ borderColor: "gray.300", bg: "#f7eaea" }}
+          _active={{ borderColor: "gray.300", bg: "#f7eaea" }}
+          transition={"all 0.2s"}
           w={w}
           textAlign="left"
           fontWeight="normal"
         >
           {selectedRole || placeholder}
         </MenuButton>
-        <MenuList borderRadius="xl" p={1} w={"128%"}>
+        <MenuList borderRadius="xl" p={1} w={menuItemWidth}>
           {roles.map((role) => {
             const isSelected = selectedRole === role;
             return (
