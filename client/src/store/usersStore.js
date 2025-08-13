@@ -2,7 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 import { toTitleCase } from "@/utils/toTitleCase";
 
-const useUserStore = create((set, get) => ({
+export const useUserStore = create((set, get) => ({
   users: [],
   loading: false,
   error: null,
@@ -253,5 +253,3 @@ const useUserStore = create((set, get) => ({
     }
   },
 }));
-
-export default useUserStore;

@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { FiAlertTriangle } from "react-icons/fi";
 import { MdOutlineLockReset } from "react-icons/md";
-import useUserStore from "@/store/usersStore";
+import { useUserStore } from "@/store/usersStore";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 

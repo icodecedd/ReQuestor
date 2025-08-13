@@ -23,7 +23,7 @@ import {
 import { FiAlertCircle, FiEdit, FiMail, FiUser } from "react-icons/fi";
 import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
 import { useEffect, useState } from "react";
-import useUserStore from "@/store/usersStore";
+import { useUserStore } from "@/store/usersStore";
 import { getUserColor } from "@/utils/getColorScheme.js";
 import { useAuth } from "@/hooks/useAuth";
 

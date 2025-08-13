@@ -15,7 +15,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { FiAlertTriangle, FiTrash } from "react-icons/fi";
-import useUserStore from "@/store/usersStore";
+import { useUserStore } from "@/store/usersStore";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
