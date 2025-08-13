@@ -26,7 +26,7 @@ import {
 } from "@chakra-ui/react";
 import { CategoryDropdown } from "@/components/dropdowns/CategoryDropdown";
 import { EquipmentStatusDropdown } from "@/components/dropdowns/EquipmentStatusDropdown";
-import useEquipmentStore from "@/store/equipmentStore";
+import { useEquipmentStore } from "@/store/equipmentStore";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";

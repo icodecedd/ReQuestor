@@ -3,7 +3,7 @@ import axios from "axios";
 import { toTitleCase } from "@/utils/toTitleCase";
 import { useRecentActivitiesStore } from "./recentStore";
 
-const useEquipmentStore = create((set, get) => ({
+export const useEquipmentStore = create((set, get) => ({
   equipment: [],
   loading: false,
   error: null,
@@ -186,5 +186,3 @@ const useEquipmentStore = create((set, get) => ({
     }
   },
 }));
-
-export default useEquipmentStore;

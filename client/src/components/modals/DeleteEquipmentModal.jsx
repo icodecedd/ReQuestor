@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   Flex,
   HStack,
   Modal,
@@ -12,47 +11,40 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useToast,
 } from "@chakra-ui/react";
-import { FiAlertTriangle, FiTrash } from "react-icons/fi";
-import useEquipmentStore from "@/store/equipmentStore";
+import { FiAlertOctagon, FiTrash } from "react-icons/fi";
+import { useEquipmentStore } from "@/store/equipmentStore";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { showToast } from "@/utils/toast";
 
-const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
+const WARNING_RED = "#E53E3E";
+const WARNING_RED_DARK = "#C53030";
+const WARNING_RED_HOVER = "#F56565";
+const DARK_GRAY = "#616161";
+
+const DeleteEquipmentModal = ({ isOpen, onClose, request }) => {
   const deleteEquipment = useEquipmentStore((state) => state.deleteEquipment);
   const setUserId = useEquipmentStore((state) => state.setUserId);
   const { user } = useAuth();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const toast = useToast();
 
   const handleDelete = async () => {
     setUserId(user.id);
     setIsSubmitting(true);
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
+      const result = await deleteEquipment(request.id);
 
-      const result = await deleteEquipment(equipment.id);
-
-      toast({
-        title: result.message,
-        status: result.success ? "success" : "error",
-        duration: 2000,
-        position: "top-right",
-        variant: "subtle",
-      });
+      showToast(result.message, result.success ? "success" : "error");
 
       if (result.success) {
         onClose();
       }
     } catch (error) {
-      toast({
-        title: "An error occurred while deleting equipment.",
-        status: "error",
-        duration: 2000,
-        position: "top-right",
-        variant: "subtle",
-      });
+      showToast("Failed to delete equipment. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -66,76 +58,84 @@ const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
       motionPreset="slideInBottom"
       isCentered
     >
-      <ModalOverlay />
-      <ModalContent borderRadius="2xl" overflow="hidden">
-        <ModalHeader>
-          <Flex color="gray.900" gap={3} align="center" mb={3}>
+      <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
+      <ModalContent borderRadius="2xl" overflow="hidden" boxShadow="2xl">
+        {/* HEADER */}
+        <ModalHeader
+          px={6}
+          pt={5}
+          pb={3}
+          borderBottom="1px solid"
+          borderColor="gray.100"
+        >
+          <Flex gap={3} align="center">
             <Box
-              bg="white"
-              color="#f0f0f0ff"
-              borderRadius="md"
-              boxShadow="0 2px 8px rgba(0,0,0,0.12)"
-              border="1px solid #e2e8f0"
-              p={2}
-              transition="all 0.3s ease"
-              _hover={{
-                transform: "scale(1.02)",
-                boxShadow: "lg",
-              }}
+              bg={`${WARNING_RED}15`}
+              color={WARNING_RED}
+              borderRadius="full"
+              p={3}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
             >
-              <FiTrash color="#800000" />
+              <FiTrash size={24} />
             </Box>
             <Box>
-              <Text fontSize="lg" mt={0.5}>
+              <Text fontSize="lg" fontWeight="bold" color={WARNING_RED_DARK}>
                 Delete Equipment
               </Text>
-              <Text color="gray.700" fontWeight="normal" fontSize="14px">
-                This will permanently remove the equipment record from the
-                system.
+              <Text color="gray.600" fontSize="sm">
+                This will permanently delete the equipment record from the
+                system
               </Text>
             </Box>
           </Flex>
-          <Divider w="110%" ml={-6} />
         </ModalHeader>
+
         <ModalCloseButton
           size="md"
-          _hover={{ bg: "#f7eaea" }}
-          borderRadius="lg"
+          _hover={{ bg: `${WARNING_RED}15` }}
+          color={DARK_GRAY}
+          borderRadius="full"
+          mt={2}
         />
-        <ModalBody>
+
+        <ModalBody px={6} py={4} bg="gray.50">
           <Box
-            bg="#fdecec"
-            color="#fda8a8ff"
-            border="1px"
+            bg="red.50"
+            color="red.800"
+            border="1px solid"
+            borderColor="red.100"
             borderRadius="xl"
-            p="2.5"
-            transition="all 0.3s ease"
-            _hover={{
-              transform: "scale(1.02)",
-              boxShadow: "lg",
-            }}
+            p={4}
           >
-            <HStack>
-              <FiAlertTriangle color="#922323ff" fontSize="20px" />
-              <Text color="#922323ff">
+            <HStack spacing={3}>
+              <FiAlertOctagon color={WARNING_RED} fontSize="20px" />
+              <Text fontWeight="medium">
                 <strong>Security Notice:</strong>
               </Text>
             </HStack>
-            <Text color="#ef4444" pl={7} fontSize="14px">
+            <Text pl={8} fontSize="14px" mt={1}>
               Deleting this equipment is permanent and cannot be undone. All
               associated records will be lost.
             </Text>
           </Box>
         </ModalBody>
-        <ModalFooter borderTop="1px solid #e2e8f0" mt={4}>
+        <ModalFooter
+          borderTop="1px solid"
+          borderTopColor="gray.100"
+          px={6}
+          py={4}
+          bg="white"
+        >
           <Button
-            bg="#ef4444"
+            flex={1}
+            bg={WARNING_RED}
             color="white"
-            borderRadius="lg"
+            _hover={{ bg: WARNING_RED_HOVER }}
+            _active={{ bg: WARNING_RED_DARK }}
             isLoading={isSubmitting}
             loadingText="Deleting..."
-            w="full"
-            _hover={{ bg: "#cc5a5aff" }}
             onClick={handleDelete}
           >
             Delete Equipment

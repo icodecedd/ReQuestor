@@ -48,7 +48,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { showToast } from "@/utils/toast";
 import { getEqConditionColor, getEqStatusColor } from "@/utils/getColorScheme";
 import { ModalDropdown } from "../dropdowns/ModalDropdown";
-import useEquipmentStore from "@/store/equipmentStore";
+import { useEquipmentStore } from "@/store/equipmentStore";
 
 const MAROON = "#800000";
 const MAROON_HOVER = "#A52A2A";
