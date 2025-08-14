@@ -82,8 +82,7 @@
 ### 🔄 In Progress  
 - **Online Reservation Form** – Fully paperless booking process  
 - **Email & In-App Notifications** – Keep users informed instantly  
-- **Configurable Booking Settings** – Admin-defined max booking time and advance request limits  
-- **Usage History & Reporting** – Generate logs for past reservations and usage analytics  
+- **Configurable Booking Settings** – Admin-defined max booking time and advance request limits    
 - **Student Dashboard** – View personal booking history, status updates, and announcements  
 - **Responsive Student UI** – Mobile, tablet, and desktop optimization for requestors  
 
