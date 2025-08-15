@@ -3,12 +3,18 @@ import {
   Input,
   InputRightElement,
   IconButton,
-  InputLeftElement,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { FiEyeOff, FiEye, FiLock } from "react-icons/fi";
+import { FiEyeOff, FiEye } from "react-icons/fi";
 
-const PasswordInput = ({ name, placeholder, onChange }) => {
+const PasswordInput = ({
+  name,
+  value,
+  placeholder,
+  onChange,
+  focusBorderColor,
+  borderColor,
+}) => {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
 
@@ -18,16 +24,13 @@ const PasswordInput = ({ name, placeholder, onChange }) => {
 
   return (
     <InputGroup>
-      <InputLeftElement pointerEvents="none" color="gray.400">
-        <FiLock />
-      </InputLeftElement>
       <Input
         type={show ? "text" : "password"}
         name={name}
+        value={value}
         placeholder={placeholder}
-        focusBorderColor="maroon"
-        borderRadius="lg"
-        borderColor="gray.400"
+        focusBorderColor={focusBorderColor}
+        borderColor={borderColor}
         onChange={handlePassword}
       />
       <InputRightElement width="4.5rem" color="gray.500">

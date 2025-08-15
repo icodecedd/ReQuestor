@@ -1,15 +1,13 @@
 import {
-  Badge,
   Box,
   Button,
-  Divider,
   Flex,
   FormControl,
   FormLabel,
+  Grid,
+  GridItem,
+  Heading,
   Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -17,35 +15,47 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
   Text,
-  useToast,
 } from "@chakra-ui/react";
-import { FiAlertCircle, FiMail, FiUser, FiUserPlus } from "react-icons/fi";
+import { FiMail, FiUser, FiUserPlus } from "react-icons/fi";
 import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
 import { useState } from "react";
 import { useUserStore } from "@/store/usersStore";
 import PasswordInput from "../inputs/PasswordInput";
-import { getUserColor } from "@/utils/getColorScheme";
 import { useAuth } from "@/hooks/useAuth";
+import { showToast } from "@/utils/toast";
+
+const MAROON = "#800000";
+const MAROON_HOVER = "#A52A2A";
 
 const userFields = [
-  { name: "name", label: "Name", placeholder: "Enter name", icon: <FiUser /> },
+  {
+    name: "name",
+    label: "Name",
+    placeholder: "Enter name",
+    icon: <FiUser />,
+    errorMessage: "Please enter a name",
+  },
   {
     name: "email",
     label: "Email",
     placeholder: "Enter email",
     icon: <FiMail />,
+    errorMessage: "Please enter an email",
   },
-  { name: "password", label: "Password", placeholder: "Enter password" },
+  {
+    name: "password",
+    label: "Password",
+    placeholder: "Enter password",
+    icon: <PasswordInput />,
+    errorMessage: "Please enter a password",
+  },
   {
     name: "confirmPassword",
     label: "Confirm Password",
     placeholder: "Re-enter password",
+    icon: <PasswordInput />,
+    errorMessage: "Please re-enter the password",
   },
 ];
 
@@ -56,7 +66,6 @@ const AddUserModal = ({ isOpen, onClose }) => {
   const addUser = useUserStore((state) => state.addUser);
   const setUserId = useUserStore((state) => state.setUserId);
   const { user } = useAuth();
-  const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [form, setForm] = useState({
@@ -69,10 +78,10 @@ const AddUserModal = ({ isOpen, onClose }) => {
   });
 
   const [errors, setErrors] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
   });
 
   const handleChange = (e) => {
@@ -82,16 +91,6 @@ const AddUserModal = ({ isOpen, onClose }) => {
     if (value.trim()) {
       setErrors((prev) => ({ ...prev, [name]: false }));
     }
-  };
-
-  const showToast = (message, status) => {
-    toast({
-      title: message,
-      status: status,
-      duration: 2000,
-      position: "top-right",
-      variant: "subtle",
-    });
   };
 
   const handleSubmit = async () => {
@@ -144,10 +143,10 @@ const AddUserModal = ({ isOpen, onClose }) => {
     });
 
     setErrors({
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      name: false,
+      email: false,
+      password: false,
+      confirmPassword: false,
     });
 
     onClose(); // actually close the modal
@@ -160,222 +159,131 @@ const AddUserModal = ({ isOpen, onClose }) => {
       size="2xl"
       motionPreset="slideInBottom"
     >
-      <ModalOverlay />
-      <ModalContent borderRadius="2xl" overflow="hidden">
-        <ModalHeader>
-          <Flex color="gray.900" gap={3} align="center" mb={3}>
-            <Box
-              bg="white"
-              color="#f0f0f0ff"
-              borderRadius="md"
-              boxShadow="0 2px 8px rgba(0,0,0,0.12)"
-              border="1px solid #e2e8f0"
-              p={2}
-              transition="all 0.3s ease"
-              _hover={{
-                transform: "scale(1.02)",
-                boxShadow: "lg",
-              }}
-            >
-              <FiUserPlus color="#800000" />
+      <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
+      <ModalContent borderRadius="2xl" overflow="hidden" boxShadow="2xl">
+        {/* HEADER */}
+        <ModalHeader
+          bgGradient="linear(to-br, #800000, #A52A2A)"
+          color="white"
+          py={5}
+          px={6}
+        >
+          <Flex align="center" gap={3}>
+            <Box bg="whiteAlpha.200" p={3} borderRadius="full">
+              <FiUserPlus size={24} />
             </Box>
             <Box>
-              <Text fontSize="lg" mt={0.5}>
+              <Heading size="md" fontWeight="bold">
                 Add New User
-              </Text>
-              <Text color="gray.700" fontWeight="normal" fontSize="14px">
-                Create a new user account for the system.
+              </Heading>
+              <Text fontSize="sm" opacity={0.85}>
+                Create a new user account for the system
               </Text>
             </Box>
           </Flex>
-          <Divider w="110%" ml={-6} />
         </ModalHeader>
         <ModalCloseButton
-          size="md"
-          _hover={{ bg: "#f7eaea" }}
-          borderRadius="lg"
+          color="white"
+          _hover={{ bg: "whiteAlpha.300" }}
+          borderRadius="full"
         />
-        <ModalBody>
-          <Tabs isFitted variant="unstyle" size="sm">
-            <TabList bg="#e9e9e9ff" borderRadius="lg" p={1.5} pr={1.5} pl={1.5}>
-              <Tab
-                _selected={{
-                  bg: "white",
-                  color: "black",
-                  borderRadius: "md",
-                  boxShadow: "0 0.5px 1px rgba(0, 0, 0, 0.15)",
-                }}
-                borderRadius="md"
-                color="#71717e"
-                fontWeight="bold"
-              >
-                Account Details
-              </Tab>
-              <Tab
-                _selected={{
-                  bg: "white",
-                  color: "black",
-                  borderRadius: "md",
-                  boxShadow: "0 0.5px 1px rgba(0, 0, 0, 0.15)",
-                }}
-                borderRadius="md"
-                color="#71717e"
-                fontWeight="bold"
-              >
-                Role & Status
-              </Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                {/* User input fields */}
-                {userFields.slice(0, 2).map((field, index) => (
-                  <FormControl
-                    mb={4}
-                    key={index}
-                    isInvalid={errors[field.name]}
-                  >
-                    <FormLabel fontSize={14}>{field.label}</FormLabel>
-                    <InputGroup>
-                      <InputLeftElement pointerEvents="none" color="gray.400">
-                        {field.icon}
-                      </InputLeftElement>
-                      <Input
-                        name={field.name}
-                        placeholder={field.placeholder}
-                        focusBorderColor="maroon"
-                        borderRadius="lg"
-                        borderColor="gray.400"
-                        onChange={handleChange}
-                      />
-                      {errors[field.name] && (
-                        <InputRightElement>
-                          <FiAlertCircle color="maroon" />
-                        </InputRightElement>
-                      )}
-                    </InputGroup>
-                  </FormControl>
-                ))}
 
-                {/* Password fields */}
-                {userFields.slice(2).map((field, index) => (
-                  <FormControl
-                    mb="4"
-                    key={index}
-                    isInvalid={errors[field.name]}
-                  >
-                    <FormLabel fontSize={14}>{field.label}</FormLabel>
+        <ModalBody>
+          <Box>
+            <Grid templateColumns="repeat(2, 1fr)" gap={5}>
+              {userFields.slice(0, 2).map((field) => (
+                <GridItem key={field.name} colSpan={2}>
+                  <FormControl isInvalid={errors[field.name]}>
+                    <FormLabel fontWeight="semibold">{field.label}</FormLabel>
+                    <Input
+                      name={field.name}
+                      value={form[field.name]}
+                      onChange={handleChange}
+                      placeholder={field.placeholder}
+                      focusBorderColor={MAROON}
+                      borderColor={MAROON_HOVER}
+                    />
+                  </FormControl>
+                  {errors[field.name] && (
+                    <Text color="#B03060" fontSize="xs">
+                      {field.errorMessage}
+                    </Text>
+                  )}
+                </GridItem>
+              ))}
+              {userFields.slice(2).map((field) => (
+                <GridItem key={field.name} colSpan={1}>
+                  <FormControl isInvalid={errors[field.name]}>
+                    <FormLabel fontWeight="semibold">{field.label}</FormLabel>
                     <PasswordInput
                       name={field.name}
+                      value={form[field.name]}
                       placeholder={field.placeholder}
                       onChange={(password) =>
                         setForm({ ...form, [field.name]: password })
                       }
+                      focusBorderColor={MAROON}
+                      borderColor={MAROON_HOVER}
                     />
                   </FormControl>
-                ))}
-              </TabPanel>
-              <TabPanel>
-                <Box h="250px">
-                  <Flex gap={5}>
-                    <ModalDropdown
-                      value={form.role}
-                      onChange={(newRole) =>
-                        setForm({ ...form, role: newRole })
-                      }
-                      roles={roleOptions}
-                      w={"100%"}
-                      label="Role"
-                      placeholder="Select role"
-                      isRequired={false}
-                    />
-                    <FormControl>
-                      <FormLabel fontSize={14}>Selected Role</FormLabel>
-                      <Box
-                        border="1px"
-                        borderRadius="lg"
-                        h="40px"
-                        borderColor="gray.400"
-                      >
-                        <Badge
-                          bg={getUserColor(form.role)}
-                          border="1px"
-                          color={form.role !== "Admin" ? "black" : "white"}
-                          borderColor={
-                            form.role === "Admin" ? "maroon" : "gray.300"
-                          }
-                          borderRadius="xl"
-                          pl={2}
-                          pr={2}
-                          pb={0.5}
-                          mt={2}
-                          ml={2}
-                        >
-                          {form.role || "No Selected Role"}
-                        </Badge>
-                      </Box>
-                    </FormControl>
-                  </Flex>
-                  <Flex gap={5} mt={4}>
-                    <ModalDropdown
-                      value={form.status}
-                      onChange={(newStatus) =>
-                        setForm({ ...form, status: newStatus })
-                      }
-                      roles={statusOptions}
-                      w={"100%"}
-                      label="Status (Optional)"
-                      placeholder="Select status"
-                      isRequired={false}
-                    />
-                    <FormControl>
-                      <FormLabel fontSize={14}>Selected Status</FormLabel>
-                      <Box
-                        border="1px"
-                        borderRadius="lg"
-                        h="40px"
-                        borderColor="gray.400"
-                      >
-                        <Badge
-                          colorScheme={getUserColor(form.status)}
-                          borderRadius="xl"
-                          pl={2}
-                          pr={2}
-                          pb={0.5}
-                          mt={2}
-                          ml={2}
-                        >
-                          {form.status || "No Selected Status"}
-                        </Badge>
-                      </Box>
-                    </FormControl>
-                  </Flex>
-                </Box>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+                  {errors[field.name] && (
+                    <Text color="#B03060" fontSize="xs">
+                      {field.errorMessage}
+                    </Text>
+                  )}
+                </GridItem>
+              ))}
+              <GridItem colSpan={2}>
+                <Flex gap={5}>
+                  <ModalDropdown
+                    value={form.role}
+                    onChange={(newRole) => setForm({ ...form, role: newRole })}
+                    roles={roleOptions}
+                    w={"100%"}
+                    menuItemWidth={"135%"}
+                    label="Role"
+                    placeholder="Select role"
+                    isRequired={false}
+                  />
+                  <ModalDropdown
+                    value={form.status}
+                    onChange={(newStatus) =>
+                      setForm({ ...form, status: newStatus })
+                    }
+                    roles={statusOptions}
+                    w={"100%"}
+                    menuItemWidth={"135%"}
+                    label="Status (Optional)"
+                    placeholder="Select status"
+                    isRequired={false}
+                  />
+                </Flex>
+              </GridItem>
+            </Grid>
+          </Box>
         </ModalBody>
 
-        <ModalFooter borderTop="1px solid #e2e8f0">
+        <ModalFooter borderTop="1px solid" borderColor="gray.200" gap={3}>
           <Button
-            mr={3}
+            flex={1}
             variant="outline"
-            borderRadius="lg"
+            color={MAROON}
+            borderColor={MAROON}
+            _hover={{ bg: `${MAROON}10` }}
             onClick={handleClose}
-            _hover={{ bg: "#f7eaea" }}
           >
-            Close
+            Cancel
           </Button>
           <Button
-            bg="#800000"
+            flex={1}
+            bg={MAROON}
             color="white"
-            borderRadius="lg"
             isLoading={isSubmitting}
             loadingText="Creating..."
-            _hover={{ bg: "#a12828" }}
-            transition="background-color 0.2s ease-in-out"
+            _hover={{ bg: MAROON_HOVER }}
             onClick={handleSubmit}
           >
-            Create User
+            Add User
           </Button>
         </ModalFooter>
       </ModalContent>

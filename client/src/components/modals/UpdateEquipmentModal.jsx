@@ -195,7 +195,7 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
     return setActiveStep(num);
   };
 
-  const handleSubmit = async () => {
+  const handleUpdate = async () => {
     setUserId(user.id);
     setIsSubmitting(true);
 
@@ -635,7 +635,7 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
               isLoading={isSubmitting}
               loadingText="Submitting..."
               _hover={{ bg: MAROON_HOVER }}
-              onClick={handleSubmit}
+              onClick={handleUpdate}
             >
               Add Equipment
             </Button>

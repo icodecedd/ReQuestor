@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   Flex,
   HStack,
   Modal,
@@ -12,56 +11,49 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useToast,
 } from "@chakra-ui/react";
-import {
-  FiAlertCircle,
-  FiCheckCircle,
-  FiUserCheck,
-  FiUserX,
-} from "react-icons/fi";
+import { FiCheckCircle, FiUserX, FiUserCheck, FiAlertCircle } from "react-icons/fi";
 import { useUserStore } from "@/store/usersStore";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { showToast } from "@/utils/toast";
+
+const DARK_GRAY = "#616161";
+const SUCCESS_GREEN = "#38A169";
+const SUCCESS_GREEN_DARK = "#2F855A";
+const SUCCESS_GREEN_HOVER = "#48BB78";
+const SUCCESS_LIGHT = "#F0F9F4";
+const WARNING_RED = "#E53E3E";
+const WARNING_RED_DARK = "#C53030";
+const WARNING_RED_HOVER = "#F56565";
+const WARNING_LIGHT = "#FFF5F5";
 
 const ToggleStatusModal = ({ isOpen, onClose, users }) => {
   const toggleStatus = useUserStore((state) => state.toggleStatus);
   const setUserId = useUserStore((state) => state.setUserId);
   const { user } = useAuth();
-  const toast = useToast();
-  const isActive = user?.status === "Active";
+  const isActive = users?.status === "Active";
   const label = isActive ? "Deactivate" : "Activate";
-  const [isSubmitting, setSubmitting] = useState(false);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleToggleStatus = async () => {
     setUserId(user.id);
-    setSubmitting(true);
+    setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
       const result = await toggleStatus(users.id);
 
-      toast({
-        title: result.message,
-        status: result.success ? "success" : "error",
-        duration: 2000,
-        variant: "subtle",
-        position: "top-right",
-      });
+      showToast(result.message, result.success ? "success" : "error");
 
       if (result.success) {
         onClose();
       }
     } catch (error) {
-      toast({
-        title: "Error toggling status. Please try again.",
-        status: "error",
-        duration: 2000,
-        position: "top-right",
-        variant: "subtle",
-      });
+      showToast("Failed to toggle status. Please try again.", "error");
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -73,34 +65,37 @@ const ToggleStatusModal = ({ isOpen, onClose, users }) => {
       motionPreset="slideInBottom"
       isCentered
     >
-      <ModalOverlay />
-      <ModalContent borderRadius="2xl" overflow="hidden">
-        <ModalHeader>
-          <Flex color="gray.900" gap={3} align="center" mb={3}>
+      <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
+      <ModalContent borderRadius="2xl" overflow="hidden" boxShadow="2xl">
+        {/* HEADER */}
+        <ModalHeader
+          px={6}
+          pt={5}
+          pb={3}
+          borderBottom="1px solid"
+          borderColor="gray.100"
+        >
+          <Flex gap={3} align="center">
             <Box
-              bg="white"
-              color="#f0f0f0ff"
-              borderRadius="md"
-              boxShadow="0 2px 8px rgba(0,0,0,0.12)"
-              border="1px solid #e2e8f0"
-              p={2}
-              transition="all 0.3s ease"
-              _hover={{
-                transform: "scale(1.02)",
-                boxShadow: "lg",
-              }}
+              bg={isActive ? `${WARNING_RED}15` : `${SUCCESS_GREEN}15`}
+              color={isActive ? WARNING_RED : SUCCESS_GREEN}
+              borderRadius="full"
+              p={3}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
             >
-              {isActive ? (
-                <FiUserX color="#800000" />
-              ) : (
-                <FiUserCheck color="#800000" />
-              )}
+              {isActive ? <FiUserX size={24} /> : <FiUserCheck size={24} />}
             </Box>
             <Box>
-              <Text fontSize="lg" mt={0.5}>
+              <Text
+                fontSize="lg"
+                fontWeight="bold"
+                color={isActive ? WARNING_RED_DARK : SUCCESS_GREEN_DARK}
+              >
                 {label} Account
               </Text>
-              <Text color="gray.700" fontWeight="normal" fontSize="14px">
+              <Text color="gray.600" fontSize="sm">
                 Confirm to{" "}
                 <Text
                   fontWeight="semibold"
@@ -117,61 +112,68 @@ const ToggleStatusModal = ({ isOpen, onClose, users }) => {
               </Text>
             </Box>
           </Flex>
-          <Divider w="110%" ml={-6} />
         </ModalHeader>
+
         <ModalCloseButton
           size="md"
-          _hover={{ bg: "#f7eaea" }}
-          borderRadius="lg"
+          _hover={{ bg: isActive ? WARNING_LIGHT : SUCCESS_LIGHT }}
+          color={DARK_GRAY}
+          borderRadius="full"
+          mt={2}
         />
-        <ModalBody>
+
+        <ModalBody px={6} py={4} bg="gray.50">
           <Box
-            bg={isActive ? "#FFF5F5" : "#ECFDF5"} // light red for deactivate, light green for activate
-            border="1px"
-            borderColor={isActive ? "#FCA5A5" : "#6EE7B7"}
+            bg={isActive ? `${WARNING_RED}15` : `${SUCCESS_GREEN}15`}
+            color={isActive ? WARNING_RED : SUCCESS_GREEN}
+            border="1px solid"
+            borderColor={isActive ? WARNING_RED : SUCCESS_GREEN}
             borderRadius="xl"
-            p="2.5"
+            p={4}
             transition="all 0.3s ease"
             _hover={{
               transform: "scale(1.02)",
-              boxShadow: "lg",
+              boxShadow: "sm",
             }}
           >
-            <HStack>
+            <HStack spacing={3}>
               {isActive ? (
-                <FiAlertCircle color="#DC2626" size="20px" />
+                <FiAlertCircle color={WARNING_RED} size="20px" />
               ) : (
-                <FiCheckCircle color="#047857" size="20px" />
+                <FiCheckCircle color={SUCCESS_GREEN} size="20px" />
               )}
-              <Text color={isActive ? "#DC2626" : "#047857"}>
+
+              <Text fontWeight="medium">
                 <strong>
                   {isActive ? "Deactivation Notice:" : "Reactivation Notice:"}
                 </strong>
               </Text>
             </HStack>
-            <Text
-              color={isActive ? "#cf4747ff" : "#18ab81ff"}
-              pl={7}
-              fontSize="14px"
-            >
+            <Text pl={8} fontSize="14px" mt={1}>
               {isActive
                 ? "Deactivating this account will restrict the user from accessing their account until it is reactivated."
                 : "Reactivating this account will allow the user to access their account again."}
             </Text>
           </Box>
         </ModalBody>
-        <ModalFooter borderTop="1px solid #e2e8f0" mt={4}>
+        <ModalFooter
+          borderTop="1px solid"
+          borderTopColor="gray.100"
+          px={6}
+          py={4}
+          bg="white"
+        >
           <Button
-            bg={isActive ? "#ef4444" : "#10b981"}
+            flex={1}
+            bg={isActive ? WARNING_RED : SUCCESS_GREEN}
             color="white"
-            w="full"
+            _hover={{ bg: isActive ? WARNING_RED_HOVER : SUCCESS_GREEN_HOVER }}
+            _active={{ bg: isActive ? WARNING_RED_DARK : SUCCESS_GREEN_DARK }}
             isLoading={isSubmitting}
-            loadingText={isActive ? "Deactivating..." : "Activating..."}
-            borderRadius="lg"
-            _hover={{ bg: isActive ? "#cc5a5a" : "#059669" }}
+            loadingText={isActive ? "Deactivating..." : "Reactivating..."}
             onClick={handleToggleStatus}
           >
-            {label}
+            {label} Account
           </Button>
         </ModalFooter>
       </ModalContent>

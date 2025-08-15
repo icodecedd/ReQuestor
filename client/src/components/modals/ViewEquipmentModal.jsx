@@ -12,7 +12,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  SimpleGrid,
   Text,
   Icon,
   useColorModeValue,
