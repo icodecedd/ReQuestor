@@ -48,7 +48,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { showToast } from "@/utils/toast";
 import { getEqConditionColor, getEqStatusColor } from "@/utils/getColorScheme";
 import { ModalDropdown } from "../dropdowns/ModalDropdown";
-import useEquipmentStore from "@/store/equipmentStore";
+import { useEquipmentStore } from "@/store/equipmentStore";
 
 const MAROON = "#800000";
 const MAROON_HOVER = "#A52A2A";
@@ -232,7 +232,9 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
         <Text fontSize="sm" fontWeight="medium" color={DARK_GRAY} mb={0.5}>
           {label}
         </Text>
-        {["condition", "status", "equipment type"].includes(label.toLowerCase()) ? (
+        {["condition", "status", "equipment type"].includes(
+          label.toLowerCase()
+        ) ? (
           makeBadge(label, value)
         ) : (
           <Text fontSize="md" {...valueStyle}>

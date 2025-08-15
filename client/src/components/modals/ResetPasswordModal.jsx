@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   Flex,
   HStack,
   Modal,
@@ -12,49 +11,44 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useToast,
 } from "@chakra-ui/react";
-import { FiAlertTriangle } from "react-icons/fi";
-import { MdOutlineLockReset } from "react-icons/md";
-import useUserStore from "@/store/usersStore";
+import { FiAlertOctagon } from "react-icons/fi";
+import { useUserStore } from "@/store/usersStore";
+import { TbCancel } from "react-icons/tb";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { showToast } from "@/utils/toast";
+import { MdOutlineLockReset } from "react-icons/md";
+
+const WARNING_RED = "#E53E3E";
+const WARNING_RED_DARK = "#C53030";
+const WARNING_RED_HOVER = "#F56565";
+const DARK_GRAY = "#616161";
 
 const ResetPasswordModal = ({ isOpen, onClose, users }) => {
   const resetPassword = useUserStore((state) => state.resetPassword);
   const setUserId = useUserStore((state) => state.setUserId);
   const { user } = useAuth();
-  const toast = useToast();
-  const [isSubmitting, setSubmitting] = useState(false);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleResetPassword = async () => {
     setUserId(user.id);
-    setSubmitting(true);
+    setIsSubmitting(true);
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
-      const result = await resetPassword(users.id, users.email);
+      const result = await resetPassword(users.id);
 
-      toast({
-        title: result.message,
-        status: result.success ? "success" : "error",
-        duration: 2000,
-        position: "top-right",
-        variant: "subtle",
-      });
+      showToast(result.message, result.success ? "success" : "error");
 
       if (result.success) {
         onClose();
       }
     } catch (error) {
-      toast({
-        title: "Error resetting password. Please try again.",
-        status: "error",
-        duration: 2000,
-        position: "top-right",
-        variant: "subtle",
-      });
+      showToast("Failed to reset password. Please try again.", "error");
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -66,61 +60,63 @@ const ResetPasswordModal = ({ isOpen, onClose, users }) => {
       motionPreset="slideInBottom"
       isCentered
     >
-      <ModalOverlay />
-      <ModalContent borderRadius="2xl" overflow="hidden">
-        <ModalHeader>
-          <Flex color="gray.900" gap={3} align="center" mb={3}>
+      <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
+      <ModalContent borderRadius="2xl" overflow="hidden" boxShadow="2xl">
+        {/* HEADER */}
+        <ModalHeader
+          px={6}
+          pt={5}
+          pb={3}
+          borderBottom="1px solid"
+          borderColor="gray.100"
+        >
+          <Flex gap={3} align="center">
             <Box
-              bg="white"
-              color="#f0f0f0ff"
-              borderRadius="md"
-              boxShadow="0 2px 8px rgba(0,0,0,0.12)"
-              border="1px solid #e2e8f0"
-              p={2}
-              transition="all 0.3s ease"
-              _hover={{
-                transform: "scale(1.02)",
-                boxShadow: "lg",
-              }}
+              bg={`${WARNING_RED}15`}
+              color={WARNING_RED}
+              borderRadius="full"
+              p={3}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
             >
-              <MdOutlineLockReset color="#800000" />
+              <MdOutlineLockReset size={24} />
             </Box>
             <Box>
-              <Text fontSize="lg" mt={0.5}>
+              <Text fontSize="lg" fontWeight="bold" color={WARNING_RED_DARK}>
                 Reset Password
               </Text>
-              <Text color="gray.700" fontWeight="normal" fontSize="14px">
+              <Text color="gray.600" fontSize="sm">
                 Reset password for <strong>{users?.email}</strong>
               </Text>
             </Box>
           </Flex>
-          <Divider w="110%" ml={-6} />
         </ModalHeader>
+
         <ModalCloseButton
           size="md"
-          _hover={{ bg: "#f7eaea" }}
-          borderRadius="lg"
+          _hover={{ bg: `${WARNING_RED}15` }}
+          color={DARK_GRAY}
+          borderRadius="full"
+          mt={2}
         />
-        <ModalBody>
+
+        <ModalBody px={6} py={4} bg="gray.50">
           <Box
-            bg="#fef6e0"
-            color="#eab308"
-            border="1px"
+            bg="red.50"
+            color="red.800"
+            border="1px solid"
+            borderColor="red.100"
             borderRadius="xl"
-            p="2.5"
-            transition="all 0.3s ease"
-            _hover={{
-              transform: "scale(1.02)",
-              boxShadow: "lg",
-            }}
+            p={4}
           >
-            <HStack>
-              <FiAlertTriangle color="#92400e" fontSize="20px" />
-              <Text color="#92400e">
-                <strong>Security Notice:</strong>
+            <HStack spacing={3}>
+              <FiAlertOctagon color={WARNING_RED} fontSize="20px" />
+              <Text fontWeight="medium">
+                <strong>Security Warning: </strong>
               </Text>
             </HStack>
-            <Text color="#92400e" pl={7} fontSize="14px">
+            <Text pl={8} fontSize="14px" mt={1}>
               Resetting this password will immediately revoke current access for{" "}
               <strong>"{users?.email}"</strong>. A temporary password will be
               emailed, and the user will be required to set a new password upon
@@ -128,19 +124,24 @@ const ResetPasswordModal = ({ isOpen, onClose, users }) => {
             </Text>
           </Box>
         </ModalBody>
-        <ModalFooter borderTop="1px solid #e2e8f0" mt={4}>
+        <ModalFooter
+          borderTop="1px solid"
+          borderTopColor="gray.100"
+          px={6}
+          py={4}
+          bg="white"
+        >
           <Button
-            bg="#800000"
+            flex={1}
+            bg={WARNING_RED}
             color="white"
-            borderRadius="lg"
-            w="full"
+            _hover={{ bg: WARNING_RED_HOVER }}
+            _active={{ bg: WARNING_RED_DARK }}
             isLoading={isSubmitting}
             loadingText="Resetting..."
-            _hover={{ bg: "#a12828" }}
-            transition="background-color 0.2s ease-in-out"
             onClick={handleResetPassword}
           >
-            Reset Password
+            Cancel Request
           </Button>
         </ModalFooter>
       </ModalContent>

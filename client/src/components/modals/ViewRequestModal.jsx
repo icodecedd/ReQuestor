@@ -113,7 +113,7 @@ const ViewRequestModal = ({ isOpen, onClose, request }) => {
                 Request Details Summary
               </Text>
               <Text color="gray.600" fontSize="sm">
-                Request ID: {formatRequestsId(request.id)}
+                Request ID: #{formatRequestsId(request.id)}
               </Text>
             </Box>
           </Flex>

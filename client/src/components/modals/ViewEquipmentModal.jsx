@@ -1,12 +1,10 @@
-import { getEqStatusColor, getEqConditionColor } from "@/utils/getColorScheme";
+import { getEqConditionColor, getEqStatusColor } from "@/utils/getColorScheme";
 import {
   Badge,
   Box,
   Button,
-  Divider,
   Flex,
   Heading,
-  HStack,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -14,35 +12,46 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  SimpleGrid,
-  Spacer,
   Text,
-  VStack,
+  Icon,
+  useColorModeValue,
+  Tag,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
-import React from "react";
-import { BsProjector } from "react-icons/bs";
+import {
+  BsProjector,
+  BsBox,
+  BsPinMap,
+  BsCheckCircle,
+  BsActivity,
+} from "react-icons/bs";
 import { MdOutlineViewInAr } from "react-icons/md";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { PiProjectorScreenChart } from "react-icons/pi";
-import {
-  FiInfo,
-  FiMapPin,
-  FiCheckCircle,
-  FiActivity,
-  FiBox,
-} from "react-icons/fi";
 import { TbFileDescription } from "react-icons/tb";
 
-const selectedCategory = (type) => {
+// Color constants
+const MAROON = "#800000";
+const MAROON_DARK = "#6A0D0D";
+const MAROON_XLIGHT = "#f5e8e8";
+const DARK_GRAY = "#616161";
+const GRAY_BORDER = "#e2e8f0";
+const GRAY_TEXT = "#4a5568";
+const RADIUS = "12px";
+
+const EquipmentIcon = ({ type }) => {
+  const iconProps = { size: "20px", color: MAROON };
+
   switch (type) {
     case "Projector":
-      return <BsProjector fontSize="32px" color="white" />;
+      return <Icon as={BsProjector} {...iconProps} />;
     case "White Screen":
-      return <PiProjectorScreenChart fontSize="32px" color="white" />;
+      return <Icon as={PiProjectorScreenChart} {...iconProps} />;
     case "AVR":
-      return <FaChalkboardTeacher fontSize="32px" color="white" />;
+      return <Icon as={FaChalkboardTeacher} {...iconProps} />;
     default:
-      return <FiBox fontSize="32px" color="white" />; // fallback icon
+      return <Icon as={BsBox} {...iconProps} />;
   }
 };
 
@@ -51,198 +60,225 @@ const formatEquipmentId = (id) => {
 };
 
 const ViewEquipmentModal = ({ isOpen, onClose, equipment }) => {
+  const borderColor = useColorModeValue(GRAY_BORDER, "gray.200");
+
+  if (!equipment) return null;
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="xl"
-      motionPreset="slideInBottom"
+      size="2xl"
       isCentered
+      motionPreset="scale"
     >
-      <ModalOverlay />
-      <ModalContent borderRadius="xl" overflow="hidden">
-        <ModalHeader>
-          <Flex color="gray.900" gap={3} align="center" mb={3}>
+      <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
+      <ModalContent
+        borderRadius="2xl"
+        overflow="hidden"
+        boxShadow="2xl"
+        border={`1px solid ${borderColor}`}
+      >
+        {/* HEADER */}
+        <ModalHeader
+          px={6}
+          pt={6}
+          pb={3}
+          borderBottom="1px solid"
+          borderColor="gray.100"
+        >
+          <Flex gap={3} align="center">
             <Box
-              bg="white"
-              color="#f0f0f0ff"
-              borderRadius="md"
-              boxShadow="0 2px 8px rgba(0,0,0,0.12)"
-              border="1px solid #e2e8f0"
-              p={2}
-              transition="all 0.3s ease"
-              _hover={{
-                transform: "scale(1.02)",
-                boxShadow: "lg",
-              }}
+              bg={`${MAROON}15`}
+              color={MAROON}
+              borderRadius="full"
+              p={3}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
             >
-              <MdOutlineViewInAr color="#800000" />
+              <MdOutlineViewInAr size={24} />
             </Box>
             <Box>
-              <Text fontSize="lg" mt={0.5}>
-                Equipment Details [#{formatEquipmentId(equipment.id)}]
+              <Text fontSize="xl" fontWeight="bold" color={MAROON_DARK}>
+                Equipment Details
               </Text>
-              <Text color="gray.700" fontWeight="normal" fontSize="14px">
-                View and manage detailed information about the selected
-                equipment.
+              <Text color="gray.600" fontSize="sm">
+                Request ID: #{formatEquipmentId(equipment.id)}
               </Text>
             </Box>
           </Flex>
-          <Divider w="110%" ml={-6} />
         </ModalHeader>
+
         <ModalCloseButton
           size="md"
-          _hover={{ bg: "#f7eaea" }}
-          borderRadius="lg"
+          _hover={{ bg: `${MAROON}10` }}
+          color={MAROON}
+          borderRadius="full"
+          mt={2}
         />
-        <ModalBody>
-          <Box
-            border="2px"
-            borderRadius="xl"
-            borderColor="#800000"
-            p={2}
-            mb={2}
-            transition="all 0.3s ease"
-            _hover={{
-              transform: "scale(1.02)",
-              boxShadow: "lg",
-            }}
-          >
-            <HStack>
-              <Box
-                borderRadius="lg"
-                bgGradient="linear(to-br, maroon, #c75d5dff)"
-                boxShadow="0 2px 8px rgba(0,0,0,0.12)"
-                p={2}
-                mr={2}
-              >
-                {selectedCategory(equipment.type)}
-              </Box>
-              <Box>
-                <Heading as="h3" fontSize="16px" fontWeight="bold">
-                  {equipment.name}
-                </Heading>
-                <Text fontSize="13px" color="gray.600" mt={0.5}>
-                  {equipment.serial_number}
-                </Text>
-              </Box>
-              <Spacer />
-              <Badge
-                color="black"
-                border="1px"
-                borderColor="gray.300"
-                borderRadius="md"
-                pl={2}
-                pr={2}
-                mb={8}
-              >
-                {equipment.type}
-              </Badge>
-            </HStack>
+
+        <ModalBody px={6} py={4} bg="gray.50">
+          {/* EQUIPMENT SECTION */}
+          <Box>
+            <Heading size="sm" mb={4} color={MAROON} fontWeight="600">
+              Requested Equipment
+            </Heading>
+            <EquipmentCard
+              id={equipment.serial_number}
+              name={equipment.name}
+              type={equipment.type}
+            />
           </Box>
-          <HStack mt={3} mb={1}>
-            <FiInfo />
-            <Text fontWeight="semibold" fontSize="15px" color="gray.600">
-              Equipment Information
-            </Text>
-          </HStack>
+
+          {/* REQUEST DETAILS */}
+          <Heading size="sm" my={4} color={MAROON} fontWeight="600">
+            Equipment Information
+          </Heading>
           <Box
-            border="1px"
-            borderRadius="xl"
-            borderColor="gray.400"
+            bg="white"
+            border="1px solid"
+            borderColor="gray.100"
+            borderRadius={RADIUS}
             p={4}
-            mb={3}
-            position="relative"
-            transition="all 0.3s ease"
-            _hover={{
-              transform: "scale(1.02)",
-              boxShadow: "lg",
-            }}
+            mb={6}
+            boxShadow="sm"
           >
-            <VStack align="start" spacing={6}>
-              {/* Description */}
-              <Box>
-                <HStack spacing={1} align="center" mb={0.5}>
-                  <TbFileDescription fontSize={12} />
-                  <Text fontSize="12px" color="gray.500">
-                    Description
-                  </Text>
-                </HStack>
-                <Text fontWeight="medium" fontSize="15px">
-                  {equipment.description}
-                </Text>
-              </Box>
+            <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+              {/* Description - Full width */}
+              <GridItem colSpan={3}>
+                <DetailItem
+                  icon={TbFileDescription}
+                  label="Description"
+                  value={equipment.description || "No description provided"}
+                />
+              </GridItem>
 
-              {/* Info Grid: Location, Status, Condition */}
-              <SimpleGrid columns={3} spacing={6} w="full">
-                {/* Location */}
-                <Box>
-                  <HStack spacing={1} align="center" mb={0.5}>
-                    <FiMapPin fontSize={12} />
-                    <Text fontSize="12px" color="gray.500">
-                      Location
-                    </Text>
-                  </HStack>
-                  <Text fontWeight="medium" fontSize="15px">
-                    {equipment.location}
-                  </Text>
-                </Box>
+              {/* Location */}
+              <GridItem>
+                <DetailItem
+                  icon={BsPinMap}
+                  label="Location"
+                  value={equipment.location || "Not specified"}
+                />
+              </GridItem>
 
-                {/* Status */}
-                <Box>
-                  <HStack spacing={1} align="center" mb={0.5}>
-                    <FiCheckCircle fontSize={12} />
-                    <Text fontSize="12px" color="gray.500">
-                      Status
-                    </Text>
-                  </HStack>
-                  <Badge
-                    bg={getEqStatusColor(equipment.status)}
-                    color="white"
-                    borderRadius="md"
-                    px={3}
-                    py={1}
-                  >
-                    {equipment.status}
-                  </Badge>
-                </Box>
+              {/* Status */}
+              <GridItem>
+                <DetailItem
+                  icon={BsCheckCircle}
+                  label="Status"
+                  value={
+                    <Badge
+                      colorScheme={getEqStatusColor(equipment.status)}
+                      borderRadius="full"
+                      px={3}
+                      py={1}
+                      textTransform="uppercase"
+                      fontSize="xs"
+                    >
+                      {equipment.status}
+                    </Badge>
+                  }
+                />
+              </GridItem>
 
-                {/* Condition */}
-                <Box>
-                  <HStack spacing={1} align="center" mb={0.5}>
-                    <FiActivity fontSize={12} />
-                    <Text fontSize="12px" color="gray.500">
-                      Condition
-                    </Text>
-                  </HStack>
-                  <Badge
-                    colorScheme={getEqConditionColor(equipment.condition)}
-                    borderRadius="md"
-                    px={3}
-                    py={1}
-                  >
-                    {equipment.condition}
-                  </Badge>
-                </Box>
-              </SimpleGrid>
-            </VStack>
+              {/* Condition */}
+              <GridItem>
+                <DetailItem
+                  icon={BsActivity}
+                  label="Condition"
+                  value={
+                    <Badge
+                      colorScheme={getEqConditionColor(equipment.condition)}
+                      borderRadius="full"
+                      px={3}
+                      py={1}
+                      textTransform="uppercase"
+                      fontSize="xs"
+                    >
+                      {equipment.condition}
+                    </Badge>
+                  }
+                />
+              </GridItem>
+            </Grid>
           </Box>
         </ModalBody>
-        <ModalFooter borderTop="1px solid #e2e8f0" mt={4}>
+
+        {/* FOOTER */}
+        <ModalFooter bg="white" borderTop={`1px solid ${borderColor}`} py={4}>
           <Button
+            flex={1}
             variant="outline"
-            borderColor={"#2D3748"}
-            borderRadius="lg"
-            w="full"
             onClick={onClose}
-            _hover={{ bg: "#f7eaea" }}
+            color={MAROON}
+            borderColor={MAROON}
+            _hover={{ bg: `${MAROON}10` }}
           >
-            Close
+            Cancel
           </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
   );
 };
+
+// Reusable Detail Item Component
+const DetailItem = ({ icon, label, value }) => (
+  <Box>
+    <Flex align="center" gap={2} mb={2}>
+      {icon && <Icon as={icon} color={MAROON} />}
+      <Text fontSize="sm" color={DARK_GRAY} fontWeight="bold">
+        {label}
+      </Text>
+    </Flex>
+    <Text fontSize="sm" fontWeight="medium">
+      {value || "Not specified"}
+    </Text>
+  </Box>
+);
+
+// Reusable Equipment Card Component
+const EquipmentCard = ({ id, name, type }) => (
+  <Box
+    bg="white"
+    borderRadius={RADIUS}
+    p={3}
+    border={`1px solid ${GRAY_BORDER}`}
+    _hover={{
+      borderColor: MAROON,
+      transform: "translateY(-2px)",
+      boxShadow: "sm",
+    }}
+    transition="all 0.2s"
+  >
+    <Flex align="center" gap={3}>
+      <Box
+        bg={MAROON_XLIGHT}
+        borderRadius="md"
+        p={2}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <EquipmentIcon type={type} />
+      </Box>
+
+      <Box flex={1}>
+        <Text fontSize="sm" fontWeight="600">
+          {name}
+        </Text>
+        <Text fontSize="xs" color={GRAY_TEXT}>
+          Serial Number: {id}
+        </Text>
+      </Box>
+
+      <Tag size="sm" variant="subtle" colorScheme="gray" borderRadius="full">
+        {type}
+      </Tag>
+    </Flex>
+  </Box>
+);
 
 export default ViewEquipmentModal;

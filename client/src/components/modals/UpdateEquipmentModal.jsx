@@ -48,7 +48,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { showToast } from "@/utils/toast";
 import { getEqConditionColor, getEqStatusColor } from "@/utils/getColorScheme";
 import { ModalDropdown } from "../dropdowns/ModalDropdown";
-import useEquipmentStore from "@/store/equipmentStore";
+import { useEquipmentStore } from "@/store/equipmentStore";
 
 const MAROON = "#800000";
 const MAROON_HOVER = "#A52A2A";
@@ -195,7 +195,7 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
     return setActiveStep(num);
   };
 
-  const handleSubmit = async () => {
+  const handleUpdate = async () => {
     setUserId(user.id);
     setIsSubmitting(true);
 
@@ -635,7 +635,7 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
               isLoading={isSubmitting}
               loadingText="Submitting..."
               _hover={{ bg: MAROON_HOVER }}
-              onClick={handleSubmit}
+              onClick={handleUpdate}
             >
               Add Equipment
             </Button>

@@ -25,7 +25,7 @@ import { IoAdd } from "react-icons/io5";
 import { UserRoleDropdown } from "@/components/dropdowns/UserRoleDropdown";
 import UserActionButton from "@/components/buttons/UserActionButton";
 import { useEffect, useMemo, useState } from "react";
-import useUserStore from "@/store/usersStore";
+import { useUserStore } from "@/store/usersStore";
 import { getDateOnly } from "@/utils/getDate";
 import ResetPasswordModal from "@/components/modals/ResetPasswordModal";
 import AddUserModal from "@/components/modals/AddUserModal";
@@ -119,7 +119,9 @@ const UsersTable = () => {
       <Flex justify="space-between" align="center" pb={0.5}>
         {/* Left: Header */}
         <HStack ml={3}>
-          <Heading size="md" w="100%">All users ({users.length})</Heading>
+          <Heading size="md" w="100%">
+            All users ({users.length})
+          </Heading>
         </HStack>
 
         {/* Right: Search, Filter, Add User */}
