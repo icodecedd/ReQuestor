@@ -38,8 +38,8 @@ const PasswordInput = ({
           variant="unstyled"
           size="md"
           onClick={handleClick}
-          ml={8}
-          pl={3.5}
+          ml={6}
+          pl={3}
           h="1.75rem"
         >
           {show ? <FiEyeOff /> : <FiEye />}

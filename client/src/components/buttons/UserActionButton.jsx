@@ -22,6 +22,7 @@ import {
 const MAROON = "#800000";
 const MAROON_XLIGHT = "#f5e8e8";
 const ERROR_RED = "#E53E3E";
+const WARNING_ORANGE = "#DD6B20";
 const SUCCESS_GREEN = "#38A169";
 const RADIUS = "8px";
 const ICON_SIZE = "18px";
@@ -54,13 +55,13 @@ const UserActionButton = ({
     },
     toggle: {
       icon: isActive ? (
-        <Icon as={FiUserX} boxSize={ICON_SIZE} color={ERROR_RED} />
+        <Icon as={FiUserX} boxSize={ICON_SIZE} color={WARNING_ORANGE} />
       ) : (
         <Icon as={FiUserCheck} boxSize={ICON_SIZE} color={SUCCESS_GREEN} />
       ),
       label: isActive ? "Deactivate User" : "Activate User",
       onClick: onToggleStatus,
-      color: isActive ? ERROR_RED : SUCCESS_GREEN,
+      color: isActive ? WARNING_ORANGE : SUCCESS_GREEN,
     },
     delete: {
       icon: <Icon as={FiTrash} boxSize={ICON_SIZE} color={ERROR_RED} />,

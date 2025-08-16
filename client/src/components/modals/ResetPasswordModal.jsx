@@ -14,16 +14,17 @@ import {
 } from "@chakra-ui/react";
 import { FiAlertOctagon } from "react-icons/fi";
 import { useUserStore } from "@/store/usersStore";
-import { TbCancel } from "react-icons/tb";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { showToast } from "@/utils/toast";
 import { MdOutlineLockReset } from "react-icons/md";
 
-const WARNING_RED = "#E53E3E";
-const WARNING_RED_DARK = "#C53030";
-const WARNING_RED_HOVER = "#F56565";
-const DARK_GRAY = "#616161";
+// Color Palette Constants
+const WARNING_ORANGE = "#DD6B20"; // Primary warning color (reset password)
+const WARNING_ORANGE_DARK = "#C05621"; // Darker shade
+const WARNING_ORANGE_HOVER = "#ED8936"; // Hover state
+const WARNING_ORANGE_LIGHT = "#FFFAF0"; // Light background
+const DARK_GRAY = "#616161"; // Neutral text/close button
 
 const ResetPasswordModal = ({ isOpen, onClose, users }) => {
   const resetPassword = useUserStore((state) => state.resetPassword);
@@ -37,14 +38,10 @@ const ResetPasswordModal = ({ isOpen, onClose, users }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
       const result = await resetPassword(users.id);
-
       showToast(result.message, result.success ? "success" : "error");
-
-      if (result.success) {
-        onClose();
-      }
+      if (result.success) onClose();
     } catch (error) {
       showToast("Failed to reset password. Please try again.", "error");
     } finally {
@@ -72,8 +69,8 @@ const ResetPasswordModal = ({ isOpen, onClose, users }) => {
         >
           <Flex gap={3} align="center">
             <Box
-              bg={`${WARNING_RED}15`}
-              color={WARNING_RED}
+              bg={`${WARNING_ORANGE}15`} // 15% opacity background
+              color={WARNING_ORANGE}
               borderRadius="full"
               p={3}
               display="flex"
@@ -83,7 +80,7 @@ const ResetPasswordModal = ({ isOpen, onClose, users }) => {
               <MdOutlineLockReset size={24} />
             </Box>
             <Box>
-              <Text fontSize="lg" fontWeight="bold" color={WARNING_RED_DARK}>
+              <Text fontSize="lg" fontWeight="bold" color={WARNING_ORANGE_DARK}>
                 Reset Password
               </Text>
               <Text color="gray.600" fontSize="sm">
@@ -95,7 +92,7 @@ const ResetPasswordModal = ({ isOpen, onClose, users }) => {
 
         <ModalCloseButton
           size="md"
-          _hover={{ bg: `${WARNING_RED}15` }}
+          _hover={{ bg: WARNING_ORANGE_LIGHT }}
           color={DARK_GRAY}
           borderRadius="full"
           mt={2}
@@ -103,17 +100,17 @@ const ResetPasswordModal = ({ isOpen, onClose, users }) => {
 
         <ModalBody px={6} py={4} bg="gray.50">
           <Box
-            bg="red.50"
-            color="red.800"
+            bg={WARNING_ORANGE_LIGHT}
+            color="orange.800"
             border="1px solid"
-            borderColor="red.100"
+            borderColor="orange.200"
             borderRadius="xl"
             p={4}
           >
             <HStack spacing={3}>
-              <FiAlertOctagon color={WARNING_RED} fontSize="20px" />
+              <FiAlertOctagon color={WARNING_ORANGE} size="20px" />
               <Text fontWeight="medium">
-                <strong>Security Warning: </strong>
+                <strong>Security Notice:</strong>
               </Text>
             </HStack>
             <Text pl={8} fontSize="14px" mt={1}>
@@ -124,6 +121,7 @@ const ResetPasswordModal = ({ isOpen, onClose, users }) => {
             </Text>
           </Box>
         </ModalBody>
+
         <ModalFooter
           borderTop="1px solid"
           borderTopColor="gray.100"
@@ -133,15 +131,15 @@ const ResetPasswordModal = ({ isOpen, onClose, users }) => {
         >
           <Button
             flex={1}
-            bg={WARNING_RED}
+            bg={WARNING_ORANGE}
             color="white"
-            _hover={{ bg: WARNING_RED_HOVER }}
-            _active={{ bg: WARNING_RED_DARK }}
+            _hover={{ bg: WARNING_ORANGE_HOVER }}
+            _active={{ bg: WARNING_ORANGE_DARK }}
             isLoading={isSubmitting}
             loadingText="Resetting..."
             onClick={handleResetPassword}
           >
-            Cancel Request
+            Reset Password
           </Button>
         </ModalFooter>
       </ModalContent>

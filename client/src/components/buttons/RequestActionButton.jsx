@@ -18,6 +18,7 @@ const MAROON = "#800000";
 const MAROON_XLIGHT = "#f5e8e8";
 const SUCCESS_GREEN = "#38A169";
 const ERROR_RED = "#E53E3E";
+const WARNING_ORANGE = "#DD6B20";
 const RADIUS = "8px";
 const ICON_SIZE = "18px";
 
@@ -83,10 +84,10 @@ const RequestActionButton = ({
     if (["Pending", "Reserved"].includes(status)) {
       actions.push({
         key: "cancel",
-        icon: <Icon as={TbCancel} color={ERROR_RED} boxSize={ICON_SIZE} />,
+        icon: <Icon as={TbCancel} color={WARNING_ORANGE} boxSize={ICON_SIZE} />,
         label: "Cancel Request",
         onClick: onCancel,
-        color: ERROR_RED,
+        color: WARNING_ORANGE,
       });
     }
 
