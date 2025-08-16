@@ -19,10 +19,12 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { showToast } from "@/utils/toast";
 
-const WARNING_RED = "#E53E3E";
-const WARNING_RED_DARK = "#C53030";
-const WARNING_RED_HOVER = "#F56565";
-const DARK_GRAY = "#616161";
+// Color Palette Constants
+const WARNING_ORANGE = "#DD6B20"; // Primary warning color
+const WARNING_ORANGE_DARK = "#C05621"; // Darker shade
+const WARNING_ORANGE_HOVER = "#ED8936"; // Hover state
+const WARNING_ORANGE_LIGHT = "#FFFAF0"; // Light background
+const DARK_GRAY = "#616161"; // Neutral text/close button
 
 const CancelRequestModal = ({ isOpen, onClose, request }) => {
   const cancelRequest = useRequestsStore((state) => state.cancelRequest);
@@ -36,14 +38,10 @@ const CancelRequestModal = ({ isOpen, onClose, request }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
       const result = await cancelRequest(request.id);
-
       showToast(result.message, result.success ? "success" : "error");
-
-      if (result.success) {
-        onClose();
-      }
+      if (result.success) onClose();
     } catch (error) {
       showToast("Failed to cancel request. Please try again.", "error");
     } finally {
@@ -71,8 +69,8 @@ const CancelRequestModal = ({ isOpen, onClose, request }) => {
         >
           <Flex gap={3} align="center">
             <Box
-              bg={`${WARNING_RED}15`}
-              color={WARNING_RED}
+              bg={`${WARNING_ORANGE}15`}
+              color={WARNING_ORANGE}
               borderRadius="full"
               p={3}
               display="flex"
@@ -82,7 +80,7 @@ const CancelRequestModal = ({ isOpen, onClose, request }) => {
               <TbCancel size={24} />
             </Box>
             <Box>
-              <Text fontSize="lg" fontWeight="bold" color={WARNING_RED_DARK}>
+              <Text fontSize="lg" fontWeight="bold" color={WARNING_ORANGE_DARK}>
                 Cancel Request
               </Text>
               <Text color="gray.600" fontSize="sm">
@@ -94,7 +92,7 @@ const CancelRequestModal = ({ isOpen, onClose, request }) => {
 
         <ModalCloseButton
           size="md"
-          _hover={{ bg: `${WARNING_RED}15` }}
+          _hover={{ bg: WARNING_ORANGE_LIGHT }}
           color={DARK_GRAY}
           borderRadius="full"
           mt={2}
@@ -102,25 +100,28 @@ const CancelRequestModal = ({ isOpen, onClose, request }) => {
 
         <ModalBody px={6} py={4} bg="gray.50">
           <Box
-            bg="red.50"
-            color="red.800"
+            bg={WARNING_ORANGE_LIGHT}
+            color="orange.800"
             border="1px solid"
-            borderColor="red.100"
+            borderColor="orange.200"
             borderRadius="xl"
             p={4}
           >
             <HStack spacing={3}>
-              <FiAlertOctagon color={WARNING_RED} fontSize="20px" />
+              <FiAlertOctagon color={WARNING_ORANGE} size="20px" />
               <Text fontWeight="medium">
-                <strong>Important:</strong>
+                <strong>Notice:</strong>
               </Text>
             </HStack>
             <Text pl={8} fontSize="14px" mt={1}>
-              Canceling this request will stop its processing. This action is
-              final and cannot be reversed.
+              Canceling this request will stop its processing.
+              {request?.canBeRecreated
+                ? " You can submit a new request later if needed."
+                : " This action cannot be reversed."}
             </Text>
           </Box>
         </ModalBody>
+
         <ModalFooter
           borderTop="1px solid"
           borderTopColor="gray.100"
@@ -130,10 +131,10 @@ const CancelRequestModal = ({ isOpen, onClose, request }) => {
         >
           <Button
             flex={1}
-            bg={WARNING_RED}
+            bg={WARNING_ORANGE}
             color="white"
-            _hover={{ bg: WARNING_RED_HOVER }}
-            _active={{ bg: WARNING_RED_DARK }}
+            _hover={{ bg: WARNING_ORANGE_HOVER }}
+            _active={{ bg: WARNING_ORANGE_DARK }}
             isLoading={isSubmitting}
             loadingText="Cancelling..."
             onClick={handleCancel}

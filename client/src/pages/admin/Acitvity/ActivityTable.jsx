@@ -96,11 +96,11 @@ const ActivityTable = () => {
           gap={1}
           p={3}
           fontSize="95%"
-          w="120px"
+          w="140px"
           //onClick={() => onAddOpen()}
         >
           <BiExport size="20px" />
-          Export
+          Export Logs
         </Button>
       </Flex>
 

@@ -1,11 +1,15 @@
 import Navbar from "@/components/Navbar";
-import SettingsBanner from "./AdminSettingsBanner";
+import AdminSettingsBanner from "./AdminSettingsBanner";
+import AdminSettingsTable from "./AdminSettingsTable";
 
-const AdminSettingsBanner = () => {
-  return <>
-  <Navbar pageName={"Settings"} />
-  <SettingsBanner />
-  </>;
+const AdminSettingsPage = () => {
+  return (
+    <>
+      <Navbar pageName={"Settings"} />
+      <AdminSettingsBanner />
+      <AdminSettingsTable />
+    </>
+  );
 };
 
-export default AdminSettingsBanner;
+export default AdminSettingsPage;

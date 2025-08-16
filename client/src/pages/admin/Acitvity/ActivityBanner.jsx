@@ -72,7 +72,7 @@ const ActivityBanner = () => {
             0 0 12px ${maroonColors[300]}80
           `}
         >
-          System Activity
+          SYSTEM ACTIVITY
         </Text>
 
         <Text
