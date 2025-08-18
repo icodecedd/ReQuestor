@@ -74,6 +74,8 @@ export const getActivityColor = (category) => {
       return "green";
     case "SYSTEM":
       return "red";
+    case "SETTINGS":
+      return "purple";
     default:
       return "gray";
   }

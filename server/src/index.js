@@ -10,6 +10,7 @@ import requestRoutes from "./routes/requestsRoutes.js";
 import activityRoutes from "./routes/activityRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import settingsRoutes from "./routes/settingsRoutes.js";
 
 dotenv.config();
 
@@ -42,6 +43,7 @@ app.use("/api/stats", statRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/activities", activityRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/settings", settingsRoutes);
 
 // Start the server on the specified port
 app.listen(PORT, () => {
