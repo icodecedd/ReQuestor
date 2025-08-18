@@ -21,15 +21,17 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { FiEye, FiEyeOff, FiLock } from "react-icons/fi";
 import { useAuth } from "@/hooks/useAuth";
+import { showToast } from "@/utils/toast";
 
 const ResetPasswordPage = () => {
   // Modern color palette
   const colors = {
     primary: "#800000",
     lightPrimary: "#a04040",
-    palePrimary: "#f8e8e8",
+    palePrimary: "#f5f5f6",
     darkPrimary: "#600000",
     slate: "#2D3748",
+    maroonHover: "#A52A2A",
   };
 
   const { resetPassword } = useAuth();
@@ -55,67 +57,43 @@ const ResetPasswordPage = () => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast({
-        title: "Please make sure both passwords are identical.",
-        status: "error",
-        duration: 2000,
-        position: "top-right",
-        variant: "subtle",
-      });
+      showToast("Passwords do not match.", "error");
       return;
     }
 
     if (password.length < 6) {
-      toast({
-        title: "Password must be at least 6 characters.",
-        status: "error",
-        duration: 2000,
-        position: "top-right",
-        variant: "subtle",
-      });
+      showToast("Password must be at least 6 characters.", "error");
       return;
     }
 
     setIsLoading(true);
     try {
       if (!resetToken) {
-        toast({
-          title: "Invalid reset token.",
-          status: "error",
-          duration: 2000,
-          position: "top-right",
-          variant: "subtle",
-        });
+        showToast("Invalid reset token.", "error");
       }
 
       // Simulate API call
       const response = await resetPassword(resetToken, password);
       if (!response.success) {
-        toast({
-          title: response.message || "An error occurred. Please try again.",
-          status: "error",
-          duration: 2000,
-          position: "top-right",
-          variant: "subtle",
-        });
+        showToast(
+          response.message || "An error occurred. Please try again.",
+          "error"
+        );
       }
 
-      toast({
-        title: "Password updated successfully.",
-        status: "success",
-        duration: 2000,
-        position: "top-right",
-        variant: "subtle",
-      });
+      showToast(
+        response.message || "Password updated successfully.",
+        "success"
+      );
       setPassword("");
       setConfirmPassword("");
       navigate("/login");
     } catch (error) {
-      toast({
-        title: error.message || "This reset link may have expired.",
-        status: "error",
-        duration: 2000,
-      });
+      console.error(error);
+      showToast(
+        error.message || "An error occurred. Please try again.",
+        "error"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -260,13 +238,13 @@ const ResetPasswordPage = () => {
               bg={colors.primary}
               color="white"
               _hover={{
-                bg: colors.darkPrimary,
-                transform: "translateY(-2px)",
-                boxShadow: "md",
+                bg: colors.maroonHover,
+                transform: "translateY(-1px)",
+                boxShadow: "lg",
               }}
               _active={{
-                bg: colors.darkPrimary,
-                transform: "none",
+                bg: colors.maroonHover,
+                transform: "translateY(0)",
               }}
               size="md"
               borderRadius="lg"

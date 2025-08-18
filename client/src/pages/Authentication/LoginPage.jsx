@@ -14,11 +14,10 @@ import {
   IconButton,
   Center,
   Image,
-  useToast,
   useColorModeValue,
   InputLeftElement,
 } from "@chakra-ui/react";
-import { FiEye, FiEyeOff, FiAlertCircle, FiLock, FiMail } from "react-icons/fi";
+import { FiEye, FiEyeOff, FiLock, FiMail } from "react-icons/fi";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
@@ -26,19 +25,20 @@ import { useNavigate, Link as RouterLink } from "react-router-dom";
 import logoWhite from "@/assets/requestor-white.svg";
 import logo from "@/assets/requestor.svg";
 import overviewBg from "@/assets/overview.webp";
+import { showToast } from "@/utils/toast";
 
 export const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const toast = useToast();
 
   // Modern color palette
   const colors = {
     maroon: "#800000",
     lightMaroon: "#a04040",
-    paleMaroon: "#f8e8e8",
+    paleMaroon: "#f5f5f6",
     darkMaroon: "#600000",
     slate: "#2D3748",
+    maroonHover: "#A52A2A",
   };
 
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -61,16 +61,6 @@ export const LoginPage = () => {
     }
   };
 
-  const showToast = (message, status = "error", duration = 2000) => {
-    toast({
-      title: message,
-      status,
-      duration: duration,
-      position: "top-right",
-      variant: "subtle",
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -88,7 +78,7 @@ export const LoginPage = () => {
     try {
       const { success, data } = await login(formData);
       if (success) {
-        showToast("Login successful! Welcome back.", "success");
+        showToast(`Login successful! Welcome back.`, "success");
         navigate(data.role === "Admin" ? "/admin/dashboard" : "/student");
       }
     } catch (err) {
@@ -226,12 +216,12 @@ export const LoginPage = () => {
                         borderRadius="lg"
                         _placeholder={{ color: "gray.400" }}
                       />
-                      {errors.email && (
-                        <InputRightElement>
-                          <FiAlertCircle color="maroon" />
-                        </InputRightElement>
-                      )}
                     </InputGroup>
+                    {errors.email && (
+                      <Text color="#B03060" fontSize="xs">
+                        Please enter a valid email address.
+                      </Text>
+                    )}
                   </FormControl>
 
                   {/* Password Field */}
@@ -269,6 +259,11 @@ export const LoginPage = () => {
                         />
                       </InputRightElement>
                     </InputGroup>
+                    {errors.password && (
+                      <Text color="#B03060" fontSize="xs">
+                        Please enter a valid password.
+                      </Text>
+                    )}
                   </FormControl>
 
                   {/* Forgot Password */}
@@ -296,12 +291,12 @@ export const LoginPage = () => {
                     borderRadius="lg"
                     fontWeight="500"
                     _hover={{
-                      bg: colors.darkMaroon,
+                      bg: colors.maroonHover,
                       transform: "translateY(-1px)",
                       boxShadow: "lg",
                     }}
                     _active={{
-                      bg: colors.darkMaroon,
+                      bg: colors.maroonHover,
                       transform: "translateY(0)",
                     }}
                   >

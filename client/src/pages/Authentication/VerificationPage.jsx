@@ -1,3 +1,4 @@
+import { showToast } from "@/utils/toast";
 import {
   Flex,
   Box,
@@ -23,9 +24,10 @@ const VerificationPage = () => {
   const colors = {
     maroon: "#800000",
     lightMaroon: "#a04040",
-    paleMaroon: "#f8e8e8",
+    paleMaroon: "#f5f5f6",
     darkMaroon: "#600000",
     slate: "#2D3748",
+    maroonHover: "#A52A2A",
   };
 
   const handleResendVerification = async () => {
@@ -34,23 +36,17 @@ const VerificationPage = () => {
         email,
       });
 
-      toast({
-        title: data?.message || "Verification email resent. Check your inbox.",
-        status: "success",
-        duration: 1800,
-        position: "top-right",
-        variant: "subtle",
-      });
+      showToast(
+        data?.message || "Verification email resent. Check your inbox.",
+        "success"
+      );
     } catch (error) {
-      toast({
-        title:
-          error.response?.data?.message ||
+      console.error(error);
+      showToast(
+        error.response?.data?.message ||
           "Failed to resend verification. Please try again.",
-        status: "error",
-        duration: 1800,
-        position: "top-right",
-        variant: "subtle",
-      });
+        "error"
+      );
     }
   };
 
@@ -124,8 +120,15 @@ const VerificationPage = () => {
               leftIcon={<MdEmail />}
               colorScheme="maroon"
               bg={colors.maroon}
-              _hover={{ bg: colors.darkMaroon }}
-              _active={{ bg: colors.darkMaroon }}
+              _hover={{
+                bg: colors.maroonHover,
+                transform: "translateY(-1px)",
+                boxShadow: "lg",
+              }}
+              _active={{
+                bg: colors.maroonHover,
+                transform: "translateY(0)",
+              }}
               size="md"
               onClick={() => window.open("https://mail.google.com", "_blank")}
             >

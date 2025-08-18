@@ -101,8 +101,15 @@ const VerificationSuccessPage = () => {
               leftIcon={<MdLogin />}
               colorScheme="green"
               bg={colors.success}
-              _hover={{ bg: colors.darkSuccess }}
-              _active={{ bg: colors.darkSuccess }}
+              _hover={{
+                bg: colors.darkSuccess,
+                transform: "translateY(-1px)",
+                boxShadow: "lg",
+              }}
+              _active={{
+                bg: colors.darkSuccess,
+                transform: "translateY(0)",
+              }}
               size="md"
               onClick={() => navigate("/login")}
             >

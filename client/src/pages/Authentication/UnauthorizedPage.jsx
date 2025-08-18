@@ -21,6 +21,7 @@ const UnauthorizedPage = () => {
     paleError: "#FFF5F5",
     darkError: "#C53030",
     slate: "#2D3748",
+    maroonHover: "#A52A2A",
   };
 
   // Modern card shadow
@@ -88,8 +89,15 @@ const UnauthorizedPage = () => {
             <Button
               colorScheme="red"
               bg={colors.error}
-              _hover={{ bg: colors.darkError }}
-              _active={{ bg: colors.darkError }}
+              _hover={{
+                bg: colors.darkError,
+                transform: "translateY(-1px)",
+                boxShadow: "lg",
+              }}
+              _active={{
+                bg: colors.darkError,
+                transform: "translateY(0)",
+              }}
               size="md"
               onClick={() => navigate("/login")} // NOTE: This should be the landing page
             >

@@ -22,7 +22,7 @@ import { FiGlobe, FiSave } from "react-icons/fi";
 
 const MAROON = "#800000";
 const MAROON_HOVER = "#A52A2A";
-const BORDER_COLOR = "#E2E8F0";
+const BORDER_COLOR = "#BCBCBCFF";
 const SUBTLE_TEXT = "#71717E";
 
 const AdminSettingsTable = () => {
@@ -119,7 +119,7 @@ const AdminSettingsTable = () => {
       </Flex>
 
       {/* Settings Card */}
-      <Box borderRadius="md" border={"1px solid #e2e8f0"} p={5}>
+      <Box borderRadius="xl" border="1px" borderColor="gray.300" p={10}>
         {/* General Settings Header */}
         <Flex gap="12px" alignItems="center" marginBottom="8px">
           <FiGlobe size="22px" color={MAROON} />
