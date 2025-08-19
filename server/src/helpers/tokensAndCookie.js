@@ -31,14 +31,14 @@ export const generateTokensAndCookies = async (res, userId) => {
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
     maxAge: 15 * 60 * 1000, // 15 minutes (matches access token)
   });
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
     maxAge: sessionTimeoutMinutes * 60 * 1000, // Matches refresh token
   });
 
@@ -53,8 +53,8 @@ export const generateAccessTokenOnly = (res, userId) => {
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: ACCESS_TOKEN_EXPIRY * 1000,
+    sameSite: "lax",
+    maxAge: ACCESS_TOKEN_EXPIRY * 60 * 1000,
   });
 
   return accessToken;

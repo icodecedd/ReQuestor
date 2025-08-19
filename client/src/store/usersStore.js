@@ -12,7 +12,7 @@ export const useUserStore = create((set, get) => ({
   fetchUsers: async () => {
     set({ loading: true, error: null });
     try {
-      const res = await api.get("/api/users");
+      const res = await api.get("/users");
       set({ users: res.data.data, loading: false });
     } catch (error) {
       set({ error: error.message, loading: false });
@@ -65,7 +65,7 @@ export const useUserStore = create((set, get) => ({
         user_id: get().userId,
       };
 
-      const res = await api.post("/api/users", addedPayload);
+      const res = await api.post("/users", addedPayload);
       set((state) => ({
         users: [res.data.data, ...state.users], // prepend new user
       }));
@@ -128,7 +128,7 @@ export const useUserStore = create((set, get) => ({
         user_id: get().userId,
       };
 
-      const res = await api.put(`/api/users/${id}`, updatedPayload);
+      const res = await api.put(`/users/${id}`, updatedPayload);
       set((state) => ({
         users: state.users.map((user) =>
           user.id === id ? res.data.data : user
@@ -161,7 +161,7 @@ export const useUserStore = create((set, get) => ({
 
   deleteUser: async (id) => {
     try {
-      await api.delete(`/api/users/${id}`, {
+      await api.delete(`/users/${id}`, {
         data: { user_id: get().userId },
       });
 
@@ -194,7 +194,7 @@ export const useUserStore = create((set, get) => ({
       };
     }
     try {
-      await api.patch(`/api/users/${id}/set-password`, {
+      await api.patch(`/users/${id}/set-password`, {
         email,
         user_id: get().userId,
       });
@@ -218,7 +218,7 @@ export const useUserStore = create((set, get) => ({
 
   toggleStatus: async (id) => {
     try {
-      const res = await api.patch(`/api/users/${id}/set-status`, {
+      const res = await api.patch(`/users/${id}/set-status`, {
         user_id: get().userId,
       });
 

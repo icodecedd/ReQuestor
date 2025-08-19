@@ -1,4 +1,3 @@
-// src/middlewares/checkMaintenance.js
 import pool from "../config/dbConfig.js";
 
 export const checkMaintenance = async (req, res, next) => {

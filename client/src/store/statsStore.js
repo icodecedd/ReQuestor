@@ -19,7 +19,7 @@ export const useStatsStore = create((set, get) => ({
   fetchStats: async () => {
     set({ loading: true, error: null });
     try {
-      const res = await api.get("/api/stats");
+      const res = await api.get("/stats");
       if (res.data?.success) {
         const {
           totalRequests,

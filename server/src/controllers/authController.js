@@ -12,9 +12,12 @@ import {
   sendResetSuccessEmail,
   sendVerificationEmail,
 } from "../emailservices/emailsGmail.js";
-import { resetLoginAttempts, handleFailedLogin } from "../middleware/auth.js";
+import {
+  resetLoginAttempts,
+  handleFailedLogin,
+} from "../middleware/handleFailedLogin.js";
 
-export const checkAuth = async (req, res) => {
+export const getCurrentUser = async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT id, name, email, role, status, is_verified FROM users where id = $1",
