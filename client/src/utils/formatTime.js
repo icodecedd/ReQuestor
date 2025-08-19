@@ -15,7 +15,26 @@ export function timeAgo(timestamp) {
   return formatDistanceToNow(localDate, { addSuffix: true });
 }
 
-export function formatTime(timeString) {
+export function formatTime(timestamp) {
+  const safeTimestamp = timestamp.includes("T")
+    ? timestamp
+    : timestamp.replace(" ", "T");
+
+  // parse the timestamp as UTC
+  const utcDate = new Date(safeTimestamp);
+
+  // manually convert to UTC+8 (Philippines)
+  const localDate = new Date(utcDate.getTime() + 8 * 60 * 60 * 1000);
+
+  // format (HH:MM AM/PM)
+  return localDate.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
+export function formatTimeOnly(timeString) {
   const [hours, minutes] = timeString.split(":");
   const date = new Date();
   date.setHours(parseInt(hours));
@@ -26,7 +45,6 @@ export function formatTime(timeString) {
     hour12: true,
   });
 }
-
 // utils/filterByTime.js
 export function getTimeLabel(timestamp) {
   const date = new Date(timestamp);
@@ -50,3 +68,24 @@ export function getTimeLabel(timestamp) {
   // Default
   return "All Time";
 }
+
+// Convert timestamp to datetime-local format (YYYY-MM-DDTHH:MM)
+export const timestampToInputFormat = (timestamp) => {
+  if (!timestamp) return "";
+
+  // parse the UTC timestamp
+  const utcDate = new Date(timestamp);
+
+  // convert to UTC+8 (Philippines)
+  const phDate = new Date(utcDate.getTime() + 8 * 60 * 60 * 1000);
+
+  // convert to ISO string and cut the seconds
+  const isoString = phDate.toISOString();
+  return isoString.substring(0, 16); // "YYYY-MM-DDTHH:MM"
+};
+
+// Convert datetime-local format to timestamp
+export const inputFormatToTimestamp = (inputString) => {
+  if (!inputString) return null;
+  return new Date(inputString).getTime();
+};

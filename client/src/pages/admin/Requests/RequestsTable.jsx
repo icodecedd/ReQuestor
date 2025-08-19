@@ -10,7 +10,7 @@ import RejectRequestModal from "@/components/modals/RejectRequestModal";
 import ScheduleDetailsModal from "@/components/modals/ScheduleDetailsModal";
 import ViewRequestModal from "@/components/modals/ViewRequestModal";
 import { useRequestsStore } from "@/store/requestsStore";
-import { formatTime } from "@/utils/formatTime";
+import { formatTimeOnly } from "@/utils/formatTime";
 import { getRequestStatusColor } from "@/utils/getColorScheme";
 import { getDateOnly } from "@/utils/getDate";
 import {
@@ -392,9 +392,9 @@ const RequestsTable = () => {
                               <Td>
                                 <Text mb={1}>{getDateOnly(req.date_use)}</Text>
                                 <Text>
-                                  {`${formatTime(req.time_from)} - ${formatTime(
-                                    req.time_to
-                                  )}`}
+                                  {`${formatTimeOnly(
+                                    req.time_from
+                                  )} - ${formatTimeOnly(req.time_to)}`}
                                 </Text>
                               </Td>
                               <Td>

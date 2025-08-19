@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "@/api/index";
 import { toTitleCase } from "@/utils/toTitleCase";
 import {
   useRecentRequestsStore,
@@ -17,7 +17,7 @@ export const useRequestsStore = create((set, get) => ({
     set({ loading: true, error: null });
 
     try {
-      const res = await axios.get("/api/requests");
+      const res = await api.get("/api/requests");
       set({ requests: res.data.data, loading: false });
     } catch (error) {
       set({ error: error.message, loading: false });
@@ -96,7 +96,7 @@ export const useRequestsStore = create((set, get) => ({
     };
 
     try {
-      const res = await axios.post(
+      const res = await api.post(
         "/api/requests/check-availability",
         requestPayload
       );
@@ -158,7 +158,7 @@ export const useRequestsStore = create((set, get) => ({
         user_id: get().userId,
       };
 
-      const res = await axios.post("/api/requests", requestPayload);
+      const res = await api.post("/api/requests", requestPayload);
       set((state) => ({
         requests: [res.data.data, ...state.requests],
       }));
@@ -190,7 +190,7 @@ export const useRequestsStore = create((set, get) => ({
 
   approveRequest: async (id) => {
     try {
-      const res = await axios.patch(`/api/requests/${id}/approve`, {
+      const res = await api.patch(`/api/requests/${id}/approve`, {
         user_id: get().userId,
       });
 
@@ -228,7 +228,7 @@ export const useRequestsStore = create((set, get) => ({
 
   rejectRequest: async (id, rejectionReason) => {
     try {
-      const res = await axios.patch(`/api/requests/${id}/reject`, {
+      const res = await api.patch(`/api/requests/${id}/reject`, {
         user_id: get().userId,
         rejectionReason,
       });
@@ -267,7 +267,7 @@ export const useRequestsStore = create((set, get) => ({
 
   cancelRequest: async (id) => {
     try {
-      const res = await axios.patch(`/api/requests/${id}/cancel`, {
+      const res = await api.patch(`/api/requests/${id}/cancel`, {
         user_id: get().userId,
       });
 
@@ -305,7 +305,7 @@ export const useRequestsStore = create((set, get) => ({
 
   markCompleteRequest: async (id) => {
     try {
-      const res = await axios.patch(`/api/requests/${id}/complete`, {
+      const res = await api.patch(`/api/requests/${id}/complete`, {
         user_id: get().userId,
       });
 

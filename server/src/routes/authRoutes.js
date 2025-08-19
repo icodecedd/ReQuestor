@@ -11,10 +11,11 @@ import {
   verifyEmail,
 } from "../controllers/authController.js";
 import { verifyToken } from "../middleware/auth.js";
+import { checkMaintenance } from "../middleware/maintenance.js";
 
 const router = express.Router();
 
-router.get("/me", verifyToken, checkAuth);
+router.get("/me", verifyToken, checkMaintenance, checkAuth);
 router.get("/verify-email/:token", verifyEmail);
 router.post("/resend-verification", resendVerification);
 router.post("/refresh-token", refreshToken);

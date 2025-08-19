@@ -7,11 +7,13 @@ import PieGraph from "./PieGraph";
 import RecentRequests from "./RecentRequests";
 import ActivityLogs from "./ActivityLogs";
 import QuickActions from "./QuickActions";
+import MaintenanceBanner from "./MaintenanceBanner";
 
 const DashboardPage = () => {
   return (
     <>
       <Navbar pageName={"Overview"} />
+      <MaintenanceBanner />
       <DashboardBanner />
       <DashboardStats />
       <Grid

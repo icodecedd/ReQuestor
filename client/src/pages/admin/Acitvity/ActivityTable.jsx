@@ -171,9 +171,12 @@ const ActivityTable = () => {
                     }
                   };
 
+                  const date = new Date(log.timestamp);
+                  const plus8 = new Date(date.getTime() + 8 * 60 * 60 * 1000);
+
                   return (
                     <Tr key={log.id} textColor="blackAlpha.900" bg="#f7f9fb">
-                      <Td>{log.timestamp}</Td>
+                      <Td>{plus8.toLocaleString()}</Td>
                       <Td>
                         {log.role === "Admin" ? "Admin System" : log.user}
                       </Td>

@@ -23,7 +23,7 @@ const WARNING_RED_DARK = "#C53030";
 const WARNING_RED_HOVER = "#F56565";
 const DARK_GRAY = "#616161";
 
-const DeleteEquipmentModal = ({ isOpen, onClose, request }) => {
+const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
   const deleteEquipment = useEquipmentStore((state) => state.deleteEquipment);
   const setUserId = useEquipmentStore((state) => state.setUserId);
   const { user } = useAuth();
@@ -36,7 +36,7 @@ const DeleteEquipmentModal = ({ isOpen, onClose, request }) => {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
-      const result = await deleteEquipment(request.id);
+      const result = await deleteEquipment(equipment.id);
 
       showToast(result.message, result.success ? "success" : "error");
 

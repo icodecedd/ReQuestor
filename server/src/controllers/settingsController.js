@@ -1,4 +1,19 @@
 import pool from "../config/dbConfig.js";
+import { disableMaintenance } from "../helpers/toggleMaintenance.js";
+
+export const checkMaintenanceMode = async () => {
+  try {
+    const result = await pool.query("SELECT * FROM settings WHERE id = 1");
+    const settings = result.rows[0];
+    return {
+      maintenance: settings.maintenance,
+      message: settings.maintenance_message,
+    };
+  } catch (error) {
+    console.error("Error in checkMaintenanceMode Function:", error);
+    return false;
+  }
+};
 
 export const getSettings = async (req, res) => {
   try {
@@ -16,6 +31,8 @@ export const updateSettings = async (req, res) => {
     email_notif,
     auto_approve,
     maintenance,
+    maintenance_message,
+    grace_period,
     session_timeout,
     max_login,
     user_id,
@@ -38,6 +55,10 @@ export const updateSettings = async (req, res) => {
     fields.push(`maintenance = $${idx++}`);
     values.push(maintenance);
   }
+  if (typeof maintenance_message !== "undefined") {
+    fields.push(`maintenance_message = $${idx++}`);
+    values.push(maintenance_message);
+  }
   if (typeof session_timeout !== "undefined") {
     fields.push(`session_timeout = $${idx++}`);
     values.push(session_timeout);
@@ -45,6 +66,11 @@ export const updateSettings = async (req, res) => {
   if (typeof max_login !== "undefined") {
     fields.push(`max_login = $${idx++}`);
     values.push(max_login);
+  }
+  if (typeof grace_period !== "undefined") {
+    fields.push(`grace_period = $${idx++}`);
+    values.push(grace_period);
+    fields.push(`grace_start_at = NOW()`);
   }
   fields.push(`updated_at = NOW()`);
 
@@ -75,11 +101,22 @@ export const updateSettings = async (req, res) => {
       [user_id, settings.id]
     );
 
-    res.status(200).json({ success: true, data: settings });
+    if (!settings.maintenance) {
+      const result = await disableMaintenance(); // Disable maintenance mode if it's not enabled manually
+      return res.status(200).json({
+        // Added return here to prevent double response
+        success: result.success,
+        data: result.data,
+      });
+    }
+
+    return res.status(200).json({ success: true, data: settings });
   } catch (error) {
     console.error("Error in updateSettings:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: error.message, // Include error message for debugging
+    });
   }
 };

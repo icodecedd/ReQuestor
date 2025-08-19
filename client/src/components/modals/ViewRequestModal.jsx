@@ -33,7 +33,7 @@ import { MdOutlineDocumentScanner } from "react-icons/md";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { PiProjectorScreenChart } from "react-icons/pi";
 import { getDateOnly } from "@/utils/getDate";
-import { formatTime } from "@/utils/formatTime";
+import { formatTimeOnly } from "@/utils/formatTime";
 
 // Color constants
 const MAROON = "#800000";
@@ -218,7 +218,7 @@ const ViewRequestModal = ({ isOpen, onClose, request }) => {
               <DetailItem
                 icon={BsClock}
                 label="Time"
-                value={`${formatTime(request.time_from)} - ${formatTime(
+                value={`${formatTimeOnly(request.time_from)} - ${formatTimeOnly(
                   request.time_to
                 )}`}
               />

@@ -281,8 +281,8 @@ export const addRequest = async (req, res) => {
     }
 
     const requestRes = await pool.query(
-      `INSERT INTO requests (user_id, course_section, faculty_in_charge, date_use, time_from, time_to, purpose, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, 'Reserved')
+      `INSERT INTO requests (user_id, course_section, faculty_in_charge, date_use, time_from, time_to, purpose, status, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, 'Reserved', NOW())
        RETURNING id`,
       [
         userId,

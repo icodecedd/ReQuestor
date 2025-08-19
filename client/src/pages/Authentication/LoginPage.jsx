@@ -78,7 +78,7 @@ export const LoginPage = () => {
     try {
       const { success, data } = await login(formData);
       if (success) {
-        showToast(`Login successful! Welcome back.`, "success");
+        showToast("Login successful! Welcome back.", "success");
         navigate(data.role === "Admin" ? "/admin/dashboard" : "/student");
       }
     } catch (err) {

@@ -69,7 +69,7 @@ const ActivityLogs = () => {
       </Flex>
 
       {/* Content */}
-      <VStack mt={7}>
+      <VStack mt={5}>
         {loading ? (
           [1, 2, 3, 4, 5].map((i) => (
             <Skeleton
@@ -87,7 +87,7 @@ const ActivityLogs = () => {
             <ActivityLogItem key={index} log={log} />
           ))
         ) : (
-          <Center h="300px">
+          <Center h="400px">
             <VStack spacing={2}>
               <Heading size="sm" color="gray.500">
                 No recent activities

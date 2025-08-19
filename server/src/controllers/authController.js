@@ -90,7 +90,7 @@ export const register = async (req, res) => {
     // Insert the new user into the database
     const result = await pool.query(
       `
-            INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3)
+            INSERT INTO users (name, email, password_hash, created_at) VALUES ($1, $2, $3, NOW())
             RETURNING id, name, email, role, status, is_verified, created_at, last_login`,
       [name, email, password_hash]
     );
@@ -239,6 +239,7 @@ export const login = async (req, res) => {
         FROM users WHERE email = $1`,
       [email]
     );
+
     if (result.rowCount === 0) {
       return res.status(404).json({
         success: false,
@@ -246,15 +247,27 @@ export const login = async (req, res) => {
       });
     }
 
-    if (result.rows[0].account_locked) {
+    const user = result.rows[0];
+
+    const {
+      rows: [maintenance],
+    } = await pool.query("SELECT * FROM settings WHERE id = 1");
+
+    if (maintenance.maintenance === true && user.role !== "Admin") {
+      return res.status(403).json({
+        success: false,
+        errorCode: "MAINTENANCE_MODE",
+        message: "System is currently undergoing maintenance.",
+      });
+    }
+
+    if (user.account_locked) {
       return res.status(403).json({
         success: false,
         errorCode: "ACCOUNT_LOCKED",
         message: "Your account has been locked. Please contact support.",
       });
     }
-
-    const user = result.rows[0];
 
     // Check if the user is active
     if (user.status !== "Active") {

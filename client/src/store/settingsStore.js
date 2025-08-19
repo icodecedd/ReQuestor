@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "@/api/index";
 import _ from "lodash";
 
 export const useSettingsStore = create((set, get) => ({
@@ -12,7 +12,7 @@ export const useSettingsStore = create((set, get) => ({
   fetchSettings: async () => {
     set({ loading: true, error: null });
     try {
-      const res = await axios.get("/api/settings");
+      const res = await api.get("/api/settings");
       const { id, updated_at, ...settings } = res.data.data;
       set({
         settings: res.data.data,
@@ -42,7 +42,7 @@ export const useSettingsStore = create((set, get) => ({
       };
 
       // 3. API call
-      const res = await axios.put("/api/settings/update", updatedPayload);
+      const res = await api.put("/api/settings/update", updatedPayload);
 
       // 4. Update Zustand state (atomic update)
       set({
