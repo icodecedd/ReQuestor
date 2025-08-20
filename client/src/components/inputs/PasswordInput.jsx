@@ -7,7 +7,7 @@ import {
 import { useState } from "react";
 import { FiEyeOff, FiEye } from "react-icons/fi";
 
-const PasswordInput = ({
+export const PasswordInput = ({
   name,
   value,
   placeholder,
@@ -48,5 +48,3 @@ const PasswordInput = ({
     </InputGroup>
   );
 };
-
-export default PasswordInput;

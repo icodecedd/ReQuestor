@@ -1,4 +1,4 @@
-import StatCard from "@/components/cards/StatCard";
+import { StatCard } from "@/components/cards/StatCard";
 import { useEquipmentStore } from "@/store/equipmentStore";
 import { SimpleGrid } from "@chakra-ui/react";
 import { useEffect } from "react";

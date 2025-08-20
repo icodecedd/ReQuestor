@@ -7,6 +7,7 @@ export const useActivityStore = create((set, get) => ({
   error: null,
 
   fetchLogs: async () => {
+    set({ loading: true, error: null });
     try {
       const res = await api.get("/activities");
       set({ logs: res.data.data, loading: false });

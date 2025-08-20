@@ -23,7 +23,7 @@ import {
 import { FiSearch } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
 import { UserRoleDropdown } from "@/components/dropdowns/UserRoleDropdown";
-import UserActionButton from "@/components/buttons/UserActionButton";
+import { UserActionButton } from "@/components/buttons/UserActionButton";
 import { useEffect, useMemo, useState } from "react";
 import { useUserStore } from "@/store/usersStore";
 import { getDateOnly } from "@/utils/getDate";

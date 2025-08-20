@@ -4,7 +4,7 @@ import { activityMeta } from "@/constants/activityLogsMeta";
 import { timeAgo } from "@/utils/formatTime";
 import { FiClock } from "react-icons/fi";
 
-const ActivityLogItem = ({ log }) => {
+export const ActivityLogItem = ({ log }) => {
   const meta = activityMeta?.[log.category]?.[log.action] || {
     title: "Unknown Activity",
     description: `No metadata available for "${log.action}" on "${log.target}".`,
@@ -50,5 +50,3 @@ const ActivityLogItem = ({ log }) => {
     </HStack>
   );
 };
-
-export default ActivityLogItem;
