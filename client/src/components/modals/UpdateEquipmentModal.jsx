@@ -49,6 +49,7 @@ import { showToast } from "@/utils/toast";
 import { getEqConditionColor, getEqStatusColor } from "@/utils/getColorScheme";
 import { ModalDropdown } from "../dropdowns/ModalDropdown";
 import { useEquipmentStore } from "@/store/equipmentStore";
+import _ from "lodash";
 
 const MAROON = "#800000";
 const MAROON_HOVER = "#A52A2A";
@@ -103,6 +104,16 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
     condition: "",
     description: "",
   });
+
+  const compareForm = {
+    name: equipment.name || "",
+    type: equipment.type || "",
+    status: equipment.status || "Available",
+    location: equipment.location || "",
+    serial_number: equipment.serial_number || "",
+    condition: equipment.condition || "",
+    description: equipment.description || "",
+  };
 
   const [errors, setErrors] = useState({
     name: false,
@@ -198,6 +209,17 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
   const handleUpdate = async () => {
     setUserId(user.id);
     setIsSubmitting(true);
+
+    const areEquipmentEqual = _.isEqual(form, compareForm);
+    if (areEquipmentEqual) {
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
+      showToast(
+        "No changes detected. Please make sure to update at least one field.",
+        "info"
+      );
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));

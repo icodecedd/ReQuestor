@@ -47,7 +47,7 @@ const CustomLegend = ({ data }) => {
             justify="space-between"
             px={3}
             borderRadius="md"
-            _hover={{ bg: useColorModeValue("gray.50", "gray.700") }}
+            _hover={{ bg: "#f7eaea" }}
           >
             <HStack spacing={2}>
               <Box

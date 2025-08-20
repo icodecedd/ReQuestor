@@ -166,12 +166,17 @@ const ActivityTable = () => {
                       return `REQ-${String(log.target_id).padStart(3, "0")}`;
                     } else if (log.category === "EQUIPMENT") {
                       return `EQ-${String(log.target_id).padStart(3, "0")}`;
+                    } else if (log.category === "SETTINGS") {
+                      return "SYSTEM SETTINGS";
                     }
                   };
 
+                  const date = new Date(log.timestamp);
+                  const plus8 = new Date(date.getTime() + 8 * 60 * 60 * 1000);
+
                   return (
                     <Tr key={log.id} textColor="blackAlpha.900" bg="#f7f9fb">
-                      <Td>{log.timestamp}</Td>
+                      <Td>{plus8.toLocaleString()}</Td>
                       <Td>
                         {log.role === "Admin" ? "Admin System" : log.user}
                       </Td>
@@ -180,7 +185,7 @@ const ActivityTable = () => {
                       <Td>
                         <Badge
                           colorScheme={getActivityColor(log.category)}
-                          variant={"outline"}
+                          variant={"subtle"}
                           borderRadius="xl"
                           pl={2}
                           pr={2}

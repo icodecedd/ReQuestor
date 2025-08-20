@@ -109,7 +109,8 @@ function App() {
           }
         />
         {/* Fallback route */}
-        <Route path="*" element={<LoginPage />} /> // change to 404 page later
+        <Route path="*" element={<NotFoundPage />} /> // change to 404 page
+        later
       </Routes>
     </>
   );

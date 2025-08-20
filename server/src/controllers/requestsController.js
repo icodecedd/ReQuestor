@@ -1,10 +1,39 @@
 import pool from "../config/dbConfig.js";
+import {
+  sendApprovedRequestEmail,
+  sendCancelledRequestEmail,
+  sendRejectedRequestEmail,
+  sendRequestInfoEmail,
+} from "../emailservices/emailsGmail.js";
+import { getAllAdmins } from "../helpers/getAllAdmins.js";
+import dayjs from "dayjs";
+
+const formatRequestsId = (id) => {
+  return `REQ-${String(id).padStart(3, "0")}`;
+};
+
+const formatDate = (timestamp) => {
+  const formatted = dayjs(timestamp).format("MM/DD/YYYY");
+  return formatted;
+};
+
+const formatTimeOnly = (timeString) => {
+  const [hours, minutes] = timeString.split(":");
+  const date = new Date();
+  date.setHours(parseInt(hours));
+  date.setMinutes(parseInt(minutes));
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
 
 // GET all requests
 export const getAllRequests = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT req.*, u.name, u.role,
+      `SELECT req.*, u.name, u.email, u.role,
          json_agg(json_build_object(
            'request_item_id', ri.id,
            'equipment_id', eq.id,
@@ -33,7 +62,7 @@ export const getAllRequests = async (req, res) => {
 export const getRecentRequests = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT req.*, u.name, u.role,
+      `SELECT req.*, u.name, u.email, u.role,
          json_agg(json_build_object(
            'request_item_id', ri.id,
            'equipment_id', eq.id,
@@ -228,7 +257,7 @@ export const addRequest = async (req, res) => {
        AND r.time_from = $3
        AND r.time_to = $4
        AND e.type = ANY($5)
-       AND r.status IN ('Reserved', 'In Use')
+       AND r.status IN ('Reserved', 'In Use', 'Pending')
        LIMIT 1`,
       [userId, date_use, time_from, time_to, equipment_list]
     );
@@ -251,7 +280,7 @@ export const addRequest = async (req, res) => {
           JOIN requests r ON ri.request_id = r.id
           WHERE ri.equipment_id = e.id
           AND r.date_use = $2
-          AND r.status IN ('Reserved', 'In Use')
+          AND r.status IN ('Reserved', 'In Use', 'Pending')
           AND r.time_from < $4
           AND r.time_to > $3
           )
@@ -280,9 +309,16 @@ export const addRequest = async (req, res) => {
       });
     }
 
+    const settingsConfig = await pool.query(
+      `SELECT email_notif, auto_approve FROM settings WHERE id = 1`
+    );
+    const autoApproveValue = settingsConfig.rows[0].auto_approve;
+
+    const statusValue = autoApproveValue ? "Reserved" : "Pending";
+
     const requestRes = await pool.query(
-      `INSERT INTO requests (user_id, course_section, faculty_in_charge, date_use, time_from, time_to, purpose, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, 'Reserved')
+      `INSERT INTO requests (user_id, course_section, faculty_in_charge, date_use, time_from, time_to, purpose, status, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
        RETURNING id`,
       [
         userId,
@@ -292,6 +328,7 @@ export const addRequest = async (req, res) => {
         time_from,
         time_to,
         purpose,
+        statusValue,
       ]
     );
 
@@ -306,7 +343,7 @@ export const addRequest = async (req, res) => {
     }
 
     const result = await pool.query(
-      `SELECT req.*, u.name, u.role,
+      `SELECT req.*, u.name, u.email, u.role,
          json_agg(json_build_object(
            'request_item_id', ri.id,
            'equipment_id', eq.id,
@@ -326,6 +363,8 @@ export const addRequest = async (req, res) => {
 
     await pool.query("COMMIT");
 
+    const request = result.rows[0];
+
     const activityLog = await pool.query(
       `INSERT INTO activity_logs (user_id, action, target_id, category, timestamp)
        VALUES ($1, 'CREATED', $2, 'REQUESTS', NOW())
@@ -340,9 +379,44 @@ export const addRequest = async (req, res) => {
       [user_id, userId]
     );
 
+    const adminEmails = await getAllAdmins();
+
+    const requestDetails = {
+      course_section,
+      faculty_in_charge,
+      date_use: formatDate(date_use),
+      time_from: formatTimeOnly(time_from),
+      time_to: formatTimeOnly(time_to),
+      purpose,
+      request_id: formatRequestsId(request.id),
+      name: request.name,
+      email: request.email,
+      equipment_list: request.equipment_list.map((item) => ({
+        equipment_name: item.equipment_name,
+      })),
+      submitted_on: activityLog.rows[0].timestamp,
+    };
+
+    // If email notifications are enabled, send an email to the user (if admin or student)
+    if (
+      settingsConfig.rows[0].email_notif === true &&
+      statusValue === "Pending"
+    ) {
+      await Promise.all(
+        adminEmails.map((adminEmail) =>
+          sendRequestInfoEmail(adminEmail.email, requestDetails)
+        )
+      );
+    } else if (
+      settingsConfig.rows[0].email_notif === true &&
+      statusValue === "Reserved"
+    ) {
+      await sendApprovedRequestEmail(request.email, requestDetails);
+    }
+
     res.status(201).json({
       success: true,
-      data: result.rows[0],
+      data: request,
       activity: activityLog.rows[0],
     });
   } catch (error) {
@@ -354,7 +428,7 @@ export const addRequest = async (req, res) => {
 
 export const approveRequest = async (req, res) => {
   const { id } = req.params;
-  const { user_id } = req.body;
+  const { user_id, request } = req.body;
 
   if (!id) {
     return res
@@ -416,6 +490,21 @@ export const approveRequest = async (req, res) => {
       [user_id, id]
     );
 
+    // Step 4: Send email notification to user
+    const requestDetails = {
+      name: request.name,
+      request_id: formatRequestsId(updatedRequest.id),
+      equipment_list: request.equipment_list.map((item) => ({
+        equipment_name: item.equipment_name,
+      })),
+      date_use: formatDate(request.date_use),
+      time_from: formatTimeOnly(request.time_from),
+      time_to: formatTimeOnly(request.time_to),
+      purpose: request.purpose,
+    };
+
+    await sendApprovedRequestEmail(request.email, requestDetails);
+
     res.status(200).json({ success: true, data: updatedRequest });
   } catch (error) {
     console.error("Error in approveRequest Function", error);
@@ -426,7 +515,7 @@ export const approveRequest = async (req, res) => {
 
 export const rejectRequest = async (req, res) => {
   const { id } = req.params;
-  const { user_id, rejectionReason: admin_notes } = req.body;
+  const { user_id, rejectionReason: admin_notes, request } = req.body;
 
   if (!id) {
     return res
@@ -487,6 +576,22 @@ export const rejectRequest = async (req, res) => {
       [user_id, id]
     );
 
+    // Step 4: Send email notification to user
+
+    const requestDetails = {
+      name: request.name,
+      request_id: formatRequestsId(updatedRequest.id),
+      equipment_list: request.equipment_list.map((item) => ({
+        equipment_name: item.equipment_name,
+      })),
+      date_use: formatDate(request.date_use),
+      time_from: formatTimeOnly(request.time_from),
+      time_to: formatTimeOnly(request.time_to),
+      purpose: request.purpose,
+    };
+
+    await sendRejectedRequestEmail(request.email, requestDetails);
+
     res.status(200).json({ success: true, data: updatedRequest });
   } catch (error) {
     console.error("Error in rejectRequest Function", error);
@@ -497,7 +602,7 @@ export const rejectRequest = async (req, res) => {
 
 export const cancelRequest = async (req, res) => {
   const { id } = req.params;
-  const { user_id } = req.body;
+  const { user_id, request } = req.body;
 
   if (!id) {
     return res
@@ -552,6 +657,20 @@ export const cancelRequest = async (req, res) => {
        RETURNING id, user_id, action, target_id, category, timestamp;`,
       [user_id, id]
     );
+
+    const requestDetails = {
+      name: request.name,
+      request_id: formatRequestsId(updatedRequest.id),
+      equipment_list: request.equipment_list.map((item) => ({
+        equipment_name: item.equipment_name,
+      })),
+      date_use: formatDate(request.date_use),
+      time_from: formatTimeOnly(request.time_from),
+      time_to: formatTimeOnly(request.time_to),
+      purpose: request.purpose,
+    };
+
+    await sendCancelledRequestEmail(request.email, requestDetails);
 
     res.status(200).json({ success: true, data: updatedRequest });
   } catch (error) {

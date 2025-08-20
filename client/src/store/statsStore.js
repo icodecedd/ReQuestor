@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "@/api/index";
 
 const initialStats = {
   totalRequests: 0,
@@ -19,7 +19,7 @@ export const useStatsStore = create((set, get) => ({
   fetchStats: async () => {
     set({ loading: true, error: null });
     try {
-      const res = await axios.get("/api/stats");
+      const res = await api.get("/stats");
       if (res.data?.success) {
         const {
           totalRequests,

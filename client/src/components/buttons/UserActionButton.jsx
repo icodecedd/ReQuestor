@@ -20,7 +20,7 @@ import {
 
 // Color constants
 const MAROON = "#800000";
-const MAROON_XLIGHT = "#f5e8e8";
+const MAROON_XLIGHT = "#f7eaea";
 const ERROR_RED = "#E53E3E";
 const WARNING_ORANGE = "#DD6B20";
 const SUCCESS_GREEN = "#38A169";
@@ -37,7 +37,7 @@ const UserActionButton = ({
   const isActive = status === "Active";
   const menuBg = "white";
   const menuBorder = "gray.200";
-  const hoverBg = MAROON_XLIGHT;
+  const hoverBg = "#f5f5f5";
 
   // Action definitions with consistent icon styling
   const actionDefinitions = {
@@ -68,6 +68,7 @@ const UserActionButton = ({
       label: "Delete User",
       onClick: onDelete,
       color: ERROR_RED,
+      hoverColor: MAROON_XLIGHT,
     },
   };
 
@@ -118,7 +119,7 @@ const UserActionButton = ({
 
         <MenuList
           minW="180px"
-          p={2}
+          p={1}
           bg={menuBg}
           borderColor={menuBorder}
           boxShadow="md"
@@ -134,10 +135,10 @@ const UserActionButton = ({
               px={3}
               borderRadius={RADIUS}
               _hover={{
-                bg: hoverBg,
+                bg: action.hoverColor || hoverBg,
               }}
               _focus={{
-                bg: hoverBg,
+                bg: action.hoverColor || hoverBg,
               }}
             >
               <Text fontSize="sm" fontWeight="medium" color={action.color}>

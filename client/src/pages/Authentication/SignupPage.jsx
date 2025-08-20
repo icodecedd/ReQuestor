@@ -14,7 +14,6 @@ import {
   IconButton,
   Center,
   Image,
-  useToast,
   useColorModeValue,
   InputLeftElement,
 } from "@chakra-ui/react";
@@ -25,27 +24,21 @@ import { useNavigate, Link as RouterLink } from "react-router-dom";
 import logoWhite from "@/assets/requestor-white.svg";
 import logo from "@/assets/requestor.svg";
 import overviewBg from "@/assets/overview.webp";
-import {
-  FiAlertCircle,
-  FiEye,
-  FiEyeOff,
-  FiLock,
-  FiMail,
-  FiUser,
-} from "react-icons/fi";
+import { FiEye, FiEyeOff, FiLock, FiMail, FiUser } from "react-icons/fi";
+import { showToast } from "@/utils/toast";
 
 export const SignupPage = () => {
   const { signup } = useAuth();
   const navigate = useNavigate();
-  const toast = useToast();
 
   // Modern color palette
   const colors = {
     maroon: "#800000",
     lightMaroon: "#a04040",
-    paleMaroon: "#f8e8e8",
+    paleMaroon: "#f5f5f6",
     darkMaroon: "#600000",
     slate: "#2D3748",
+    maroonHover: "#A52A2A",
   };
 
   const [formData, setFormData] = useState({
@@ -72,16 +65,6 @@ export const SignupPage = () => {
     if (value.trim()) setErrors((prev) => ({ ...prev, [name]: false }));
   };
 
-  const showToast = (message, status = "error", duration = 2000) => {
-    toast({
-      title: message,
-      status,
-      duration: duration,
-      position: "top-right",
-      variant: "subtle",
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -97,7 +80,7 @@ export const SignupPage = () => {
 
     if (formData.password.length < 6) {
       setErrors((prev) => ({ ...prev, password: true }));
-      showToast("Password must be at least 6 characters.");
+      showToast("Password must be at least 6 characters.", "error");
       return;
     }
 
@@ -113,7 +96,7 @@ export const SignupPage = () => {
       console.error(err);
       const errorMessage =
         err?.response?.data?.message || "Sign up failed. Please try again.";
-      showToast(errorMessage);
+      showToast(errorMessage, "error");
 
       if (errorMessage.includes("not verified")) {
         navigate("/verification", { state: { email: formData.email } });
@@ -246,12 +229,12 @@ export const SignupPage = () => {
                         borderRadius="lg"
                         _placeholder={{ color: "gray.400" }}
                       />
-                      {errors.name && (
-                        <InputRightElement>
-                          <FiAlertCircle color="maroon" />
-                        </InputRightElement>
-                      )}
                     </InputGroup>
+                    {errors.name && (
+                      <Text color="#B03060" fontSize="xs">
+                        Please enter your full name.
+                      </Text>
+                    )}
                   </FormControl>
 
                   {/* Email Field */}
@@ -277,12 +260,12 @@ export const SignupPage = () => {
                         borderRadius="lg"
                         _placeholder={{ color: "gray.400" }}
                       />
-                      {errors.email && (
-                        <InputRightElement>
-                          <FiAlertCircle color="maroon" />
-                        </InputRightElement>
-                      )}
                     </InputGroup>
+                    {errors.email && (
+                      <Text color="#B03060" fontSize="xs">
+                        Please enter a valid email address.
+                      </Text>
+                    )}
                   </FormControl>
 
                   {/* Password Field */}
@@ -319,6 +302,11 @@ export const SignupPage = () => {
                         />
                       </InputRightElement>
                     </InputGroup>
+                    {errors.password && (
+                      <Text color="#B03060" fontSize="xs">
+                        Please enter a valid password.
+                      </Text>
+                    )}
                   </FormControl>
 
                   {/* Submit Button */}
@@ -334,12 +322,12 @@ export const SignupPage = () => {
                     fontWeight="500"
                     mt={3}
                     _hover={{
-                      bg: colors.darkMaroon,
+                      bg: colors.maroonHover,
                       transform: "translateY(-1px)",
                       boxShadow: "lg",
                     }}
                     _active={{
-                      bg: colors.darkMaroon,
+                      bg: colors.maroonHover,
                       transform: "translateY(0)",
                     }}
                   >

@@ -19,7 +19,7 @@ import { NavLink } from "react-router-dom";
 import { useRecentRequestsStore } from "@/store/recentStore";
 import { useEffect } from "react";
 import { getDateOnly } from "@/utils/getDate";
-import { formatTime } from "@/utils/formatTime";
+import { formatTimeOnly } from "@/utils/formatTime";
 import { getRequestStatusColor } from "@/utils/getColorScheme";
 
 const RecentRequests = () => {
@@ -34,14 +34,15 @@ const RecentRequests = () => {
     fetchRecentRequests();
   }, [fetchRecentRequests]);
 
+  const numberOfRequests = recentRequests.length;
+
   return (
     <Box
-      overflow="hidden"
       bg="white"
       borderRadius="2xl"
       boxShadow="md"
       w="100%"
-      h="100%"
+      h={numberOfRequests === 5 ? "100%" : "380px"}
     >
       {/* Header */}
       <Flex
@@ -127,7 +128,7 @@ const RecentRequests = () => {
                   <Td>
                     <Text mb={1}>{getDateOnly(req.date_use)}</Text>
                   </Td>
-                  <Td>{`${formatTime(req.time_from)} - ${formatTime(
+                  <Td>{`${formatTimeOnly(req.time_from)} - ${formatTimeOnly(
                     req.time_to
                   )}`}</Td>
                   <Td>

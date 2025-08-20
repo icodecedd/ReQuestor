@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "@/api/index";
 
 export const useRecentRequestsStore = create((set, get) => ({
   recentRequests: [],
@@ -9,7 +9,7 @@ export const useRecentRequestsStore = create((set, get) => ({
   fetchRecentRequests: async () => {
     set({ loading: true, error: null });
     try {
-      const res = await axios.get("/api/requests/recent"); // 5 most recent
+      const res = await api.get("/requests/recent"); // 5 most recent
       if (res.data?.success && Array.isArray(res.data.data)) {
         set({ recentRequests: res.data.data, loading: false });
         console.log("Recent requests:", res.data.data);
@@ -38,7 +38,7 @@ export const useRecentActivitiesStore = create((set, get) => ({
   fetchRecentActivities: async () => {
     set({ loading: true, error: null });
     try {
-      const res = await axios.get("/api/activities/recent"); // 5 most recent
+      const res = await api.get("/activities/recent"); // 5 most recent
       if (res.data?.success && Array.isArray(res.data.data)) {
         set({ recentActivities: res.data.data, loading: false });
       } else {

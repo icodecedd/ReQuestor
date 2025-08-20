@@ -48,8 +48,8 @@ export const addUser = async (req, res) => {
     const password_hashed = await hashPassword(password_hash);
 
     const query = `
-      INSERT INTO users (name, email, password_hash, role, status, is_verified, must_change_password)
-      VALUES ($1, $2, $3, $4, $5, TRUE, TRUE)
+      INSERT INTO users (name, email, password_hash, role, status, is_verified, must_change_password, created_at)
+      VALUES ($1, $2, $3, $4, $5, TRUE, TRUE, NOW())
       RETURNING id, name, email, role, status, created_at, is_verified, last_login;
       `;
 

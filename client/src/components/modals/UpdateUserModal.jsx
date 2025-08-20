@@ -25,6 +25,7 @@ import { useUserStore } from "@/store/usersStore";
 import { useAuth } from "@/hooks/useAuth";
 import { showToast } from "@/utils/toast";
 import { getUserColor } from "@/utils/getColorScheme";
+import _ from "lodash";
 
 const MAROON = "#800000";
 const MAROON_HOVER = "#A52A2A";
@@ -61,6 +62,14 @@ const UpdateUserModal = ({ isOpen, onClose, users }) => {
     role: "",
     status: "",
   });
+
+  const compareForm = {
+    name: users?.name || "",
+    email: users?.email || "",
+    role: users?.role || "",
+    status: users?.status || "",
+  };
+
   const [errors, setErrors] = useState({
     name: false,
     email: false,
@@ -89,6 +98,17 @@ const UpdateUserModal = ({ isOpen, onClose, users }) => {
   const handleUpdate = async () => {
     setUserId(user.id);
     setIsSubmitting(true);
+
+    const areUserEqual = _.isEqual(form, compareForm);
+    if (areUserEqual) {
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
+      showToast(
+        "No changes detected. Please make sure to update at least one field.",
+        "info"
+      );
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay

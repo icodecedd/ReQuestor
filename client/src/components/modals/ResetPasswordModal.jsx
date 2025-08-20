@@ -39,7 +39,7 @@ const ResetPasswordModal = ({ isOpen, onClose, users }) => {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const result = await resetPassword(users.id);
+      const result = await resetPassword(users.id, users.email);
       showToast(result.message, result.success ? "success" : "error");
       if (result.success) onClose();
     } catch (error) {

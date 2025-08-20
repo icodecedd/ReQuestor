@@ -44,7 +44,7 @@ const RejectRequestModal = ({ isOpen, onClose, request }) => {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const result = await rejectRequest(request.id, rejectionReason);
+      const result = await rejectRequest(request, rejectionReason);
 
       showToast(result.message, result.success ? "success" : "error");
 

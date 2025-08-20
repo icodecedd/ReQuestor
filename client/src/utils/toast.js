@@ -1,7 +1,7 @@
 // toastUtils.js
 import { toast, Bounce } from "react-toastify";
 
-export const showToast = (message, type, duration = 3000) => {
+export const showToast = (message, type="error", duration = 3000) => {
   const options = {
     position: "top-right",
     autoClose: duration,

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "@/api/index";
 import { toTitleCase } from "@/utils/toTitleCase";
 import { useRecentActivitiesStore } from "./recentStore";
 
@@ -14,7 +14,7 @@ export const useEquipmentStore = create((set, get) => ({
     set({ loading: true, error: null });
 
     try {
-      const res = await axios.get("/api/equipment");
+      const res = await api.get("/equipment");
       set({ equipment: res.data.data, loading: false });
     } catch (error) {
       set({ error: error.message, loading: false });
@@ -70,7 +70,7 @@ export const useEquipmentStore = create((set, get) => ({
         user_id: get().userId,
       };
 
-      const res = await axios.post("/api/equipment", payload);
+      const res = await api.post("/equipment", payload);
       set((state) => ({
         equipment: [res.data.data, ...state.equipment], // prepend new equipment
       }));
@@ -128,7 +128,7 @@ export const useEquipmentStore = create((set, get) => ({
         user_id: get().userId,
       };
 
-      const res = await axios.put(`/api/equipment/${id}`, updatedPayload);
+      const res = await api.put(`/equipment/${id}`, updatedPayload);
       set((state) => ({
         equipment: state.equipment.map((eq) =>
           eq.id === id ? res.data.data : eq
@@ -161,7 +161,7 @@ export const useEquipmentStore = create((set, get) => ({
 
   deleteEquipment: async (id) => {
     try {
-      await axios.delete(`/api/equipment/${id}`, {
+      await api.delete(`/equipment/${id}`, {
         data: { user_id: get().userId },
       });
 

@@ -10,9 +10,10 @@ const NotFoundPage = () => {
   const colors = {
     primary: "#800000",
     lightPrimary: "#a04040",
-    palePrimary: "#f8e8e8",
+    palePrimary: "#f5f5f6",
     darkPrimary: "#600000",
     slate: "#2D3748",
+    maroonHover: "#A52A2A",
   };
 
   return (
@@ -74,8 +75,15 @@ const NotFoundPage = () => {
             <Button
               colorScheme="maroon"
               bg={colors.primary}
-              _hover={{ bg: colors.darkPrimary }}
-              _active={{ bg: colors.darkPrimary }}
+              _hover={{
+                bg: colors.maroonHover,
+                transform: "translateY(-1px)",
+                boxShadow: "lg",
+              }}
+              _active={{
+                bg: colors.maroonHover,
+                transform: "translateY(0)",
+              }}
               size="md"
               onClick={() => navigate("/")} // NOTE: This should be the landing page
             >

@@ -61,4 +61,10 @@ export const activityMeta = {
       description: "A user's password was reset",
     },
   },
+  SETTINGS: {
+    UPDATED: {
+      title: "Updated Settings",
+      description: "System settings were updated",
+    },
+  },
 };

@@ -8,7 +8,6 @@ import {
   Input,
   FormControl,
   FormLabel,
-  useToast,
   InputGroup,
   InputLeftElement,
   useColorModeValue,
@@ -19,21 +18,25 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { FiMail } from "react-icons/fi";
+import { showToast } from "@/utils/toast";
 
 const ForgotPasswordPage = () => {
   const { forgotPassword } = useAuth();
   const navigate = useNavigate();
-  const toast = useToast();
   const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState({
+    email: false,
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   // Modern color palette
   const colors = {
     primary: "#800000",
     lightPrimary: "#a04040",
-    palePrimary: "#f8e8e8",
+    palePrimary: "#f5f5f6",
     darkPrimary: "#600000",
     slate: "#2D3748",
+    maroonHover: "#A52A2A",
   };
 
   // Modern card shadow
@@ -42,26 +45,18 @@ const ForgotPasswordPage = () => {
     "0px 4px 20px rgba(0, 0, 0, 0.2)"
   );
 
-  const showToast = (message, status, duration = 2000) => {
-    toast({
-      title: message,
-      status,
-      duration: duration,
-      position: "top-right",
-      variant: "subtle",
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email) {
       showToast("Please enter your email address.", "error");
+      setErrors((prev) => ({ ...prev, email: true }));
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       showToast("Please enter a valid email address.", "error");
+      setErrors((prev) => ({ ...prev, email: true }));
       return;
     }
 
@@ -84,6 +79,7 @@ const ForgotPasswordPage = () => {
       showToast("An error occurred. Please try again later.", "error");
     } finally {
       setIsLoading(false);
+      setErrors((prev) => ({ ...prev, email: false }));
     }
   };
 
@@ -142,7 +138,7 @@ const ForgotPasswordPage = () => {
           </Text>
 
           <Stack spacing={5}>
-            <FormControl>
+            <FormControl isInvalid={errors.email}>
               <FormLabel
                 fontSize="sm"
                 fontWeight="500"
@@ -159,7 +155,10 @@ const ForgotPasswordPage = () => {
                   type="email"
                   placeholder="your@email.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setErrors((prev) => ({ ...prev, email: false }));
+                  }}
                   focusBorderColor={colors.primary}
                   borderColor={colors.lightPrimary}
                   _hover={{ borderColor: colors.primary }}
@@ -167,6 +166,11 @@ const ForgotPasswordPage = () => {
                   _placeholder={{ color: "gray.400" }}
                 />
               </InputGroup>
+              {errors.email && (
+                <Text color="#B03060" fontSize="xs" align={"left"}>
+                  Please enter a valid email address.
+                </Text>
+              )}
             </FormControl>
 
             <Button
@@ -176,12 +180,12 @@ const ForgotPasswordPage = () => {
               bg={colors.primary}
               color="white"
               _hover={{
-                bg: colors.darkPrimary,
+                bg: colors.maroonHover,
                 transform: "translateY(-2px)",
                 boxShadow: "md",
               }}
               _active={{
-                bg: colors.darkPrimary,
+                bg: colors.maroonHover,
                 transform: "translateY(0)",
               }}
               size="md"

@@ -12,8 +12,12 @@ import {
   sendResetSuccessEmail,
   sendVerificationEmail,
 } from "../emailservices/emailsGmail.js";
+import {
+  resetLoginAttempts,
+  handleFailedLogin,
+} from "../middleware/handleFailedLogin.js";
 
-export const checkAuth = async (req, res) => {
+export const getCurrentUser = async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT id, name, email, role, status, is_verified FROM users where id = $1",
@@ -89,7 +93,7 @@ export const register = async (req, res) => {
     // Insert the new user into the database
     const result = await pool.query(
       `
-            INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3)
+            INSERT INTO users (name, email, password_hash, created_at) VALUES ($1, $2, $3, NOW())
             RETURNING id, name, email, role, status, is_verified, created_at, last_login`,
       [name, email, password_hash]
     );
@@ -167,7 +171,10 @@ export const verifyEmail = async (req, res) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_VERIFICATION_TOKEN_SECRET
+    );
     const { userId } = decoded;
 
     const result = await pool.query(
@@ -231,10 +238,11 @@ export const login = async (req, res) => {
     // Check if the user exists
     const result = await pool.query(
       `
-        SELECT id, name, password_hash, email, role, status, is_verified, created_at, last_login
+        SELECT id, name, password_hash, email, role, status, is_verified, created_at, last_login, account_locked
         FROM users WHERE email = $1`,
       [email]
     );
+
     if (result.rowCount === 0) {
       return res.status(404).json({
         success: false,
@@ -243,6 +251,26 @@ export const login = async (req, res) => {
     }
 
     const user = result.rows[0];
+
+    const {
+      rows: [maintenance],
+    } = await pool.query("SELECT * FROM settings WHERE id = 1");
+
+    if (maintenance.maintenance === true && user.role !== "Admin") {
+      return res.status(403).json({
+        success: false,
+        errorCode: "MAINTENANCE_MODE",
+        message: "System is currently undergoing maintenance.",
+      });
+    }
+
+    if (user.account_locked) {
+      return res.status(403).json({
+        success: false,
+        errorCode: "ACCOUNT_LOCKED",
+        message: "Your account has been locked. Please contact support.",
+      });
+    }
 
     // Check if the user is active
     if (user.status !== "Active") {
@@ -256,10 +284,11 @@ export const login = async (req, res) => {
     // Check if the password is correct
     const match = await comparePassword(password, user.password_hash);
     if (!match) {
+      const result = await handleFailedLogin(email);
       return res.status(401).json({
         success: false,
         errorCode: "WRONG_CREDENTIALS",
-        message: "Invalid email or password.",
+        message: `Invalid email or password. ${result.attempts} attempt(s) left.`,
       });
     }
 
@@ -273,7 +302,7 @@ export const login = async (req, res) => {
 
     // Generate a JWT token for the user session
     generateTokensAndCookies(res, user.id);
-
+    await resetLoginAttempts(user.id);
     await pool.query("UPDATE users SET last_login = NOW() WHERE id = $1", [
       user.id,
     ]);
@@ -298,7 +327,8 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    res.clearCookie("token");
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
 
     return res.status(200).json({
       success: true,
