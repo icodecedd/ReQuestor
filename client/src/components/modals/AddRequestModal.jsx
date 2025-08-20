@@ -48,7 +48,7 @@ import { BsCalendarDate } from "react-icons/bs";
 import { PiProjectorScreenChart } from "react-icons/pi";
 import { useAuth } from "@/hooks/useAuth";
 import { showToast } from "@/utils/toast";
-import { formatTime } from "@/utils/formatTime";
+import { formatTimeOnly } from "@/utils/formatTime";
 
 const MAROON = "#800000";
 const MAROON_HOVER = "#A52A2A";
@@ -582,9 +582,11 @@ const AddRequestModal = ({
                     <DetailItem
                       icon={<FiClock />}
                       label="Time Requested"
-                      value={`${formatTime(form.time_from)} - ${formatTime(
-                        form.time_to
-                      )}` || "Not specified"}
+                      value={
+                        `${formatTimeOnly(form.time_from)} - ${formatTimeOnly(
+                          form.time_to
+                        )}` || "Not specified"
+                      }
                     />
                   </SimpleGrid>
                 </Box>

@@ -39,7 +39,7 @@ const ApproveRequestModal = ({ isOpen, onClose, request }) => {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
-      const result = await approveRequest(request.id);
+      const result = await approveRequest(request);
 
       showToast(result.message, result.success ? "success" : "error");
 

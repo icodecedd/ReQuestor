@@ -15,7 +15,7 @@ import { TbCancel, TbChecklist } from "react-icons/tb";
 
 // Color constants
 const MAROON = "#800000";
-const MAROON_XLIGHT = "#f5e8e8";
+const MAROON_XLIGHT = "#f7eaea";
 const SUCCESS_GREEN = "#38A169";
 const ERROR_RED = "#E53E3E";
 const WARNING_ORANGE = "#DD6B20";
@@ -32,7 +32,7 @@ const RequestActionButton = ({
 }) => {
   const menuBg = "white";
   const menuBorder = "gray.200";
-  const hoverBg = MAROON_XLIGHT;
+  const hoverBg = "#f5f5f5";
 
   const getAvailableActions = (status) => {
     const actions = [];
@@ -66,6 +66,7 @@ const RequestActionButton = ({
         label: "Reject Request",
         onClick: onReject,
         color: ERROR_RED,
+        hoverColor: MAROON_XLIGHT,
       });
     }
 
@@ -139,32 +140,34 @@ const RequestActionButton = ({
 
           <MenuList
             minW="180px"
-            p={2}
+            p={1}
             bg={menuBg}
             borderColor={menuBorder}
             boxShadow="md"
             borderRadius={RADIUS}
           >
-            {actions.slice(1).map(({ key, icon, label, onClick, color }) => (
-              <MenuItem
-                key={key}
-                onClick={onClick}
-                icon={icon}
-                py={2}
-                px={3}
-                borderRadius={RADIUS}
-                _hover={{
-                  bg: hoverBg,
-                }}
-                _focus={{
-                  bg: hoverBg,
-                }}
-              >
-                <Text fontSize="sm" fontWeight="medium" color={color}>
-                  {label}
-                </Text>
-              </MenuItem>
-            ))}
+            {actions
+              .slice(1)
+              .map(({ key, icon, label, onClick, color, hoverColor }) => (
+                <MenuItem
+                  key={key}
+                  onClick={onClick}
+                  icon={icon}
+                  py={2}
+                  px={3}
+                  borderRadius={RADIUS}
+                  _hover={{
+                    bg: hoverColor || hoverBg,
+                  }}
+                  _focus={{
+                    bg: hoverColor || hoverBg,
+                  }}
+                >
+                  <Text fontSize="sm" fontWeight="medium" color={color}>
+                    {label}
+                  </Text>
+                </MenuItem>
+              ))}
           </MenuList>
         </Menu>
       )}

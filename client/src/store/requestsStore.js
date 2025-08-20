@@ -188,10 +188,13 @@ export const useRequestsStore = create((set, get) => ({
     }
   },
 
-  approveRequest: async (id) => {
+  approveRequest: async (request) => {
+    const { id } = request;
+
     try {
       const res = await api.patch(`/requests/${id}/approve`, {
         user_id: get().userId,
+        request,
       });
 
       set((state) => ({
@@ -226,11 +229,13 @@ export const useRequestsStore = create((set, get) => ({
     }
   },
 
-  rejectRequest: async (id, rejectionReason) => {
+  rejectRequest: async (request, rejectionReason) => {
+    const { id } = request;
     try {
       const res = await api.patch(`/requests/${id}/reject`, {
         user_id: get().userId,
         rejectionReason,
+        request,
       });
 
       set((state) => ({
@@ -265,10 +270,12 @@ export const useRequestsStore = create((set, get) => ({
     }
   },
 
-  cancelRequest: async (id) => {
+  cancelRequest: async (request) => {
+    const { id } = request;
     try {
       const res = await api.patch(`/requests/${id}/cancel`, {
         user_id: get().userId,
+        request,
       });
 
       set((state) => ({

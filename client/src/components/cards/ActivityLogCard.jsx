@@ -23,7 +23,7 @@ const ActivityLogItem = ({ log }) => {
       borderRadius="xl"
       w="90%"
       mb={1}
-      _hover={{ bg: "#f7f1f1" }}
+      _hover={{ bg: "#f7eaea" }}
     >
       <Box
         bg={bg}
