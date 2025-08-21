@@ -43,7 +43,7 @@ const AdminSettingsTable = () => {
       auto_approve: config?.auto_approve ?? false,
       maintenance: config?.maintenance ?? false,
       grace_period: config?.grace_period ?? 5,
-      maintenance_message: config?.maintenance_message ?? "",
+      maintenance_message: config?.maintenance_message ?? null,
       session_timeout: config?.session_timeout ?? 30,
       max_login: config?.max_login ?? 5,
     }),

@@ -17,7 +17,6 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Bar,
 } from "recharts";
 import { useStatsStore } from "@/store/statsStore";
 
@@ -35,22 +34,6 @@ const LineGraph = () => {
     borderColor: "gray.200",
     textColor: "gray.600",
   };
-
-  // Mock Data
-  const normalizedStats = [
-    { month: "Jan", approved: 5, rejected: 2, cancelled: 3 },
-    { month: "Feb", approved: 8, rejected: 3, cancelled: 1 },
-    { month: "Mar", approved: 6, rejected: 5, cancelled: 3 },
-    { month: "Apr", approved: 4, rejected: 0, cancelled: 5 },
-    { month: "May", approved: 10, rejected: 1, cancelled: 4 },
-    { month: "Jun", approved: 2, rejected: 2, cancelled: 4 },
-    { month: "Jul", approved: 4, rejected: 0, cancelled: 2 },
-    { month: "Aug", approved: 10, rejected: 1, cancelled: 4 },
-    { month: "Sep", approved: 3, rejected: 0, cancelled: 7 },
-    { month: "Oct", approved: 10, rejected: 2, cancelled: 4 },
-    { month: "Nov", approved: 18, rejected: 0, cancelled: 9 },
-    { month: "Dec", approved: 1, rejected: 0, cancelled: 4 },
-  ];
 
   function normalizeStats(stats) {
     const fullMonths = [
@@ -81,7 +64,7 @@ const LineGraph = () => {
     });
   }
 
-  // const normalizedStats = normalizeStats(stats.LineGraph);
+  const normalizedStats = normalizeStats(stats.lineGraph);
 
   if (loading) {
     return (

@@ -9,6 +9,7 @@ import {
   FiActivity,
 } from "react-icons/fi";
 import { LuLayoutDashboard } from "react-icons/lu";
+import SidebarProvider from "@/context/SidebarProvider";
 
 const DashboardLayout = () => {
   const navItems = [
@@ -21,12 +22,14 @@ const DashboardLayout = () => {
   ];
 
   return (
-    <Flex>
-      <Sidebar navItems={navItems} />
-      <Box flex="2" p={6} bg="#f5f5f6" minH="100vh">
-        <Outlet />
-      </Box>
-    </Flex>
+    <SidebarProvider>
+      <Flex>
+        <Sidebar navItems={navItems} />
+        <Box flex="2" p={6} bg="#f5f5f6" minH="100vh">
+          <Outlet />
+        </Box>
+      </Flex>
+    </SidebarProvider>
   );
 };
 

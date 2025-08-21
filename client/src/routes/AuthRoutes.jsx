@@ -1,8 +1,8 @@
-import ForgotPasswordPage from "@/pages/Authentication/ForgotPasswordPage";
-import LoginPage from "@/pages/Authentication/LoginPage";
-import SignupPage from "@/pages/Authentication/SignupPage";
-import ResetPasswordPage from "@/pages/Authentication/ResetPasswordPage";
-import VerificationPage from "@/pages/Authentication/VerificationPage";
+import ForgotPasswordPage from "@/pages/authentication/ForgotPasswordPage";
+import LoginPage from "@/pages/authentication/LoginPage";
+import SignupPage from "@/pages/authentication/SignupPage";
+import ResetPasswordPage from "@/pages/authentication/ResetPasswordPage";
+import VerificationPage from "@/pages/authentication/VerificationPage";
 import { useLocation, Navigate, Routes, Route } from "react-router-dom";
 
 // Wrapper to protect VerificationPage from missing email

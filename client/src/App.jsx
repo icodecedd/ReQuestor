@@ -4,16 +4,16 @@ import StudentRoutes from "./routes/StudentRoutes";
 import AuthRoutes from "./routes/AuthRoutes";
 import "@/assets/global.css";
 import { useAuth } from "./hooks/useAuth";
-import VerificationSuccessPage from "./pages/Authentication/VerificationSuccessPage";
-import LoginPage from "./pages/Authentication/LoginPage";
-import SignupPage from "./pages/Authentication/SignupPage";
+import VerificationSuccessPage from "./pages/authentication/VerificationSuccessPage";
+import LoginPage from "./pages/authentication/LoginPage";
+import SignupPage from "./pages/authentication/SignupPage";
 import PublicRoute from "./components/routes/PublicRoute";
 import PrivateRoute from "./components/routes/PrivateRoute";
 import { useAxiosInterceptor } from "./hooks/useAxiosInterceptor";
-import ResetPasswordPage from "./pages/Authentication/ResetPasswordPage";
-import VerificationPage from "./pages/Authentication/VerificationPage";
-import ForgotPasswordPage from "./pages/Authentication/ForgotPasswordPage";
-import NotFoundPage from "./pages/Authentication/NotFoundPage";
+import ResetPasswordPage from "./pages/authentication/ResetPasswordPage";
+import VerificationPage from "./pages/authentication/VerificationPage";
+import ForgotPasswordPage from "./pages/authentication/ForgotPasswordPage";
+import NotFoundPage from "./pages/authentication/NotFoundPage";
 import { ToastContainer, Bounce } from "react-toastify";
 
 function App() {

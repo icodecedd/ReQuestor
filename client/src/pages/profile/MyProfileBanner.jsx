@@ -1,8 +1,7 @@
 import { Box, Text, Flex } from "@chakra-ui/react";
 import overviewBg from "@/assets/overview.webp";
 
-const ActivityBanner = () => {
-
+const MyProfileBanner = () => {
   const maroonColors = {
     900: "#3a0000", // Deepest maroon
     700: "#800000", // Classic maroon
@@ -70,7 +69,7 @@ const ActivityBanner = () => {
             0 0 12px ${maroonColors[300]}80
           `}
         >
-          SYSTEM ACTIVITY
+          MY PROFILE
         </Text>
 
         <Text
@@ -80,7 +79,8 @@ const ActivityBanner = () => {
           maxW="600px"
           textShadow="0 1px 2px rgba(0,0,0,0.2)"
         >
-          Detailed log of all system activities and user actions
+          Manage your personal information, preferences, and account settings
+          from this page.
         </Text>
 
         {/* Glowing accent line */}
@@ -110,4 +110,4 @@ const ActivityBanner = () => {
   );
 };
 
-export default ActivityBanner;
+export default MyProfileBanner;

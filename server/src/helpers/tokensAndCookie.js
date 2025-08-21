@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import pool from "../config/dbConfig.js";
 
 // Access token expiry in seconds
-const ACCESS_TOKEN_EXPIRY = 15; // 15 minutes
+let ACCESS_TOKEN_EXPIRY = 15; // 15 minutes
 
 export const generateTokensAndCookies = async (res, userId) => {
   if (!userId) throw new Error("User ID is required");
@@ -13,6 +13,7 @@ export const generateTokensAndCookies = async (res, userId) => {
   );
   const sessionTimeoutMinutes = settings.rows[0]?.session_timeout || 120; // Default 2hrs
   const accessTokenExpiry = Math.floor(sessionTimeoutMinutes / 4);
+  ACCESS_TOKEN_EXPIRY = accessTokenExpiry; // Update global constant
 
   // Generate tokens
   const accessToken = jwt.sign(
@@ -32,7 +33,7 @@ export const generateTokensAndCookies = async (res, userId) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 15 * 60 * 1000, // 15 minutes (matches access token)
+    maxAge: accessTokenExpiry * 60 * 1000, // Matches access token
   });
 
   res.cookie("refreshToken", refreshToken, {

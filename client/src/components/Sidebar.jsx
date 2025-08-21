@@ -15,10 +15,11 @@ import { FiLogOut } from "react-icons/fi";
 import logo from "@/assets/requestor.svg";
 import { LuPanelLeftClose, LuPanelRightClose } from "react-icons/lu";
 import { useAuth } from "@/hooks/useAuth";
+import { useSidebar } from "@/hooks/useSidebar";
 
 const Sidebar = ({ navItems }) => {
   const { logout } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
+  const { collapsed, setCollapsed } = useSidebar();
   const [showText, setShowText] = useState(!collapsed);
 
   useEffect(() => {

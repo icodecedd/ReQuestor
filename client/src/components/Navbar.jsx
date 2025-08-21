@@ -21,6 +21,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/hooks/useAuth";
+import { useSidebar } from "@/hooks/useSidebar";
 
 const SIDEBAR_WIDTH = "240px";
 const MAROON_LIGHT = "#f7eaea";
@@ -28,14 +29,18 @@ const MAROON = "#800000";
 
 const Navbar = ({ pageName }) => {
   const { user, logout } = useAuth();
+  const { collapsed } = useSidebar();
   const navigate = useNavigate();
+
+  const sidebarWidth = collapsed ? "70px" : SIDEBAR_WIDTH;
 
   return (
     <Box
       position="fixed"
       top="16px" // ← floating gap from top
-      left={`calc(${SIDEBAR_WIDTH} + 16px)`} // ← offset so it doesn't overlap sidebar
-      w={`calc(100% - ${SIDEBAR_WIDTH} - 32px)`} // full width minus sidebar and margins
+      left={`calc(${sidebarWidth} + 16px)`} // ← offset so it doesn't overlap sidebar
+      w={`calc(100% - ${sidebarWidth} - 32px)`} // full width minus sidebar and margins
+      transition="all 0.2s ease"
       bg="white"
       boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)"
       borderRadius="full"
@@ -137,6 +142,9 @@ const Navbar = ({ pageName }) => {
                     bg: MAROON_LIGHT,
                   }}
                   fontSize="sm"
+                  onClick={() => {
+                    navigate("/admin/profile");
+                  }}
                 >
                   My Profile
                 </MenuItem>

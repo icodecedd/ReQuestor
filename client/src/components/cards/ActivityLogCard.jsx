@@ -1,6 +1,6 @@
 import { Box, Text, HStack } from "@chakra-ui/react";
 import { getStatusIconStyle } from "@/constants/statusIconsMeta";
-import { activityMeta } from "@/constants/activityLogsMeta";
+import { activityMeta } from "@/constants/ActivityLogsMeta";
 import { timeAgo } from "@/utils/formatTime";
 import { FiClock } from "react-icons/fi";
 

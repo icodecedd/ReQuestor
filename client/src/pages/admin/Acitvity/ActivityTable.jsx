@@ -25,7 +25,7 @@ import { ActivityCategoryDropdown } from "@/components/dropdowns/ActivityCategor
 import { ActivityTimeDropdown } from "@/components/dropdowns/ActivityTimeDropdown";
 import { getTimeLabel } from "@/utils/formatTime";
 import { useActivityStore } from "@/store/activityStore";
-import { activityMeta } from "@/constants/activityLogsMeta";
+import { activityMeta } from "@/constants/ActivityLogsMeta";
 import { toTitleCase } from "@/utils/toTitleCase";
 import { BiExport } from "react-icons/bi";
 

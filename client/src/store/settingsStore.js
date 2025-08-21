@@ -13,7 +13,7 @@ export const useSettingsStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const res = await api.get("/settings");
-      const { id, updated_at, ...settings } = res.data.data;
+      const { id, updated_at, grace_start_at, ...settings } = res.data.data;
       set({
         settings: res.data.data,
         compareSettings: settings,
@@ -33,6 +33,9 @@ export const useSettingsStore = create((set, get) => ({
         type: "info",
       };
     }
+
+    console.log("Updating settings:", updatedSettings);
+    console.log("Comparing with:", get().compareSettings);
 
     try {
       // 2. Prepare payload (immutable update)
