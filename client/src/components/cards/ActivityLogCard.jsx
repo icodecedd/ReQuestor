@@ -22,7 +22,7 @@ export const ActivityLogItem = ({ log }) => {
       p={4}
       borderRadius="xl"
       w="90%"
-      mb={1}
+      mb={2}
       _hover={{ bg: "#f7eaea" }}
     >
       <Box

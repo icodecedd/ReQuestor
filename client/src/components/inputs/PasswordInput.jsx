@@ -15,8 +15,14 @@ export const PasswordInput = ({
   focusBorderColor,
   borderColor,
 }) => {
-  const [show, setShow] = useState(false);
-  const handleClick = () => setShow(!show);
+  const [show, setShow] = useState({
+    password: false,
+    confirmPassword: false,
+  });
+
+  const togglePassword = (name) => {
+    setShow((prev) => ({ ...prev, [name]: !prev[name] }));
+  };
 
   const handlePassword = (event) => {
     onChange && onChange(event.target.value);
@@ -25,7 +31,7 @@ export const PasswordInput = ({
   return (
     <InputGroup>
       <Input
-        type={show ? "text" : "password"}
+        type={show[name] ? "text" : "password"}
         name={name}
         value={value}
         placeholder={placeholder}
@@ -37,12 +43,12 @@ export const PasswordInput = ({
         <IconButton
           variant="unstyled"
           size="md"
-          onClick={handleClick}
+          onClick={() => togglePassword(name)}
           ml={6}
           pl={3}
           h="1.75rem"
         >
-          {show ? <FiEyeOff /> : <FiEye />}
+          {show[name] ? <FiEyeOff /> : <FiEye />}
         </IconButton>
       </InputRightElement>
     </InputGroup>

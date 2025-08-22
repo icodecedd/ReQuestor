@@ -35,7 +35,6 @@ const DeleteUserModal = ({ isOpen, onClose, users }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
       const result = await deleteUser(users.id);
 
       showToast(result.message, result.success ? "success" : "error");

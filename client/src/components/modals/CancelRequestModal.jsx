@@ -38,7 +38,6 @@ const CancelRequestModal = ({ isOpen, onClose, request }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
       const result = await cancelRequest(request);
       showToast(result.message, result.success ? "success" : "error");
       if (result.success) onClose();

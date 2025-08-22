@@ -20,7 +20,7 @@ import {
 export const getCurrentUser = async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id, name, email, role, status, is_verified FROM users where id = $1",
+      "SELECT id, name, email, bio, role, status, is_verified FROM users where id = $1",
       [req.userId]
     );
 

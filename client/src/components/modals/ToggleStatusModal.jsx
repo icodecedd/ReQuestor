@@ -46,7 +46,6 @@ const ToggleStatusModal = ({ isOpen, onClose, users }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
       const result = await toggleStatus(users.id);
       showToast(result.message, result.success ? "success" : "error");
       if (result.success) onClose();

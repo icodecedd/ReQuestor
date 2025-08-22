@@ -186,7 +186,6 @@ const AddEquipmentModal = ({ isOpen, onClose }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const result = await addEquipment(form);
 

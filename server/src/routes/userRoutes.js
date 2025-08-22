@@ -1,6 +1,8 @@
 import express from "express";
 import {
   addUser,
+  changeUserInfo,
+  changeUserPassword,
   deleteUser,
   getAllUsers,
   resetUserPassword,
@@ -32,5 +34,11 @@ router.patch("/:id/set-status", toggleUserStatus);
 
 // Reset user password manually
 router.patch("/:id/set-password", resetUserPassword);
+
+// Change user info (only name and bio)
+router.patch("/:id/change-info", changeUserInfo);
+
+// Change user password
+router.patch("/:id/change-password", changeUserPassword);
 
 export default router;

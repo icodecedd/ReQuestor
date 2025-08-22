@@ -98,7 +98,6 @@ const AddUserModal = ({ isOpen, onClose }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
       const result = await addUser(form); // Direct call to Zustand store
 
       if (result.message.includes("All")) {

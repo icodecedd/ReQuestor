@@ -53,6 +53,7 @@ import { formatTimeOnly } from "@/utils/formatTime";
 const MAROON = "#800000";
 const MAROON_HOVER = "#A52A2A";
 const DARK_GRAY = "#616161";
+const SUBTLE_TEXT = "#71717E";
 
 const requestFields = [
   {
@@ -268,7 +269,6 @@ const AddRequestModal = ({
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
       const result = await addRequest(form);
       showToast(result.message, result.success ? "success" : "error");
 
@@ -534,12 +534,22 @@ const AddRequestModal = ({
                 <GridItem colSpan={2}>
                   <FormControl>
                     <FormLabel fontWeight="semibold">
-                      Purpose (Optional)
+                      <Flex
+                        alignItems="center"
+                        justifyContent={"space-between"}
+                      >
+                        <Text>Purpose (Optional)</Text>
+                        <Text ml="4px" color={SUBTLE_TEXT} fontSize="12px">
+                          {form.purpose.length}/512
+                        </Text>
+                      </Flex>
                     </FormLabel>
                     <Textarea
                       name="purpose"
                       value={form.purpose}
                       onChange={handleChange}
+                      minHeight="100px"
+                      maxLength={512}
                       placeholder="Enter purpose or additional details..."
                       focusBorderColor={MAROON}
                       borderColor={MAROON_HOVER}

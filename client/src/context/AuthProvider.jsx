@@ -89,6 +89,17 @@ const AuthProvider = ({ children }) => {
     return result.data.data;
   };
 
+  const changeUserInfo = async (userId, data) => {
+    const result = await api.patch(`/users/${userId}/change-info`, data);
+    setUser(result.data.data);
+    return result.data;
+  };
+
+  const changePassword = async (userId, data) => {
+    const result = await api.patch(`/users/${userId}/change-password`, data);
+    return result.data;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -99,6 +110,8 @@ const AuthProvider = ({ children }) => {
         forgotPassword,
         resetPassword,
         refreshToken,
+        changeUserInfo,
+        changePassword,
         loading,
       }}
     >

@@ -212,7 +212,6 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
 
     const areEquipmentEqual = _.isEqual(form, compareForm);
     if (areEquipmentEqual) {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
       showToast(
         "No changes detected. Please make sure to update at least one field.",
         "info"
@@ -222,8 +221,6 @@ const UpdateEquipmentModal = ({ isOpen, onClose, equipment }) => {
     }
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
       const result = await updateEquipment(equipment.id, form);
 
       if (result.message.includes("All")) {

@@ -69,7 +69,7 @@ const ActivityLogs = () => {
       </Flex>
 
       {/* Content */}
-      <VStack mt={5}>
+      <VStack mt={8}>
         {loading ? (
           [1, 2, 3, 4, 5].map((i) => (
             <Skeleton

@@ -43,7 +43,6 @@ const RejectRequestModal = ({ isOpen, onClose, request }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
       const result = await rejectRequest(request, rejectionReason);
 
       showToast(result.message, result.success ? "success" : "error");
@@ -137,15 +136,21 @@ const RejectRequestModal = ({ isOpen, onClose, request }) => {
           </Box>
 
           <Box>
-            <Text mb={2} fontSize="sm" color="gray.600">
-              Rejection Reason (Required)
-            </Text>
+            <Flex alignItems="center" justifyContent={"space-between"}>
+              <Text mb={2} fontSize="sm" color="gray.600">
+                Rejection Reason (Required)
+              </Text>
+              <Text mr="8px" color={"#71717E"} fontSize="12px">
+                {rejectionReason.length}/512
+              </Text>
+            </Flex>
             <Textarea
               placeholder="Explain why this request is being rejected..."
               value={rejectionReason}
               onChange={(e) => setRejectionReason(e.target.value)}
               borderRadius="lg"
               borderColor="gray.300"
+              maxLength={512}
               _hover={{ borderColor: "gray.400" }}
               _focus={{
                 borderColor: WARNING_RED,

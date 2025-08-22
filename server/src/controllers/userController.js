@@ -1,6 +1,10 @@
 import pool from "../config/dbConfig.js";
 import bcrypt from "bcrypt";
-import { generateTempPassword, hashPassword } from "../helpers/password.js";
+import {
+  generateTempPassword,
+  hashPassword,
+  comparePassword,
+} from "../helpers/password.js";
 import { sendAdminResetPasswordEmail } from "../emailservices/emailsGmail.js";
 
 export const getAllUsers = async (req, res) => {
@@ -325,6 +329,113 @@ export const resetUserPassword = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in resetUserPassword:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+
+export const changeUserInfo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, bio } = req.body;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User ID is required." });
+    }
+
+    if (!name) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Name cannot be empty." });
+    }
+
+    const result = await pool.query(
+      `UPDATE public.users
+       SET name = $1, bio = $2
+       WHERE id = $3
+       RETURNING id, name, email, bio, role, status, is_verified;`,
+      [name, bio, id]
+    );
+
+    if (result.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User information updated successfully.",
+      data: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Error in updateUserInfo:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const changeUserPassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { password, newPassword } = req.body;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User ID is required." });
+    }
+
+    const result = await pool.query(
+      `SELECT password_hash FROM public.users WHERE id = $1`,
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    }
+
+    const passwordToCompare = result.rows[0].password_hash;
+
+    const isSamePassword = await comparePassword(password, passwordToCompare);
+
+    if (!isSamePassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect password. Please try again.",
+      });
+    }
+
+    const new_password_hashed = await hashPassword(newPassword);
+
+    const updateResult = await pool.query(
+      `UPDATE public.users
+       SET password_hash = $1, must_change_password = FALSE
+       WHERE id = $2
+       RETURNING id, name, email, bio, role, status, created_at, is_verified, last_login;`,
+      [new_password_hashed, id]
+    );
+
+    if (updateResult.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Password changed successfully.",
+      data: updateResult.rows[0],
+    });
+  } catch (error) {
+    console.error("Error in changeUserPassword:", error);
     return res
       .status(500)
       .json({ success: false, message: "Internal Server Error" });

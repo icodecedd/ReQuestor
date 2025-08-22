@@ -42,7 +42,7 @@ const RecentRequests = () => {
       borderRadius="2xl"
       boxShadow="md"
       w="100%"
-      h={numberOfRequests === 5 ? "100%" : "380px"}
+      h={numberOfRequests === 5 ? "100%" : "415px"}
     >
       {/* Header */}
       <Flex
