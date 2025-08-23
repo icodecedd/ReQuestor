@@ -18,7 +18,7 @@ import {
   NumberInputField,
   Textarea,
 } from "@chakra-ui/react";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { FiGlobe, FiSave } from "react-icons/fi";
 
 // Constants
@@ -87,7 +87,7 @@ const AdminSettingsTable = () => {
 
   // Switch props helper
   const getSwitchProps = () => ({
-    size: "lg",
+    size: { base: "md", md: "lg" },
     colorScheme: "red",
     _focusVisible: {
       boxShadow: `0 0 0 3px ${MAROON}`,
@@ -128,7 +128,8 @@ const AdminSettingsTable = () => {
   };
 
   return (
-    <Box w="99.5%" mx="auto" p={8}>
+    <Box w="100%" mx="auto" mt={3}>
+      {/* Save Button */}
       <Flex align="flex-end" gap={3} mb={2}>
         <Button
           ml="auto"
@@ -141,7 +142,7 @@ const AdminSettingsTable = () => {
           gap={1}
           p={3}
           fontSize="95%"
-          w="150px"
+          w={{ base: "100%", md: "auto" }}
           onClick={handleSaveSettings}
           isLoading={isSubmitting}
           loadingText="Saving..."
@@ -151,14 +152,25 @@ const AdminSettingsTable = () => {
         </Button>
       </Flex>
 
-      <Box borderRadius="xl" border="1px" borderColor="gray.300" p={10}>
-        <Flex gap="12px" alignItems="center" marginBottom="8px">
-          <FiGlobe size="22px" color={MAROON} />
+      {/* General Settings Section */}
+      <Box
+        borderRadius="xl"
+        border="1px"
+        borderColor="gray.300"
+        p={{ base: 6, md: 10 }}
+      >
+        <Flex
+          direction={{ base: "column", md: "row" }}
+          gap="12px"
+          alignItems="center"
+          marginBottom="8px"
+        >
+          <FiGlobe size="24px" color={MAROON} />
           <Heading fontSize="24px" fontWeight="600">
             General Settings
           </Heading>
         </Flex>
-        <Text fontSize="14px" marginBottom="16px" color={SUBTLE_TEXT}>
+        <Text textAlign={{ base: "center", md: "left" }} fontSize="14px" marginBottom="16px" color={SUBTLE_TEXT}>
           Configure basic system settings and preferences
         </Text>
 
@@ -175,7 +187,7 @@ const AdminSettingsTable = () => {
             justifyContent="space-between"
             paddingY="12px"
           >
-            <Box>
+            <Box mr={{ base: 4, md: 0 }}>
               <Text fontSize="15px" fontWeight="500" marginBottom="4px">
                 Email Notifications
               </Text>
@@ -195,7 +207,7 @@ const AdminSettingsTable = () => {
             justifyContent="space-between"
             paddingY="12px"
           >
-            <Box>
+            <Box mr={{ base: 4, md: 0 }}>
               <Text fontSize="15px" fontWeight="500" marginBottom="4px">
                 Auto Approval
               </Text>
@@ -224,7 +236,7 @@ const AdminSettingsTable = () => {
             justifyContent="space-between"
             paddingY="12px"
           >
-            <Box>
+            <Box mr={{ base: 4, md: 0 }}>
               <Text fontSize="15px" fontWeight="500" marginBottom="4px">
                 Maintenance Mode
               </Text>
@@ -246,13 +258,13 @@ const AdminSettingsTable = () => {
             <NumberInput
               min={5}
               value={settings.grace_period}
+              focusBorderColor={MAROON}
               onChange={(value) =>
                 handleChange("grace_period", parseInt(value))
               }
             >
               <NumberInputField
                 borderColor={MAROON_HOVER}
-                focusBorderColor={MAROON}
                 borderRadius="6px"
                 padding="12px"
               />
@@ -287,6 +299,7 @@ const AdminSettingsTable = () => {
                 rows={3}
                 maxLength={512}
                 minHeight={"100px"}
+                height={{ base: "150px", md: "100px", lg: "100px" }}
                 placeholder="Enter maintenance message here..."
                 focusBorderColor={MAROON}
                 borderColor={MAROON_HOVER}
@@ -301,13 +314,13 @@ const AdminSettingsTable = () => {
             <NumberInput
               min={15}
               value={settings.session_timeout}
+              focusBorderColor={MAROON}
               onChange={(value) =>
                 handleChange("session_timeout", parseInt(value))
               }
             >
               <NumberInputField
                 borderColor={MAROON_HOVER}
-                focusBorderColor={MAROON}
                 borderRadius="6px"
                 padding="12px"
               />
@@ -325,11 +338,11 @@ const AdminSettingsTable = () => {
             <NumberInput
               min={1}
               value={settings.max_login}
+              focusBorderColor={MAROON}
               onChange={(value) => handleChange("max_login", parseInt(value))}
             >
               <NumberInputField
                 borderColor={MAROON_HOVER}
-                focusBorderColor={MAROON}
                 borderRadius="6px"
                 padding="12px"
               />

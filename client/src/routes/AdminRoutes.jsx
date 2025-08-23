@@ -7,9 +7,11 @@ import Equipment from "@/pages/admin/equipment/EquipmentsPage";
 import Activity from "@/pages/admin/acitvity/ActivityLogsPage";
 import Settings from "@/pages/admin/settings/AdminSettingsPage";
 import MyProfilePage from "@/pages/profile/MyProfilePage";
+import SidebarProvider from "@/context/SidebarProvider";
 
 const AdminRoutes = () => {
   return (
+    <SidebarProvider>
     <Routes>
       {/* Nested routes under /dashboard */}
       <Route path="/" element={<AdminLayout />}>
@@ -25,6 +27,7 @@ const AdminRoutes = () => {
 
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
     </Routes>
+    </SidebarProvider>
   );
 };
 

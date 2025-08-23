@@ -1,4 +1,10 @@
-import { Box, Flex } from "@chakra-ui/react";
+import {
+  Box,
+  Drawer,
+  DrawerContent,
+  DrawerOverlay,
+  Flex,
+} from "@chakra-ui/react";
 import Sidebar from "@/components/Sidebar";
 import { Outlet } from "react-router-dom";
 import {
@@ -9,7 +15,7 @@ import {
   FiActivity,
 } from "react-icons/fi";
 import { LuLayoutDashboard } from "react-icons/lu";
-import SidebarProvider from "@/context/SidebarProvider";
+import { useSidebar } from "@/hooks/useSidebar";
 
 const DashboardLayout = () => {
   const navItems = [
@@ -21,15 +27,27 @@ const DashboardLayout = () => {
     { label: "Settings", icon: FiSettings, path: "/admin/settings" },
   ];
 
+  const { isOpen, onClose } = useSidebar();
+
   return (
-    <SidebarProvider>
-      <Flex>
+    <Flex>
+      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+        <DrawerOverlay />
+        {/* The maxW value should be the same as the width of the sidebar */}
+        <DrawerContent maxW="230px">
+          <Sidebar navItems={navItems} isDrawer onClose={onClose} />
+        </DrawerContent>
+      </Drawer>
+
+      {/* Only visible on Desktop and Tablet */}
+      <Box display={{ base: "none", md: "block" }}>
         <Sidebar navItems={navItems} />
-        <Box flex="2" p={6} bg="#f5f5f6" minH="100vh">
-          <Outlet />
-        </Box>
-      </Flex>
-    </SidebarProvider>
+      </Box>
+      <Box flex="2" p={6} bg="#f5f5f6" minH="100vh">
+        {/* Main Content */}
+        <Outlet />
+      </Box>
+    </Flex>
   );
 };
 

@@ -252,6 +252,7 @@ const MyProfileTabs = () => {
           onChange={handleChange}
           maxLength={512}
           minHeight={"100px"}
+          height={{ base: "150px", md: "100px", lg: "100px" }}
           placeholder="Enter your bio here..."
           focusBorderColor={MAROON}
           borderColor={MAROON_HOVER}
@@ -356,15 +357,26 @@ const MyProfileTabs = () => {
   );
 
   return (
-    <Box w="99.5%" mx="auto" p={8}>
-      <Box borderRadius="xl" border="1px" borderColor="gray.300" p={10}>
-        <Flex gap="12px" alignItems="center" marginBottom="8px">
+    <Box w="100%" mx="auto" mt={3}>
+      {/* Profile Card */}
+      <Box
+        borderRadius="xl"
+        border="1px"
+        borderColor="gray.300"
+        p={{ base: 6, md: 10 }}
+      >
+        <Flex direction={{ base: "column", md: "row" }} gap="12px" alignItems="center" marginBottom="8px">
           <CgProfile size="24px" color={MAROON} />
           <Heading fontSize="24px" fontWeight="600">
             My Profile
           </Heading>
         </Flex>
-        <Text fontSize="14px" marginBottom="16px" color={SUBTLE_TEXT}>
+        <Text
+          textAlign={{ base: "center", md: "left" }}
+          fontSize="14px"
+          marginBottom="16px"
+          color={SUBTLE_TEXT}
+        >
           View and edit your profile information, including your name, email,
           and password.
         </Text>

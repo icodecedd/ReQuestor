@@ -44,7 +44,7 @@ const MaintenanceBanner = () => {
       _hover={{
         transform: "translateY(-2px)",
       }}
-      w="95%"
+      w="100%"
       mx="auto"
       mb={4}
       py={2}

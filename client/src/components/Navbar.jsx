@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/hooks/useAuth";
 import { useSidebar } from "@/hooks/useSidebar";
+import { LuPanelLeftClose, LuPanelRightClose } from "react-icons/lu";
 
 const SIDEBAR_WIDTH = "240px";
 const MAROON_LIGHT = "#f7eaea";
@@ -29,7 +30,7 @@ const MAROON = "#800000";
 
 const Navbar = ({ pageName }) => {
   const { user, logout } = useAuth();
-  const { collapsed } = useSidebar();
+  const { collapsed, setCollapsed, onOpen } = useSidebar();
   const navigate = useNavigate();
 
   const sidebarWidth = collapsed ? "70px" : SIDEBAR_WIDTH;
@@ -38,20 +39,43 @@ const Navbar = ({ pageName }) => {
     <Box
       position="fixed"
       top="16px" // ← floating gap from top
-      left={`calc(${sidebarWidth} + 16px)`} // ← offset so it doesn't overlap sidebar
-      w={`calc(100% - ${sidebarWidth} - 32px)`} // full width minus sidebar and margins
+      left={{ base: "16px", md: `calc(${sidebarWidth} + 16px)` }}
+      w={{
+        base: "calc(100% - 32px)",
+        md: `calc(100% - ${sidebarWidth} - 32px)`,
+      }}
       transition="all 0.2s ease"
       bg="white"
       boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)"
       borderRadius="full"
       zIndex={1000}
-      px={8}
+      px={6}
       py={1}
       display="flex"
       alignItems="center"
     >
+      {/* Toggle Sidebar Button. Only Visible on Mobile */}
+      <IconButton
+        icon={
+          collapsed ? (
+            <LuPanelRightClose fontSize={20} />
+          ) : (
+            <LuPanelLeftClose fontSize={20} />
+          )
+        }
+        size="sm"
+        variant="ghost"
+        onClick={() => onOpen()}
+        _hover={{ bg: "#f7eaea" }}
+        aria-label="Toggle sidebar"
+        borderRadius="md"
+        right={{ base: "0px", md: "auto" }}
+        display={{ base: "flex", md: "none" }}
+      />
+
       <Flex justify="space-between" align="center" w="100%">
         <Breadcrumb
+          display={{ base: "none", md: "flex" }}
           spacing="8px"
           separator={<ChevronRightIcon fontSize={"20px"} />}
           fontWeight="medium"
@@ -71,7 +95,7 @@ const Navbar = ({ pageName }) => {
           </BreadcrumbItem>
         </Breadcrumb>
 
-        <Flex align="center" gap={3}>
+        <Flex align="center" gap={3} ml="auto">
           <IconButton
             icon={<FiSettings size={17} />}
             aria-label="Settings"
@@ -101,7 +125,11 @@ const Navbar = ({ pageName }) => {
                   color="white"
                   fontWeight="bold"
                 />
-                <VStack spacing={0} align="start">
+                <VStack
+                  spacing={0}
+                  align="start"
+                  display={{ base: "none", md: "flex" }}
+                >
                   <Text fontSize="13px" fontWeight="medium">
                     {user.name}
                   </Text>

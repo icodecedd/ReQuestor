@@ -18,7 +18,7 @@ const DashboardPage = () => {
         <MaintenanceBanner />
         <DashboardBanner />
         <DashboardStats />
-        <Grid
+        {/* <Grid
           templateColumns={{
             base: "1fr", // Mobile: single column
             md: "repeat(2, 1fr)", // Tablet: two columns
@@ -52,7 +52,7 @@ const DashboardPage = () => {
           <GridItem colSpan={{ base: 1, md: 2, lg: 4 }}>
             <RecentRequests />
           </GridItem>
-        </Grid>
+        </Grid> */}
       </Box>
     </>
   );
