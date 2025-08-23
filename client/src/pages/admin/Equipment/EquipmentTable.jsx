@@ -30,7 +30,7 @@ import { useEquipmentStore } from "@/store/equipmentStore";
 import { useEffect, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { IoAdd } from "react-icons/io5";
-import EquipmentActionButton from "@/components/buttons/EquipmentActionButton";
+import { EquipmentActionButton } from "@/components/buttons/EquipmentActionButton";
 import ViewEquipmentModal from "@/components/modals/ViewEquipmentModal";
 import { getEqStatusColor, getEqConditionColor } from "@/utils/getColorScheme";
 import AddEquipmentModal from "@/components/modals/AddEquipmentModal";

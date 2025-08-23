@@ -21,7 +21,7 @@ import { FiMail, FiUser, FiUserPlus } from "react-icons/fi";
 import { ModalDropdown } from "@/components/dropdowns/ModalDropdown";
 import { useState } from "react";
 import { useUserStore } from "@/store/usersStore";
-import PasswordInput from "../inputs/PasswordInput";
+import { PasswordInput } from "../inputs/PasswordInput";
 import { useAuth } from "@/hooks/useAuth";
 import { showToast } from "@/utils/toast";
 
@@ -98,7 +98,6 @@ const AddUserModal = ({ isOpen, onClose }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
       const result = await addUser(form); // Direct call to Zustand store
 
       if (result.message.includes("All")) {

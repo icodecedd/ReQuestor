@@ -101,7 +101,6 @@ const UpdateUserModal = ({ isOpen, onClose, users }) => {
 
     const areUserEqual = _.isEqual(form, compareForm);
     if (areUserEqual) {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
       showToast(
         "No changes detected. Please make sure to update at least one field.",
         "info"
@@ -111,8 +110,6 @@ const UpdateUserModal = ({ isOpen, onClose, users }) => {
     }
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
-
       const result = await updateUser(users.id, form); // Direct call to Zustand store
 
       if (result.message.includes("All")) {

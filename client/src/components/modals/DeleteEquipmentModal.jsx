@@ -35,7 +35,6 @@ const DeleteEquipmentModal = ({ isOpen, onClose, equipment }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
       const result = await deleteEquipment(equipment.id);
 
       showToast(result.message, result.success ? "success" : "error");

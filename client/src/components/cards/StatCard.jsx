@@ -9,8 +9,8 @@ import {
   StatHelpText,
 } from "@chakra-ui/react";
 
-const StatCard = ({ label, value, icon, loading = false, text }) => {
-  if (false) {
+export const StatCard = ({ label, value, icon, loading = false, text }) => {
+  if (loading) {
     return <Skeleton w="100%" h="135px" borderRadius="2xl" />;
   }
 
@@ -125,5 +125,3 @@ const StatCard = ({ label, value, icon, loading = false, text }) => {
     </Box>
   );
 };
-
-export default StatCard;

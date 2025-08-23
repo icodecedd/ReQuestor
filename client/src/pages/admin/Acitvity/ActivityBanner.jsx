@@ -1,9 +1,7 @@
 import { Box, Text, Flex } from "@chakra-ui/react";
 import overviewBg from "@/assets/overview.webp";
-import { useAuth } from "@/hooks/useAuth";
 
 const ActivityBanner = () => {
-  const { user } = useAuth();
 
   const maroonColors = {
     900: "#3a0000", // Deepest maroon
@@ -14,7 +12,7 @@ const ActivityBanner = () => {
 
   return (
     <Box
-      w="95%"
+      w="100%"
       mx="auto"
       h={{ base: "200px", md: "240px" }}
       borderRadius="2xl"

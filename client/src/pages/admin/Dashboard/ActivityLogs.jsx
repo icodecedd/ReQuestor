@@ -9,7 +9,7 @@ import {
   Center,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
-import ActivityLogItem from "@/components/cards/ActivityLogCard";
+import { ActivityLogItem } from "@/components/cards/ActivityLogCard";
 import { useRecentActivitiesStore } from "@/store/recentStore";
 import { useEffect } from "react";
 
@@ -69,7 +69,7 @@ const ActivityLogs = () => {
       </Flex>
 
       {/* Content */}
-      <VStack mt={5}>
+      <VStack mt={8}>
         {loading ? (
           [1, 2, 3, 4, 5].map((i) => (
             <Skeleton

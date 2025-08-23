@@ -15,39 +15,44 @@ import { FiLogOut } from "react-icons/fi";
 import logo from "@/assets/requestor.svg";
 import { LuPanelLeftClose, LuPanelRightClose } from "react-icons/lu";
 import { useAuth } from "@/hooks/useAuth";
+import { useSidebar } from "@/hooks/useSidebar";
 
-const Sidebar = ({ navItems }) => {
+const Sidebar = ({ navItems, isDrawer = false, onClose }) => {
   const { logout } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
+  const { collapsed, setCollapsed } = useSidebar();
   const [showText, setShowText] = useState(!collapsed);
+
+  {/* For Drawer, this will override the `collapsed` state */}
+  const effectiveCollapsed = isDrawer ? false : collapsed;
 
   useEffect(() => {
     let t;
-    if (!collapsed) t = setTimeout(() => setShowText(true), 200);
+    if (!effectiveCollapsed) t = setTimeout(() => setShowText(true), 200);
     else setShowText(false);
     return () => clearTimeout(t);
-  }, [collapsed]);
+  }, [effectiveCollapsed]);
 
   return (
     <Box
-      w={collapsed ? "60px" : "230px"}
+      w={effectiveCollapsed ? "60px" : "230px"}
       transition="width 0.2s ease-in-out"
       h="100vh"
       bg="#f5f5f6"
       borderRight="1px solid #dbe2e9ff"
-      position="sticky"
+      position={isDrawer ? "relative" : "sticky"}
       top="0"
       overflow="hidden"
+      display={isDrawer ? "block" : { base: "none", md: "block" }}
     >
       {/* Header */}
       <Flex
-        justify={collapsed ? "center" : "space-between"}
+        justify={effectiveCollapsed ? "center" : "space-between"}
         align="center"
         borderBottom="1px solid #dbe2e9ff"
         p={3}
         position="relative"
       >
-        {!collapsed && (
+        {!effectiveCollapsed && (
           <Flex align="center" minW="160px">
             <Image src={logo} boxSize="40px" mr={2} />
             <Text
@@ -63,7 +68,7 @@ const Sidebar = ({ navItems }) => {
 
         <IconButton
           icon={
-            collapsed ? (
+            effectiveCollapsed ? (
               <LuPanelRightClose fontSize={20} />
             ) : (
               <LuPanelLeftClose fontSize={20} />
@@ -71,17 +76,23 @@ const Sidebar = ({ navItems }) => {
           }
           size="sm"
           variant="ghost"
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={() => setCollapsed(!effectiveCollapsed)}
           _hover={{ bg: "#f7eaea" }}
           aria-label="Toggle sidebar"
           borderRadius="md"
-          position={collapsed ? "relative" : "absolute"}
-          right={collapsed ? "auto" : 3}
+          position={effectiveCollapsed ? "relative" : "absolute"}
+          right={effectiveCollapsed ? "auto" : 3}
+          display={isDrawer ? "none" : "flex"}
         />
       </Flex>
 
       {/* Navigation */}
-      <VStack align="stretch" spacing={2} px={collapsed ? 1 : 2} mt={2}>
+      <VStack
+        align="stretch"
+        spacing={2}
+        px={effectiveCollapsed ? 1 : 2}
+        mt={2}
+      >
         {showText && (
           <Heading fontSize="13px" color="gray" ml={2} mb={1}>
             General
@@ -91,7 +102,7 @@ const Sidebar = ({ navItems }) => {
         {navItems.map(({ label, icon: Icon, path }) => (
           <Tooltip
             key={label}
-            label={collapsed ? label : undefined}
+            label={effectiveCollapsed ? label : undefined}
             placement="right"
             borderRadius="lg"
             px={3}
@@ -102,7 +113,7 @@ const Sidebar = ({ navItems }) => {
             fontWeight="medium"
             boxShadow="lg"
             openDelay={200}
-            isDisabled={!collapsed}
+            isDisabled={!effectiveCollapsed}
           >
             <NavLink to={path}>
               {({ isActive }) => (
@@ -120,6 +131,7 @@ const Sidebar = ({ navItems }) => {
                     bg: isActive ? "#832222" : "#f7eaea",
                     color: isActive ? "white" : "#800000",
                   }}
+                  onClick={isDrawer ? onClose : undefined}
                 >
                   {/* Icon always stays fixed */}
                   <Box flexShrink={0} pl={1}>
@@ -144,10 +156,16 @@ const Sidebar = ({ navItems }) => {
       </VStack>
 
       {/* Footer */}
-      <Box pos="absolute" bottom="5" left="0" right="0" px={collapsed ? 1 : 2}>
+      <Box
+        pos="absolute"
+        bottom="5"
+        left="0"
+        right="0"
+        px={effectiveCollapsed ? 1 : 2}
+      >
         <Divider my={3} borderColor="#dbe2e9ff" />
         <Tooltip
-          label={collapsed ? "Logout" : undefined}
+          label={effectiveCollapsed ? "Logout" : undefined}
           placement="right"
           borderRadius="lg"
           px={3}
@@ -158,7 +176,7 @@ const Sidebar = ({ navItems }) => {
           fontWeight="medium"
           boxShadow="lg"
           openDelay={200}
-          isDisabled={!collapsed}
+          isDisabled={!effectiveCollapsed}
         >
           <Box
             as="button"

@@ -22,7 +22,7 @@ const WARNING_ORANGE = "#DD6B20";
 const RADIUS = "8px";
 const ICON_SIZE = "18px";
 
-const RequestActionButton = ({
+export const RequestActionButton = ({
   status,
   onMarkComplete,
   onViewDetails,
@@ -174,5 +174,3 @@ const RequestActionButton = ({
     </Flex>
   );
 };
-
-export default RequestActionButton;

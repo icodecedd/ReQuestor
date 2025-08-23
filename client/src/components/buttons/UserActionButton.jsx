@@ -27,7 +27,7 @@ const SUCCESS_GREEN = "#38A169";
 const RADIUS = "8px";
 const ICON_SIZE = "18px";
 
-const UserActionButton = ({
+export const UserActionButton = ({
   status,
   onEdit,
   onResetPassword,
@@ -151,5 +151,3 @@ const UserActionButton = ({
     </Flex>
   );
 };
-
-export default UserActionButton;

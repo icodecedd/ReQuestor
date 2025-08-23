@@ -25,7 +25,7 @@ import { ActivityCategoryDropdown } from "@/components/dropdowns/ActivityCategor
 import { ActivityTimeDropdown } from "@/components/dropdowns/ActivityTimeDropdown";
 import { getTimeLabel } from "@/utils/formatTime";
 import { useActivityStore } from "@/store/activityStore";
-import { activityMeta } from "@/constants/activityLogsMeta";
+import { activityMeta } from "@/constants/ActivityLogsMeta";
 import { toTitleCase } from "@/utils/toTitleCase";
 import { BiExport } from "react-icons/bi";
 
@@ -63,7 +63,7 @@ const ActivityTable = () => {
   }, []);
 
   return (
-    <Box w="99.5%" mx="auto" p={8}>
+    <Box w="100%" mx="auto" mt={3}>
       {/* Right: Search, Filter, Add Equipment */}
       <Flex align="flex-end" justify="flex-end" gap={3} w="100%">
         <InputGroup w="400px">

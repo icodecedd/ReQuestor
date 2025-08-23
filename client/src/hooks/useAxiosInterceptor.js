@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import api from "@/api/index";
+import { showToast } from "@/utils/toast";
 
 export const useAxiosInterceptor = () => {
   const { logout, refreshToken } = useAuth();
@@ -23,7 +24,7 @@ export const useAxiosInterceptor = () => {
             "error"
           );
           // Immediately force logout of non-admins
-          setTimeout(() => logout(), 2000); // delay logout so message shows
+          logout();
           return; // prevent further processing
         }
 
@@ -35,16 +36,14 @@ export const useAxiosInterceptor = () => {
             await refreshToken(); // backend issues new access token
             return api(originalRequest); // retry request
           } catch (refreshErr) {
-            // Case 2: Refresh token also expired → graceful logout
-            if (
-              refreshErr.response?.status === 401 ||
-              refreshErr.response?.status === 403
-            ) {
+            const status = refreshErr.response?.status;
+            if (status === 400 || status === 401 || status === 403) {
               showToast(
                 "Your session has expired. Please log in again.",
                 "error"
               );
-              setTimeout(() => logout(), 2000); // delay logout so message shows
+              logout();
+              return;
             }
           }
         }

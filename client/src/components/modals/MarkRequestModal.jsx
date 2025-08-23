@@ -39,7 +39,6 @@ const MarkRequestModal = ({ isOpen, onClose, request }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
       const result = await markCompleteRequest(request.id);
 
       showToast(result.message, result.success ? "success" : "error");

@@ -1,7 +1,7 @@
 import { Box, Text, Flex } from "@chakra-ui/react";
 import overviewBg from "@/assets/overview.webp";
 
-const AdminSettingsBanner = () => {
+const MyProfileBanner = () => {
   const maroonColors = {
     900: "#3a0000", // Deepest maroon
     700: "#800000", // Classic maroon
@@ -69,17 +69,18 @@ const AdminSettingsBanner = () => {
             0 0 12px ${maroonColors[300]}80
           `}
         >
-          ADMIN SETTINGS
+          MY PROFILE
         </Text>
 
         <Text
           fontSize={{ base: "md", md: "lg" }}
           fontWeight="medium"
           color="whiteAlpha.900"
-          maxW="650px"
+          maxW="600px"
           textShadow="0 1px 2px rgba(0,0,0,0.2)"
         >
-          Customize your experience and manage core system settings in one place
+          Manage your personal information, preferences, and account settings
+          from this page.
         </Text>
 
         {/* Glowing accent line */}
@@ -109,4 +110,4 @@ const AdminSettingsBanner = () => {
   );
 };
 
-export default AdminSettingsBanner;
+export default MyProfileBanner;

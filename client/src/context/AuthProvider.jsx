@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import api from "@/api/index";
 import AuthContext from "./AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const isLoggingOut = useRef(false); // 🚨 Prevent multiple logout calls
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -23,9 +26,13 @@ const AuthProvider = ({ children }) => {
           } catch (refreshErr) {
             console.log("Refresh failed:", refreshErr);
             setUser(null);
+            safeLogout(); // ✅ use safeLogout instead of direct logout
           }
         } else {
           setUser(null);
+          console.log("Not logged in or error fetching user:", err);
+          // If not logged in, redirect to login
+          navigate("/login");
         }
       } finally {
         setLoading(false);
@@ -49,10 +56,20 @@ const AuthProvider = ({ children }) => {
     return { success: userRes.data.success, data: userRes.data.data };
   };
 
-  const logout = async () => {
-    await api.post("/auth/logout", {});
-    setUser(null);
-    localStorage.removeItem("maintenanceDismissed");
+  const safeLogout = async () => {
+    if (isLoggingOut.current) return; // 🚨 Prevent duplicates
+    isLoggingOut.current = true;
+
+    try {
+      await api.post("/auth/logout", {});
+    } catch (err) {
+      console.warn("Logout request failed:", err);
+    } finally {
+      setUser(null);
+      localStorage.removeItem("maintenanceDismissed");
+      navigate("/login");
+      isLoggingOut.current = false; // reset after finishing
+    }
   };
 
   const forgotPassword = async (email) => {
@@ -68,7 +85,18 @@ const AuthProvider = ({ children }) => {
   };
 
   const refreshToken = async () => {
-    const result = await api.post("/auth/refresh-token", {});
+    const result = await api.post("/auth/refresh-token");
+    return result.data.data;
+  };
+
+  const changeUserInfo = async (userId, data) => {
+    const result = await api.patch(`/users/${userId}/change-info`, data);
+    setUser(result.data.data);
+    return result.data;
+  };
+
+  const changePassword = async (userId, data) => {
+    const result = await api.patch(`/users/${userId}/change-password`, data);
     return result.data;
   };
 
@@ -78,10 +106,12 @@ const AuthProvider = ({ children }) => {
         user,
         login,
         signup,
-        logout,
+        logout: safeLogout,
         forgotPassword,
         resetPassword,
         refreshToken,
+        changeUserInfo,
+        changePassword,
         loading,
       }}
     >

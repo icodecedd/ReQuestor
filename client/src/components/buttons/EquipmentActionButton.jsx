@@ -19,7 +19,7 @@ const ERROR_RED = "#E53E3E";
 const RADIUS = "8px";
 const ICON_SIZE = "18px";
 
-const EquipmentActionButton = ({ onEdit, onViewDetails, onDelete }) => {
+export const EquipmentActionButton = ({ onEdit, onViewDetails, onDelete }) => {
   const menuBg = "white";
   const menuBorder = "gray.200";
   const hoverBg = "#f5f5f5";
@@ -122,5 +122,3 @@ const EquipmentActionButton = ({ onEdit, onViewDetails, onDelete }) => {
     </Flex>
   );
 };
-
-export default EquipmentActionButton;

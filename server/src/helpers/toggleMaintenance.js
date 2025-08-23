@@ -13,7 +13,7 @@ export const enableMaintenance = async () => {
 
 export const disableMaintenance = async () => {
   const result = await pool.query(
-    "UPDATE settings SET maintenance = false, maintenance_message = NULL, grace_period = NULL WHERE id = 1 RETURNING *"
+    "UPDATE settings SET maintenance = false, maintenance_message = NULL, grace_period = 5 WHERE id = 1 RETURNING *"
   );
   return {
     success: true,

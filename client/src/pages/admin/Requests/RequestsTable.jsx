@@ -1,4 +1,4 @@
-import RequestActionButton from "@/components/buttons/RequestActionButton";
+import { RequestActionButton } from "@/components/buttons/RequestActionButton";
 import { CategoryDropdown } from "@/components/dropdowns/CategoryDropdown";
 import { RequestsStatusDropdown } from "@/components/dropdowns/RequestsStatusDropdown";
 import AddRequestModal from "@/components/modals/AddRequestModal";

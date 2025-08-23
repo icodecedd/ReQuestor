@@ -107,7 +107,6 @@ const CheckAvailabilityModal = ({
   const handleCheckAvailability = async () => {
     setIsSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
       const dateDetails = { ...form };
       const result = await checkAvailability(dateDetails);
 

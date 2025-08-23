@@ -1,10 +1,10 @@
 import { Box, Text, HStack } from "@chakra-ui/react";
 import { getStatusIconStyle } from "@/constants/statusIconsMeta";
-import { activityMeta } from "@/constants/activityLogsMeta";
+import { activityMeta } from "@/constants/ActivityLogsMeta";
 import { timeAgo } from "@/utils/formatTime";
 import { FiClock } from "react-icons/fi";
 
-const ActivityLogItem = ({ log }) => {
+export const ActivityLogItem = ({ log }) => {
   const meta = activityMeta?.[log.category]?.[log.action] || {
     title: "Unknown Activity",
     description: `No metadata available for "${log.action}" on "${log.target}".`,
@@ -22,7 +22,7 @@ const ActivityLogItem = ({ log }) => {
       p={4}
       borderRadius="xl"
       w="90%"
-      mb={1}
+      mb={2}
       _hover={{ bg: "#f7eaea" }}
     >
       <Box
@@ -50,5 +50,3 @@ const ActivityLogItem = ({ log }) => {
     </HStack>
   );
 };
-
-export default ActivityLogItem;
