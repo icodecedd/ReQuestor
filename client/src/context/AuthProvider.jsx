@@ -56,19 +56,39 @@ const AuthProvider = ({ children }) => {
     return { success: userRes.data.success, data: userRes.data.data };
   };
 
-  const safeLogout = async () => {
-    if (isLoggingOut.current) return; // 🚨 Prevent duplicates
+  const safeLogout = async (shouldRedirect = true) => {
+    if (isLoggingOut.current) return;
     isLoggingOut.current = true;
 
     try {
-      await api.post("/auth/logout", {});
+      // Only make logout API call if user exists
+      if (user) {
+        await api.post("/auth/logout", {});
+      }
     } catch (err) {
       console.warn("Logout request failed:", err);
     } finally {
+      // Always clear user state
       setUser(null);
       localStorage.removeItem("maintenanceDismissed");
-      navigate("/login");
-      isLoggingOut.current = false; // reset after finishing
+
+      // Only redirect if shouldRedirect is true AND we're not already on a public route
+      if (shouldRedirect) {
+        const currentPath = window.location.pathname;
+        const isOnPublicRoute =
+          currentPath === "/" ||
+          currentPath === "/login" ||
+          currentPath === "/signup" ||
+          currentPath.startsWith("/verification") ||
+          currentPath.startsWith("/forgot-password") ||
+          currentPath.startsWith("/reset-password");
+
+        if (!isOnPublicRoute) {
+          navigate("/login");
+        }
+      }
+
+      isLoggingOut.current = false;
     }
   };
 

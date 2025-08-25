@@ -1,9 +1,7 @@
-import React from 'react'
+import Navbar from "@/components/Navbar";
 
 const DashboardPage = () => {
-  return (
-    <div>DashboardPage</div>
-  )
-}
+  return <Navbar pageName={"Overview"} />;
+};
 
-export default DashboardPage
+export default DashboardPage;

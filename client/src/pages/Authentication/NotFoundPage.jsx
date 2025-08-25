@@ -89,16 +89,6 @@ const NotFoundPage = () => {
             >
               Return Home
             </Button>
-            <Button
-              variant="outline"
-              color={colors.primary}
-              borderColor={colors.lightPrimary}
-              _hover={{ bg: colors.palePrimary }}
-              size="md"
-              onClick={() => navigate(-1)}
-            >
-              Go Back
-            </Button>
           </Stack>
         </Box>
       </motion.div>

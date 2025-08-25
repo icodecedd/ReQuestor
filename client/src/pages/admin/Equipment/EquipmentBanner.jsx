@@ -11,7 +11,7 @@ const EquipmentBanner = () => {
 
   return (
     <Box
-      w="95%"
+      w="100%"
       mx="auto"
       h={{ base: "200px", md: "240px" }}
       borderRadius="2xl"
