@@ -181,7 +181,7 @@ const Sidebar = ({ navItems, isDrawer = false, onClose }) => {
           <Box
             as="button"
             onClick={() => {
-              logout();
+              logout(true);
             }}
             w="full"
           >
