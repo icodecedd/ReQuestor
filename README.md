@@ -73,8 +73,7 @@
 ### ✅ Completed  
 - **User Accounts** – Role-based access (Admin, Student)  
 - **Queue Management** – Track requests through Pending → Approved → In Use → Returned stages  
-- **Admin Panel** – Review, approve, reject, or cancel requests  
-- **Equipment Availability Tracking** – Real-time view of available and reserved equipment  
+- **Admin Panel** – Review, approve, reject, or cancel requests 
 - **Inventory Management** – Admins can add, edit, or remove equipment items  
 - **Basic Reservation Rules** – Prevent overlapping schedules and enforce availability
 - **Advanced Search & Filters** – Find requests by date, status, or equipment type  
