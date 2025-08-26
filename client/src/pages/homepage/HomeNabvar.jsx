@@ -12,20 +12,20 @@ import {
 } from "@chakra-ui/react";
 import logo from "@/assets/requestor.svg";
 import { FiMenu, FiX } from "react-icons/fi";
-import { useState } from "react";
+import { Link as ScrollLink } from "react-scroll";
 
 const navItems = [
   {
     label: "Home",
-    path: "/",
+    id: "home", // matches <section id="home">
   },
   {
     label: "Features",
-    path: "/features",
+    id: "features", // matches <section id="features">
   },
   {
     label: "How It Works",
-    path: "/how-it-works",
+    id: "how-it-works", // matches <section id="how-it-works">
   },
 ];
 
@@ -64,48 +64,44 @@ const HomeNavbar = () => {
           alignItems="center"
         >
           {navItems.map((item) => (
-            <Box key={item.label} position="relative">
-              <a href={item.path} style={{ textDecoration: "none" }}>
-                <Text
-                  fontWeight="medium"
-                  fontSize={16}
-                  color="#800000"
-                  _hover={{ color: "#A52A2A" }}
-                  _active={{ color: "#A52A2A" }}
-                  position="relative"
-                  py={1}
-                  _before={{
-                    content: '""',
-                    position: "absolute",
-                    bottom: "-2px",
-                    left: "0",
-                    width: "0",
-                    height: "2px",
-                    bg: "#A52A2A",
-                    transition: "width 0.3s ease-in-out",
-                  }}
-                  _after={{
-                    content: '""',
-                    position: "absolute",
-                    bottom: "-2px",
-                    left: "0",
-                    width: "100%",
-                    height: "1px",
-                    bg: "#A52A2A",
-                    transform: "scaleX(0)",
-                    transformOrigin: "left",
-                    transition: "transform 0.3s ease-in-out",
-                  }}
-                  sx={{
-                    "&:hover::after": {
-                      transform: "scaleX(1)",
-                    },
-                  }}
-                >
-                  {item.label}
-                </Text>
-              </a>
-            </Box>
+            <ScrollLink
+              key={item.label}
+              to={item.id}
+              smooth={true}
+              duration={600}
+              offset={-60} // adjust for fixed navbar height
+              spy={true}
+            >
+              <Text
+                fontWeight="medium"
+                fontSize={16}
+                color="#800000"
+                _hover={{ color: "#A52A2A" }}
+                _active={{ color: "#A52A2A" }}
+                position="relative"
+                cursor="pointer"
+                py={1}
+                _after={{
+                  content: '""',
+                  position: "absolute",
+                  bottom: "0px",
+                  left: "0",
+                  width: "100%",
+                  height: "2px",
+                  bg: "#A52A2A",
+                  transform: "scaleX(0)",
+                  transformOrigin: "left",
+                  transition: "transform 0.3s ease-in-out",
+                }}
+                sx={{
+                  "&:hover::after": {
+                    transform: "scaleX(1)",
+                  },
+                }}
+              >
+                {item.label}
+              </Text>
+            </ScrollLink>
           ))}
         </Flex>
 
@@ -130,10 +126,10 @@ const HomeNavbar = () => {
                 _after={{
                   content: '""',
                   position: "absolute",
-                  bottom: "-2px",
+                  bottom: "0px",
                   left: "0",
                   width: "100%",
-                  height: "1px",
+                  height: "2px",
                   bg: "#A52A2A",
                   transform: "scaleX(0)",
                   transformOrigin: "left",
@@ -200,9 +196,13 @@ const HomeNavbar = () => {
               <Flex direction="column" gap={6}>
                 {navItems.map((item) => (
                   <Box key={item.label}>
-                    <a
-                      href={item.path}
-                      style={{ textDecoration: "none" }}
+                    <ScrollLink
+                      key={item.label}
+                      to={item.id}
+                      smooth={true}
+                      duration={600}
+                      offset={-50} // adjust for fixed navbar height
+                      spy={true}
                       onClick={onClose}
                     >
                       <Text
@@ -210,11 +210,30 @@ const HomeNavbar = () => {
                         fontSize={16}
                         color="#800000"
                         _hover={{ color: "#A52A2A" }}
-                        _active={{ color: "#A52A2A" }}
+                        position="relative"
+                        cursor="pointer"
+                        py={1}
+                        _after={{
+                          content: '""',
+                          position: "absolute",
+                          bottom: "0px",
+                          left: "0",
+                          width: "90%",
+                          height: "2px",
+                          bg: "#A52A2A",
+                          transform: "scaleX(0)",
+                          transformOrigin: "left",
+                          transition: "transform 0.3s ease-in-out",
+                        }}
+                        sx={{
+                          "&:hover::after": {
+                            transform: "scaleX(1)",
+                          },
+                        }}
                       >
                         {item.label}
                       </Text>
-                    </a>
+                    </ScrollLink>
                   </Box>
                 ))}
 

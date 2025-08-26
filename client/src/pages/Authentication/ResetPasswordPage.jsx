@@ -36,7 +36,6 @@ const ResetPasswordPage = () => {
 
   const { resetPassword } = useAuth();
   const navigate = useNavigate();
-  const toast = useToast();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

@@ -85,7 +85,7 @@ const NotFoundPage = () => {
                 transform: "translateY(0)",
               }}
               size="md"
-              onClick={() => navigate("/")} // NOTE: This should be the landing page
+              onClick={() => navigate("/")}
             >
               Return Home
             </Button>
