@@ -99,7 +99,7 @@ const UnauthorizedPage = () => {
                 transform: "translateY(0)",
               }}
               size="md"
-              onClick={() => navigate("/login")} // NOTE: This should be the landing page
+              onClick={() => navigate("/")}
             >
               Return Home
             </Button>

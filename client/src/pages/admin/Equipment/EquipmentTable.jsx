@@ -131,7 +131,7 @@ const EquipmentTable = () => {
   };
 
   return (
-    <Box w="99.5%" mx="auto" p={8}>
+    <Box w="100%" mx="auto" mt={3}>
       {/* Right: Search, Filter, Add Equipment */}
       <Flex align="flex-end" justify="flex-end" gap={3} w="100%">
         <InputGroup w="400px">

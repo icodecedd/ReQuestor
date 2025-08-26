@@ -32,7 +32,7 @@ const EquipmentStats = () => {
       columns={{ base: 1, md: 2, lg: 4 }}
       spacingX="1.8%"
       spacingY="5%"
-      w="95%"
+      w="100%"
       mx="auto"
       mt={6}
     >

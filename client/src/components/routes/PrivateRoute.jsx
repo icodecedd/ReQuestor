@@ -6,7 +6,6 @@ import { useEffect } from "react";
 
 const PrivateRoute = ({ children, allowedRoles = [] }) => {
   const { user, loading } = useAuth();
-
   const { fetchSettings } = useSettingsStore();
 
   // fetch settings as the dashboard page loads
@@ -18,12 +17,14 @@ const PrivateRoute = ({ children, allowedRoles = [] }) => {
 
   const isAuthenticated = user && user.status === "Active" && user.is_verified;
 
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user?.role)) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
+  // IMPORTANT: Check authentication FIRST, before role checking
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Only check roles if user is authenticated AND allowedRoles is specified
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/unauthorized" replace />;
   }
 
   return children;

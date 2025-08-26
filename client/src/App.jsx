@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import AdminRoutes from "./routes/AdminRoutes";
 import StudentRoutes from "./routes/StudentRoutes";
-import AuthRoutes from "./routes/AuthRoutes";
 import "@/assets/global.css";
 import { useAuth } from "./hooks/useAuth";
 import VerificationSuccessPage from "./pages/authentication/VerificationSuccessPage";
@@ -15,9 +14,10 @@ import VerificationPage from "./pages/authentication/VerificationPage";
 import ForgotPasswordPage from "./pages/authentication/ForgotPasswordPage";
 import NotFoundPage from "./pages/authentication/NotFoundPage";
 import { ToastContainer, Bounce } from "react-toastify";
+import HomePage from "./pages/homepage/HomePage";
 
 function App() {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
   useAxiosInterceptor();
 
   if (loading) return null;
@@ -38,10 +38,17 @@ function App() {
         transition={Bounce}
         stacked
       />
+
       <Routes>
-        {(!user || !user.is_verified) && (
-          <Route path="/*" element={<AuthRoutes />} />
-        )}
+        {/* Public Routes - Always accessible */}
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <HomePage />
+            </PublicRoute>
+          }
+        />
         <Route
           path="/login"
           element={
@@ -90,7 +97,8 @@ function App() {
             </PublicRoute>
           }
         />
-        {/* Admin Routes */}
+
+        {/* Protected Routes */}
         <Route
           path="/admin/*"
           element={
@@ -99,7 +107,6 @@ function App() {
             </PrivateRoute>
           }
         />
-        {/* Student Routes */}
         <Route
           path="/student/*"
           element={
@@ -108,9 +115,9 @@ function App() {
             </PrivateRoute>
           }
         />
+
         {/* Fallback route */}
-        <Route path="*" element={<NotFoundPage />} /> // change to 404 page
-        later
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );

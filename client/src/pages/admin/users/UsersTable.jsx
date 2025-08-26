@@ -115,7 +115,7 @@ const UsersTable = () => {
   };
 
   return (
-    <Box w="99.5%" mx="auto" p={8}>
+    <Box w="100%" mx="auto" mt={3}>
       <Flex justify="space-between" align="center" pb={0.5}>
         {/* Left: Header */}
         <HStack ml={3}>

@@ -90,7 +90,7 @@ export const StatCard = ({ label, value, icon, loading = false, text }) => {
               {value}
             </StatNumber>
             <StatHelpText
-              fontSize="xs"
+              fontSize={{ base: "11px", md: "xs" }}
               fontWeight="medium"
               color="whiteAlpha.800"
               mt={1}

@@ -17,16 +17,16 @@ import {
 import { LuLayoutDashboard } from "react-icons/lu";
 import { useSidebar } from "@/hooks/useSidebar";
 
-const DashboardLayout = () => {
-  const navItems = [
-    { label: "Dashboard", icon: LuLayoutDashboard, path: "/admin/dashboard" },
-    { label: "Manage Users", icon: FiUsers, path: "/admin/users" },
-    { label: "Requests", icon: FiFileText, path: "/admin/requests" },
-    { label: "Equipment", icon: FiMonitor, path: "/admin/equipment" },
-    { label: "Activity Logs", icon: FiActivity, path: "/admin/activity" },
-    { label: "Settings", icon: FiSettings, path: "/admin/settings" },
-  ];
+const navItems = [
+  { label: "Dashboard", icon: LuLayoutDashboard, path: "/admin/dashboard" },
+  { label: "Manage Users", icon: FiUsers, path: "/admin/users" },
+  { label: "Requests", icon: FiFileText, path: "/admin/requests" },
+  { label: "Equipment", icon: FiMonitor, path: "/admin/equipment" },
+  { label: "Activity Logs", icon: FiActivity, path: "/admin/activity" },
+  { label: "Settings", icon: FiSettings, path: "/admin/settings" },
+];
 
+const DashboardLayout = () => {
   const { isOpen, onClose } = useSidebar();
 
   return (
@@ -43,7 +43,7 @@ const DashboardLayout = () => {
       <Box display={{ base: "none", md: "block" }}>
         <Sidebar navItems={navItems} />
       </Box>
-      <Box flex="2" p={6} bg="#f5f5f6" minH="100vh">
+      <Box flex="1" p={6} bg="#f5f5f6" minH="100vh">
         {/* Main Content */}
         <Outlet />
       </Box>

@@ -192,7 +192,7 @@ const RequestsTable = () => {
   };
 
   return (
-    <Box w="99.5%" mx="auto" p={8}>
+    <Box w="100%" mx="auto" mt={3}>
       <Flex align="flex-end" justify="flex-end" gap={3} w="100%">
         <InputGroup w="400px">
           <InputLeftElement color="gray.500">

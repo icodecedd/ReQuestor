@@ -30,7 +30,7 @@ const MAROON = "#800000";
 
 const Navbar = ({ pageName }) => {
   const { user, logout } = useAuth();
-  const { collapsed, setCollapsed, onOpen } = useSidebar();
+  const { collapsed } = useSidebar();
   const navigate = useNavigate();
 
   const sidebarWidth = collapsed ? "70px" : SIDEBAR_WIDTH;
@@ -47,7 +47,7 @@ const Navbar = ({ pageName }) => {
       transition="all 0.2s ease"
       bg="white"
       boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)"
-      borderRadius="full"
+      borderRadius="xl"
       zIndex={1000}
       px={6}
       py={1}
@@ -65,7 +65,7 @@ const Navbar = ({ pageName }) => {
         }
         size="sm"
         variant="ghost"
-        onClick={() => onOpen()}
+        //onClick={() => onOpen()}
         _hover={{ bg: "#f7eaea" }}
         aria-label="Toggle sidebar"
         borderRadius="md"

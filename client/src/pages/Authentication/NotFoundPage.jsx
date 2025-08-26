@@ -85,19 +85,9 @@ const NotFoundPage = () => {
                 transform: "translateY(0)",
               }}
               size="md"
-              onClick={() => navigate("/")} // NOTE: This should be the landing page
+              onClick={() => navigate("/")}
             >
               Return Home
-            </Button>
-            <Button
-              variant="outline"
-              color={colors.primary}
-              borderColor={colors.lightPrimary}
-              _hover={{ bg: colors.palePrimary }}
-              size="md"
-              onClick={() => navigate(-1)}
-            >
-              Go Back
             </Button>
           </Stack>
         </Box>
