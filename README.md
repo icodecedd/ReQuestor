@@ -25,7 +25,16 @@
 ---
 
 ## 📊 Project Status  
+
+<div align="center">
+  <!-- Status Badge -->
+  <img src="https://img.shields.io/badge/Status-Active%20Development-brightgreen?style=for-the-badge" alt="Active Development">
+  <!-- Version Badge -->
+  <img src="https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge" alt="Version 1.0.0">
+</div>
+
 **Under Development** — ReQuestor is an upcoming **web-based reservation and queue management platform** designed to replace outdated paper-based equipment request forms with a **streamlined, digital-first experience**.
+
 
 ---
 
