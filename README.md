@@ -65,13 +65,26 @@
 ---
 
 ## 🛠 Tech Stack  
-| Layer       | Technology |
-|-------------|------------|
-| **Frontend** | React, Chakra UI, Vite |
-| **Backend**  | Node.js, Express |
-| **Database** | Supabase (PostgreSQL) |
-| **Auth**     | JWT |
-| **CI/CD**    | GitHub Actions |
+
+<div align="center">
+  <!-- General descriptive badge -->
+  <img src="https://img.shields.io/badge/Tech-Stack%20Overview-blue?style=for-the-badge" alt="Tech Stack Overview">
+  <img src="https://img.shields.io/badge/Includes-Frontend%2FBackend%2FDatabase%2FAuth%2FCI--CD-green?style=for-the-badge" alt="Includes Frontend/Backend/Database/Auth/CI-CD">
+</div>
+
+<br>
+<!-- Tech Stack Table -->
+<div align="center">
+
+| Layer       | Technology                     | Description |
+|:------------:|:------------:|:------------:|
+| **Frontend** | React, Chakra UI, Vite        | Handles the user interface and interactive components with modern web frameworks. |
+| **Backend**  | Node.js, Express              | Manages server-side logic, API endpoints, and request handling. |
+| **Database** | Supabase (PostgreSQL)        | Stores structured data securely and provides real-time database functionality. |
+| **Auth**     | JWT                          | Provides secure authentication and authorization for users. |
+| **CI/CD**    | GitHub Actions               | Automates testing, building, and deployment pipelines for continuous integration. |
+
+</div>
 
 ---
 
