@@ -52,20 +52,13 @@
 
 ## ✨ Features by User Role
 
-### 👩‍🎓 Student / Requestor
-- Fully responsive interface for mobile, tablet, and desktop  
-- Submit equipment reservation requests online  
-- View request status (Pending, Approved, In Use, Returned)  
-- Use the **On-Demand Availability Checker** to confirm availability of equipment before booking  
-- Receive email and in-app notifications for updates  
-- Cancel pending requests before approval  
-
-### 🧑‍💼 Admin
-- Desktop-first interface for efficient management  
-- View, approve, reject, or cancel equipment requests  
-- Manage equipment inventory and availability status  
-- Track ongoing and upcoming reservations  
-- Configure reservation rules (e.g., max duration, advance booking time)  
+| 👩‍🎓 Student / Requestor | 🧑‍💼 Admin |
+|--------------------------|------------|
+| Fully responsive interface for mobile, tablet, and desktop | Desktop-first interface for efficient management |
+| Submit equipment reservation requests online | View, approve, reject, or cancel equipment requests |
+| View request status (Pending, Approved, In Use, Returned) | Manage equipment inventory and availability status |
+| Use the **On-Demand Availability Checker** to confirm equipment availability before booking | Track ongoing and upcoming reservations |
+| Cancel pending requests before approval | Configure reservation rules (e.g., max duration, advance booking time) |
 
 > **💡 Design Note:**  
 > The **Student side** of ReQuestor is fully responsive and optimized for mobile, tablet, and desktop devices.  
