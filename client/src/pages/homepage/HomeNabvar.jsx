@@ -46,7 +46,7 @@ const HomeNavbar = () => {
       <Flex align="center" justify="space-between">
         {/* Logo and Title - Left */}
         <Flex align="center" minW="160px">
-          <Image src={logo} boxSize="45px" mr={2} />
+          <Image src={logo} boxSize="45px" mr={2} alt="ReQuestor Logo" />
           <Text
             fontWeight="bold"
             fontSize={20}

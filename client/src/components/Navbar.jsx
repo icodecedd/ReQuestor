@@ -16,7 +16,7 @@ import {
   Text,
   MenuGroup,
 } from "@chakra-ui/react";
-import { FiSettings, FiLogOut, FiUser } from "react-icons/fi";
+import { FiSettings, FiLogOut, FiUser, FiMenu } from "react-icons/fi";
 import { IoIosArrowDown } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { ChevronRightIcon } from "@chakra-ui/icons";
@@ -30,7 +30,7 @@ const MAROON = "#800000";
 
 const Navbar = ({ pageName }) => {
   const { user, logout } = useAuth();
-  const { collapsed } = useSidebar();
+  const { collapsed, onOpen } = useSidebar();
   const navigate = useNavigate();
 
   const sidebarWidth = collapsed ? "70px" : SIDEBAR_WIDTH;
@@ -38,15 +38,16 @@ const Navbar = ({ pageName }) => {
   return (
     <Box
       position="fixed"
-      top="16px" // ← floating gap from top
+      top="16px"
       left={{ base: "16px", md: `calc(${sidebarWidth} + 16px)` }}
       w={{
         base: "calc(100% - 32px)",
         md: `calc(100% - ${sidebarWidth} - 32px)`,
       }}
       transition="all 0.2s ease"
-      bg="white"
-      boxShadow="0 2px 4px rgba(0, 0, 0, 0.1)"
+      bg="rgba(255, 255, 255, 0.7)" // semi-transparent white
+      backdropFilter="blur(10px)" // frosted glass effect
+      boxShadow="0 2px 8px rgba(0, 0, 0, 0.15)"
       borderRadius="xl"
       zIndex={1000}
       px={6}
@@ -56,16 +57,10 @@ const Navbar = ({ pageName }) => {
     >
       {/* Toggle Sidebar Button. Only Visible on Mobile */}
       <IconButton
-        icon={
-          collapsed ? (
-            <LuPanelRightClose fontSize={20} />
-          ) : (
-            <LuPanelLeftClose fontSize={20} />
-          )
-        }
+        icon={<FiMenu size={20} />}
         size="sm"
         variant="ghost"
-        //onClick={() => onOpen()}
+        onClick={() => onOpen()}
         _hover={{ bg: "#f7eaea" }}
         aria-label="Toggle sidebar"
         borderRadius="md"

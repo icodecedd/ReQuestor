@@ -65,6 +65,7 @@ const HeroSection = () => {
       display="flex"
       alignItems="center"
       justifyContent="center"
+      mt={{ base: "56px", md: "0px" }}
     >
       <MotionFlex
         direction={{ base: "column", md: "row" }}
@@ -147,7 +148,7 @@ const HeroSection = () => {
           </Flex>
 
           <motion.div variants={fadeInUp}>
-            <a href="/login">
+            <a href="/signup">
               <Button
                 mt={{ base: 6, sm: 8 }}
                 bg="#800000"
@@ -163,7 +164,12 @@ const HeroSection = () => {
                 transition="all 0.2s"
                 w="200px"
               >
-                <Flex w="100%" align="center" justify="space-between">
+                <Flex
+                  w="100%"
+                  align="center"
+                  justify="space-between"
+                  pl={{ base: 4, md: 0 }}
+                >
                   Get Started
                   <Box
                     ml={8}
@@ -216,7 +222,7 @@ const HeroSection = () => {
             animate={floatAnimation}
             display={{ base: "none", sm: "block" }}
           >
-            <Text fontSize="sm" fontWeight="semibold" color="blue.500">
+            <Text fontSize="sm" fontWeight="semibold" color="#800000">
               <IoCheckmark style={{ display: "inline", marginRight: "4px" }} />
               Reservation Confirmed
             </Text>
@@ -242,7 +248,7 @@ const HeroSection = () => {
             }}
             display={{ base: "none", sm: "block" }}
           >
-            <Text fontSize="sm" fontWeight="semibold" color="blue.500">
+            <Text fontSize="sm" fontWeight="semibold" color="#800000">
               📅 Availability Checker
             </Text>
             <Text fontSize="xs" color="gray.500">

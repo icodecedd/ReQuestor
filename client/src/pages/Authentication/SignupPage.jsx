@@ -24,7 +24,7 @@ import { useNavigate, Link as RouterLink } from "react-router-dom";
 import logoWhite from "@/assets/requestor-white.svg";
 import logo from "@/assets/requestor.svg";
 import overviewBg from "@/assets/overview.webp";
-import { FiEye, FiEyeOff, FiLock, FiMail, FiUser } from "react-icons/fi";
+import { FiArrowLeft, FiEye, FiEyeOff, FiLock, FiMail, FiUser } from "react-icons/fi";
 import { showToast } from "@/utils/toast";
 
 export const SignupPage = () => {
@@ -178,12 +178,31 @@ export const SignupPage = () => {
               </Text>
             </Box>
           </Box>
+
+          {/* RIGHT: Form Section */}
           <Box
             w={{ base: "100%", md: "50%", lg: "45%" }}
             p={{ base: 8, md: 10, lg: 12 }}
             bg="white"
             zIndex={2}
+            position="relative"
           >
+            {/* Back Button */}
+            <IconButton
+              as={RouterLink}
+              to="/"
+              icon={<FiArrowLeft />}
+              aria-label="Back to Home"
+              size="sm"
+              variant="ghost"
+              color={colors.slate}
+              _hover={{ bg: colors.paleMaroon }}
+              position="absolute"
+              top="20px"
+              right="20px" // 👈 moved to the right
+              borderRadius="full"
+            />
+
             <Stack spacing={8}>
               {/* Mobile Logo */}
               <Box display={{ base: "block", md: "none" }} textAlign="center">
@@ -255,6 +274,7 @@ export const SignupPage = () => {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
+                        autoComplete="email"
                         placeholder="your@email.com"
                         focusBorderColor={colors.maroon}
                         borderRadius="lg"
@@ -286,6 +306,7 @@ export const SignupPage = () => {
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
+                        autoComplete="new-password"
                         placeholder="At least 6 characters"
                         focusBorderColor={colors.maroon}
                         borderRadius="lg"

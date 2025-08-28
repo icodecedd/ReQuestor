@@ -54,7 +54,7 @@ const Sidebar = ({ navItems, isDrawer = false, onClose }) => {
       >
         {!effectiveCollapsed && (
           <Flex align="center" minW="160px">
-            <Image src={logo} boxSize="40px" mr={2} />
+            <Image src={logo} boxSize="40px" mr={2} alt="ReQuestor Logo" />
             <Text
               fontWeight="bold"
               fontSize={20}

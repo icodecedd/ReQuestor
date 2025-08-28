@@ -3,15 +3,21 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useSettingsStore } from "@/store/settingsStore";
 import { useEffect } from "react";
+import { useAxiosInterceptor } from "@/hooks/useAxiosInterceptor";
 
 const PrivateRoute = ({ children, allowedRoles = [] }) => {
   const { user, loading } = useAuth();
   const { fetchSettings } = useSettingsStore();
 
+  // Attach Axios interceptor only when user is authenticated
+  useAxiosInterceptor();
+
   // fetch settings as the dashboard page loads
   useEffect(() => {
-    fetchSettings();
-  }, []);
+    if (user) {
+      fetchSettings();
+    }
+  }, [user, fetchSettings]);
 
   if (loading) return null;
 

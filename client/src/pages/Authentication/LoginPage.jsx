@@ -17,7 +17,7 @@ import {
   useColorModeValue,
   InputLeftElement,
 } from "@chakra-ui/react";
-import { FiEye, FiEyeOff, FiLock, FiMail } from "react-icons/fi";
+import { FiArrowLeft, FiEye, FiEyeOff, FiLock, FiMail } from "react-icons/fi";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
@@ -169,7 +169,24 @@ export const LoginPage = () => {
             p={{ base: 8, md: 10, lg: 12 }}
             bg="white"
             zIndex={2}
+            position="relative"
           >
+            {/* Back Button */}
+            <IconButton
+              as={RouterLink}
+              to="/"
+              icon={<FiArrowLeft />}
+              aria-label="Back to Home"
+              size="sm"
+              variant="ghost"
+              color={colors.slate}
+              _hover={{ bg: colors.paleMaroon }}
+              position="absolute"
+              top="20px"
+              right="20px" // 👈 moved to the right
+              borderRadius="full"
+            />
+
             <Stack spacing={8}>
               {/* Mobile Logo */}
               <Box display={{ base: "block", md: "none" }} textAlign="center">

@@ -8,7 +8,6 @@ import LoginPage from "./pages/authentication/LoginPage";
 import SignupPage from "./pages/authentication/SignupPage";
 import PublicRoute from "./components/routes/PublicRoute";
 import PrivateRoute from "./components/routes/PrivateRoute";
-import { useAxiosInterceptor } from "./hooks/useAxiosInterceptor";
 import ResetPasswordPage from "./pages/authentication/ResetPasswordPage";
 import VerificationPage from "./pages/authentication/VerificationPage";
 import ForgotPasswordPage from "./pages/authentication/ForgotPasswordPage";
@@ -18,7 +17,6 @@ import HomePage from "./pages/homepage/HomePage";
 
 function App() {
   const { loading } = useAuth();
-  useAxiosInterceptor();
 
   if (loading) return null;
 

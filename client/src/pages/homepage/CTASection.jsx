@@ -85,7 +85,7 @@ const CTASection = () => {
         </Flex>
 
         {/* CTA button */}
-        <a href="/login">
+        <a href="/signup">
           <Button
             bg="#fafafa"
             color="#840404"
@@ -101,7 +101,12 @@ const CTASection = () => {
             transition="all 0.2s"
             w="200px"
           >
-            <Flex w="100%" align="center" justify="space-between">
+            <Flex
+              w="100%"
+              align="center"
+              justify="space-between"
+              pl={{ base: 4, md: 0 }}
+            >
               Get Started
               <Box
                 ml={8}
