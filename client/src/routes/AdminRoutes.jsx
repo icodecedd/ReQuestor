@@ -4,7 +4,7 @@ import Dashboard from "@/pages/admin/dashboard/DashboardPage";
 import ManageUsers from "@/pages/admin/users/ManageUsersPage";
 import Requests from "@/pages/admin/requests/RequestsPage";
 import Equipment from "@/pages/admin/equipment/EquipmentsPage";
-import Activity from "@/pages/admin/acitvity/ActivityLogsPage";
+import Activity from "@/pages/admin/activity/ActivityLogsPage";
 import Settings from "@/pages/admin/settings/AdminSettingsPage";
 import MyProfilePage from "@/pages/profile/MyProfilePage";
 import SidebarProvider from "@/context/SidebarProvider";
