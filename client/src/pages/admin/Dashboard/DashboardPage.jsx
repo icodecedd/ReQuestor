@@ -1,4 +1,5 @@
 import { Box, Grid, GridItem } from "@chakra-ui/react";
+import MaintenanceBanner from "@/components/MaintenanceBanner";
 import Navbar from "@/components/Navbar";
 import DashboardStats from "./DashboardStats";
 import DashboardBanner from "./DashboardBanner";
@@ -7,7 +8,6 @@ import PieGraph from "./PieGraph";
 import RecentRequests from "./RecentRequests";
 import ActivityLogs from "./ActivityLogs";
 import QuickActions from "./QuickActions";
-import MaintenanceBanner from "./MaintenanceBanner";
 
 const DashboardPage = () => {
   return (

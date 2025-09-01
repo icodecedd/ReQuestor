@@ -1,32 +1,26 @@
-import { useAuth } from "@/hooks/useAuth";
-import { Button, Text } from "@chakra-ui/react";
+import SidebarProvider from "@/context/SidebarProvider";
+import StudentLayout from "@/layouts/StudentLayout";
+import MyProfilePage from "@/pages/profile/MyProfilePage";
+import DashboardPage from "@/pages/user/dashboard/DashboardPage";
 import React from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 const StudentRoutes = () => {
-  const { logout } = useAuth();
-
   return (
-    <div align="center">
-      <Text
-        fontSize="2xl"
-        fontWeight="bold"
-        textAlign="center"
-        mt={10}
-        color="gray.700"
-      >
-        Student Routes Coming Soon!
-      </Text>
-      {/* Placeholder for future student routes */}
-      {/* You can add more components or routes here as needed */}
-      <Button
-        variant="primary"
-        bg="maroon"
-        color="white"
-        onClick={() => logout()}
-      >
-        Logout
-      </Button>
-    </div>
+    <SidebarProvider>
+      <Routes>
+        <Route path="/" element={<StudentLayout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="profile" element={<MyProfilePage />} />
+        </Route>
+
+        <Route
+          path="*"
+          element={<Navigate to="/student/dashboard" replace />}
+        />
+      </Routes>
+    </SidebarProvider>
   );
 };
 

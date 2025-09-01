@@ -13,6 +13,10 @@ const EquipmentStats = () => {
     utilizationPercentage,
   } = stats();
 
+  useEffect(() => {
+    fetchEquipment();
+  }, [fetchEquipment]);
+
   const renderCard = (label, value, icon, loading, text) => (
     <StatCard
       label={label}
@@ -22,10 +26,6 @@ const EquipmentStats = () => {
       text={text}
     />
   );
-
-  useEffect(() => {
-    fetchEquipment();
-  }, [fetchEquipment]);
 
   return (
     <SimpleGrid

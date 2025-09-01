@@ -24,6 +24,39 @@ export const useRequestsStore = create((set, get) => ({
     }
   },
 
+  userRequest: () => {
+    const req = get().requests;
+
+    const actualRequests = req.filter((e) => e.user_id === get().userId);
+
+    // get total request
+    const totalUserRequest = req.filter(
+      (e) => e.user_id === get().userId
+    ).length;
+
+    // get total pending request
+    const totalPending = req.filter(
+      (e) => e.user_id === get().userId && e.status === "Pending"
+    ).length;
+
+    // get total approved request
+    const totalApproved = req.filter(
+      (e) => e.user_id === get().userId && e.status === "Reserved"
+    ).length;
+
+    const totalRejected = req.filter(
+      (e) => e.user_id === get().userId && e.status === "Rejected"
+    ).length;
+
+    return {
+      requestByUser: actualRequests,
+      totalUserRequest,
+      totalApproved,
+      totalPending,
+      totalRejected,
+    };
+  },
+
   stats: () => {
     const req = get().requests;
 

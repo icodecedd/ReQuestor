@@ -22,7 +22,6 @@ import { useNavigate } from "react-router-dom";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/hooks/useAuth";
 import { useSidebar } from "@/hooks/useSidebar";
-import { LuPanelLeftClose, LuPanelRightClose } from "react-icons/lu";
 
 const SIDEBAR_WIDTH = "240px";
 const MAROON_LIGHT = "#f7eaea";
@@ -34,6 +33,8 @@ const Navbar = ({ pageName }) => {
   const navigate = useNavigate();
 
   const sidebarWidth = collapsed ? "70px" : SIDEBAR_WIDTH;
+
+  const navUser = user.role === "Admin" ? "/admin" : "/student";
 
   return (
     <Box
@@ -77,7 +78,7 @@ const Navbar = ({ pageName }) => {
         >
           <BreadcrumbItem>
             <BreadcrumbLink
-              href="/admin/dashboard"
+              href={`${navUser}/dashboard`}
               _hover={{ textDecoration: "none" }}
             >
               Dashboard
@@ -166,7 +167,7 @@ const Navbar = ({ pageName }) => {
                   }}
                   fontSize="sm"
                   onClick={() => {
-                    navigate("/admin/profile");
+                    navigate(`${navUser}/profile`);
                   }}
                 >
                   My Profile

@@ -17,7 +17,7 @@ import {
 import { LuLayoutDashboard } from "react-icons/lu";
 import { useSidebar } from "@/hooks/useSidebar";
 
-const navItems = [
+const adminNavItems = [
   { label: "Dashboard", icon: LuLayoutDashboard, path: "/admin/dashboard" },
   { label: "Manage Users", icon: FiUsers, path: "/admin/users" },
   { label: "Requests", icon: FiFileText, path: "/admin/requests" },
@@ -35,13 +35,13 @@ const DashboardLayout = () => {
         <DrawerOverlay />
         {/* The maxW value should be the same as the width of the sidebar */}
         <DrawerContent maxW="230px">
-          <Sidebar navItems={navItems} isDrawer onClose={onClose} />
+          <Sidebar navItems={adminNavItems} isDrawer onClose={onClose} />
         </DrawerContent>
       </Drawer>
 
       {/* Only visible on Desktop and Tablet */}
       <Box display={{ base: "none", md: "block" }}>
-        <Sidebar navItems={navItems} />
+        <Sidebar navItems={adminNavItems} />
       </Box>
       <Box flex="1" p={6} bg="#f5f5f6" minH="100vh">
         {/* Main Content */}

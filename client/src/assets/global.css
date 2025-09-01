@@ -1,3 +1,38 @@
+/* This is to remove the focus outline from the recharts chart */
 .recharts-wrapper *:focus {
   outline: none;
+}
+
+/* This is to adjust the size of the calendar */
+.sx-react-calendar-wrapper {
+  max-width: 100vw;
+  height: 500px;
+  max-height: 90vh;
+}
+
+.sx__event-modal {
+  width: 85vw !important; /* Fit mobile screen */
+  max-width: 320px !important; /* Constrain width */
+  max-height: 70vh !important; /* Limit height */
+  font-size: 12px !important; /* Match date picker */
+  padding: 12px !important; /* Reduce padding */
+  overflow-y: auto !important; /* Allow scrolling */
+  box-sizing: border-box !important;
+}
+
+.sx__view-selection {
+  display: none !important;
+}
+
+/* This is to adjust the size of the calendar date picker in mobile */
+@media (max-width: 600px) {
+  .sx__date-picker-popup {
+    width: 85vw !important;
+    max-width: 280px !important;
+    max-height: 60vh !important;
+    font-size: 12px !important;
+    padding: 8px !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+  }
 }
